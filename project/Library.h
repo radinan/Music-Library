@@ -4,32 +4,19 @@
 #include "Playlist.h"
 
 #include <iostream>
-
-class Library
+//shte sydyrja elementi, koito v momenta sa neobhodimi na potrebitelq
+//da pushvame elementi koito sa s bool == 1
+//posle da gi popvame
+class Library 
 {
 private:
 	/*
-	all_users
-	all_songs
-	all_playlists
-	all_albums */
+	users
+	songs
+	playlists
+	albums */
 
 public:
-
-	void help();
-	void sign_in();
-	void sign_up();
-
-	void change_data();
-	int change_data_options();
-	void add_song();
-	void rate_song();
-	void generate_playlist();
-	int generate_playlist_choice();
-	void save_playlist(); //pod ime
-	void load_playlist();
-	//void change_playlists_name(); //syshtoto kato save playlist
-	void show_info_for_all_songs();
 
 
 };
