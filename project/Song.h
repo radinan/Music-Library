@@ -22,5 +22,8 @@ public:
 	//setter-i i getter-i
 	void set_rating(int rate);
 	double get_rating();
+
+	std::string& get_name();
+	void song_info();
 };
 

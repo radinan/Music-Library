@@ -5,11 +5,14 @@ void Playlist::add_song(const Song& other)
 {
 	songs.push_back(other);
 	size++;
-
 }
-void Playlist::remove_song(const Song& element)
+void Playlist::remove_song(std::string& _name)
 {
-	//mahane
+	for (size_t i = 0; i < songs.size(); ++i) //ili i<size (se taq)
+	{
+		if(songs[i].get_name() == _name)
+			songs.erase(songs.begin() + i);
+	}
 	size--;
 }
 
@@ -19,11 +22,19 @@ void Playlist::change_name(std::string& _name)
 	name = _name;
 }
 
-void Playlist::load()
+void Playlist::all_songs_name()
 {
-	is_loaded = 1;
+	for (size_t i = 0; i < songs.size(); ++i) //ili i<size (se taq)
+	{
+		std::cout << songs[i].get_name() << std::endl;
+	}
 }
-void Playlist::unload()
+void Playlist::all_songs_info()
 {
-	is_loaded = 0;
+	for (size_t i = 0; i < songs.size(); ++i) 
+	{
+		songs[i].song_info();
+		std::cout << std::endl;
+	}
 }
+

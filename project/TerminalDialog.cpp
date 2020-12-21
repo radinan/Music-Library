@@ -4,7 +4,7 @@
 //#include "Album"
 #include <iostream>
 
-Commands c; //tova da se pomisli dali da e atribut
+Commands c; //posle shte gi sleq dvata klasa
 
 void TerminalDialog::welcome()
 {
@@ -52,7 +52,8 @@ void TerminalDialog::change_data()
 		"2. password \n" <<
 		"3. full name \n" <<
 		"4. birth date \n" <<
-		"5. favourite genres \n";
+		"5. add favourite genres \n" <<
+		"6. remove favourite genres \n";
 	std::cin >> command; 
 
 	if (command == 1)
@@ -126,7 +127,7 @@ void TerminalDialog::rate_song()
 	c.rate_song(name, rate);
 }
 
-void TerminalDialog::generate_playlist() //oshte rabota!
+void TerminalDialog::generate_playlist() 
 {
 	//&& ||
 	std::string input;
@@ -144,7 +145,7 @@ void TerminalDialog::generate_playlist() //oshte rabota!
 void TerminalDialog::save_playlist()
 {
 	std::string input;
-	std::cout << "Enter name: ";
+	std::cout << "Enter new name: ";
 	std::cin >> input;
 	c.save_playlist(input);
 }

@@ -7,6 +7,7 @@
 class User //validaciq v setterite?
 {
 private:
+	//da gi napravq pairs?
 	std::string username; 
 	std::string password;
 	//-----------------------------------

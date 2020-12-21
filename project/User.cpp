@@ -8,8 +8,6 @@ void User::copy(const User& other)
 	birth_date = other.birth_date;
 	fav_genres = other.fav_genres;
 	playlists = other.playlists;
-	is_logged = is_logged;
-
 }
 void User::clear()
 {
@@ -19,7 +17,6 @@ void User::clear()
 	birth_date.clear();
 	fav_genres.clear();
 	playlists.clear();
-	//is_logged = 0;
 
 	//da se iztrie i ot faila
 }
@@ -31,7 +28,6 @@ User::User()
 	password = "";
 	full_name = "";
 	birth_date = "";
-	is_logged = 0;
 	//da proverq vektorite dali sa prazni
 } 
 User::User(const User& other) //copy
@@ -73,10 +69,7 @@ void User::set_birth_date(const std::string& _birth_date)
 {
 	birth_date = _birth_date;
 }
-void User::set_is_logged(bool _is_logged)
-{
-	is_logged = _is_logged;
-}
+
 
 
 void User::add_genre(std::string genre)
