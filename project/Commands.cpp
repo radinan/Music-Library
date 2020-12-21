@@ -1,189 +1,98 @@
 #include "Commands.h"
+#include "User.h"
 #include <string>
 
-void Commands::welcome()
+void Commands::sign_in(std::string& un, std::string& pw)
 {
-	std::cout << "Welcome to ... \n";
-	// .............
-}
-void Commands::help()
-{
-	std::cout << "List of commands: \n";
-	//1. 2. 3. ....
-}
-
-void Commands::sign_in()
-{
-	std::string un,
-				pw;
-
-	std::cout << "Enter username: ";
-	std::cin >> un;
-	std::cout << "Enter password: ";
-	std::cin >> pw;
-	//validation
 	//proverqva vyv faila?
-	//logged in = 1
+	//moje f-q load user ;)
+	User user; // danni ot faila
+	user.set_is_logged(1);
+	//library.add_user(user)
 }
-void Commands::sign_up()
+void Commands::sign_up(std::string& un, std::string& pw)
 {
-	std::string un,	
-				pw; //~~r_pw
-
-	std::cout << "Enter username: ";
-	std::cin >> un;
-	std::cout << "Enter password: ";
-	std::cin >> pw;
-	//~~repeat password
-	//validation
-	//construktor
+	User new_user(un, pw);
+	//library.add_user(new_user);
 	//zapisva vyv faila
-	//logged_in
+	new_user.set_is_logged(1);
 }
-void Commands::change_data()
+void Commands::change_data(int choice, std::string& input) 
 {
-	std::string input;
-	//~~moje da gi izvadq v pomoshtna f-q
-	std::cout << 
-		"Choose: \n" <<
-		"1. username \n" <<
-		"2. password \n" <<
-		"3. full name \n" <<
-		"4. birth date \n" <<
-		"5. favourite genres \n";
-	std::cin >> input; //da proverq dali ima problem s "input" v if-ovete
-	if (input == "1")
+	User user;//
+	Playlist playlist;//
+	if (choice == 1)
 	{
-		std::cout << "Enter new username: ";
-		std::cin >> input;
-		//validaciq
-		//promqna
+		user.set_username(input);
 	}
-	else if(input == "2")
+	else if(choice == 2)
 	{
-		//~potvyrjdavane na starata
-		std::cout << "Enter new password: ";
-		std::cin >> input;
-		//validaciq
-		//promqna
+		user.set_password(input);
 	}
-	else if (input == "3")
+	else if (choice == 3)
 	{ 
-		std::cout << "Enter new full name: ";
-		std::cin >> input;
-		//validaciq
-		//promqna
+		user.set_full_name(input);
 	}
-	else if (input == "4")
+	else if (choice == 4)
 	{ 
-		std::cout << "Enter new bith date: ";
-		std::cin >> input;
-		//validaciq
-		//promqna
+		user.set_birth_date(input);
 	}
-	else if (input == "5")
-	{ 
-		std::cout <<
-			"Choose: \n" <<
-			"1. add \n" <<
-			"2. remove \n";
-		std::cin >> input; 
-		if (input == "1")
-		{
-			std::cout << "Enter genre you want to add: ";
-			std::cin >> input;
-			//validaciq
-			//promqna
-		}
-		else if (input == "2")
-		{
-			std::cout << "Enter genre you want to remove: ";
-			std::cin >> input;
-			//validaciq
-			//promqna
-		}
-		else
-		{
-			std::cout << "Wrong input\n";
-		}
+	else if (choice == 5) //dopis
+	{
+
+		std::cout << "Enter genre you want to add: ";
+		std::cin >> input;
+		user.add_genre(input);
+	}
+	else if (choice == 6)
+	{
+		std::cout << "Enter genre you want to remove: ";
+		std::cin >> input;
+		user.remove_genre(input);
 	}
 
 }
 
 
-void Commands::add_song()
+void Commands::add_song(std::string& name, std::string& artist, std::string& genre, 
+						std::string& album, std::string& release_date) //oshte rabota
 {
-	std::string name, artist, genre,
-				album, release_date;
-	//preduprejdenie che tr se popylva :DD
-	std::cout << "Enter name: ";
-	std::cin >> name;
-	std::cout << "Enter artist: ";
-	std::cin >> artist;
-	std::cout << "Enter genre: ";
-	std::cin >> genre;
-	std::cout << "Enter album: ";
-	std::cin >> album;
-	std::cout << "Enter release date: ";
-	std::cin >> release_date;
-	//validaciq
-	//szydava Song
+	Song song(name, artist, genre, album, release_date);
 	//promqna v txt file
 }
-void Commands::rate_song()
+void Commands::rate_song(std::string& name, int rate)
 {
-	std::string name;
-	int rating = 0;
-	std::cout << "Enter song: ";
-	std::cin >> name;
 	//proverqva dali ima vyv file-a
-	std::cout << "Enter rating: ";
-	std::cin >> rating;
-	//validaciq
+	Song song;
+	song.set_rating(rate);
 	//promqna v class i file
 }
 
-void Commands::generate_playlist()
+void Commands::generate_playlist(std::string& input) //dopis
 {
-	//moje pomoshtna funkciq
-	std::string input;
-	std::cout << "Choose criteria: \n" <<
-		"1. rating higher than \n" <<
-		"2. icluded genres \n" <<
-		"3. excluded genres \n" <<
-		"4. only favourite genres \n" <<
-		"5. before year \n" <<
-		"6. from year \n" <<
-		"7. after year \n";
-	//moje da e v while cikyl
-	std::cin >> input;
-	//validaciq
-	//moje da se zapazva v char* i da se chetat el-te s ++
-	//???
-	//syzdavane i zapazvane
+	//string to char[]
+	//tozi pyt validaciqta e tuk
+
+	//f-q za syzdavane koqto priema char[]
 	//save_playlist()
 	//po default <username>'s playlist
-	//is_loaded = 1
+	//????is_loaded = 1????
 }
-void Commands::save_playlist()
+void Commands::save_playlist(std::string& name)
 {
-	std::string input;
-	//ako ima is_loaded == 1
-	//ako nqma -> load()
-	std::cout << "Enter name: ";
-	std::cin >> input;
-	//validaciq
-	//promqna v klasa i faila
+
+	//ako ima is_loaded == 1 vyv v-ra; ??(posle vyv file-a)??
+	//ako nqma -> load_playlilst()
+	Playlist p;
+	p.change_name(name);
+	//promqna v Library, User i faila
 }
-void Commands::load_playlist()
+void Commands::load_playlist(std::string& name)
 {
-	//ako ima loadnat go zatvarqme
-	std::string input;
-	std::cout << "Enter name: ";
-	std::cin >> input;
-	//validaciq
-	//tyrsi pll po ime 
-	//-> is_loaded = 1
+	//ako ima drug loadnat go zatvarqme
+	//tyrsi pll po ime (vyv file-a)
+	Playlist pl;//s (name)
+	pl.load();
 }
 void Commands::show_all_info()
 {

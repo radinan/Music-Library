@@ -1,21 +1,23 @@
 #pragma once
 #include <iostream>
-class Commands
+//dali prechat na TerminalDialog -> moje bez "_"
+class Commands //maham gi da ne sa static
 {
-	//general
-	static void welcome();
-	static void help();
+public: //pravq sys setteri i getteri, posle shte mislq kak da go opravq
 	//user
-	static void sign_in();
-	static void sign_up();
-	static void change_data();
+	 void sign_in(std::string& un, std::string& pw);
+	 void sign_up(std::string& un, std::string& pw);
+	 void change_data(int choice, std::string& input);
+
 	//song
-	static void add_song();
-	static void rate_song();
+	 void add_song(std::string& name, std::string& artist, std::string& genre,
+					std::string& album, std::string& release_date);
+	 void rate_song(std::string& name, int rate);
+
 	//playlist
-	static void generate_playlist();
-	static void save_playlist();
-	static void load_playlist();
-	static void show_all_info();
+	 void generate_playlist(std::string& input);
+	 void save_playlist(std::string& name);
+	 void load_playlist(std::string& name);
+	 void show_all_info();
 };
 

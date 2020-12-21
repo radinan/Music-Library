@@ -1,6 +1,8 @@
 #pragma once
+#include <iostream>
 #include <string>
-#include "Album.h"
+#include <utility>
+//#include "Album.h"
 
 class Song
 {
@@ -8,11 +10,17 @@ private:
 	std::string name;
 	std::string artist; //izpylnitel
 	std::string genre; //moje da e enum??
-	Album album;
-	int release_date;
-	double rating;
+	std::string album;
+	std::string release_date; //mmoje i da go smenq na int
+	std::pair <int, int> rating; //broi glasuvali, sbor ot glasove
 
 public:
+	Song();
+	Song(std::string& _name, std::string& _artist, std::string& _genre, 
+		std::string& _album, std::string& _release_date);
 
+	//setter-i i getter-i
+	void set_rating(int rate);
+	double get_rating();
 };
 

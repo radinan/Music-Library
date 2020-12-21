@@ -4,7 +4,7 @@
 #include <vector>
 #include "Song.h"
 
-class Album
+class Album //vremenno neizpolzvaem
 {
 private:
 	std::string artist;
