@@ -17,7 +17,7 @@ private:
 	std::vector<std::string> fav_genres;
 	std::vector<Playlist> playlists;
 
-	bool is_logged;
+	//bool is_logged;
 private:
 	void copy(const User& other);
 	void clear();
@@ -33,7 +33,6 @@ public:
 	void set_password(const std::string& _password);
 	void set_full_name(const std::string& _full_name);
 	void set_birth_date(const std::string& _birth_date);
-	void set_is_logged(bool _is_logged); //shte vidim dali shte go ostavq taka
 
 	void add_genre(std::string genre);
 	void remove_genre(std::string genre);

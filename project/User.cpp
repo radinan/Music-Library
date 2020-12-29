@@ -78,5 +78,9 @@ void User::add_genre(std::string genre)
 }
 void User::remove_genre(std::string genre)
 {
-	//tyrsi i kato go nameri go trie
+	for (size_t i = 0; i < fav_genres.size(); ++i) //ili i<size (se taq)
+	{
+		if (fav_genres[i] == genre)
+			fav_genres.erase(fav_genres.begin() + i);
+	}
 }

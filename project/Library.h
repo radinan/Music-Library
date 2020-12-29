@@ -2,16 +2,16 @@
 #include "User.h"
 #include "Song.h"
 #include "Playlist.h"
+#include "AVLTree.h"
 
 #include <iostream>
-//shte sydyrja elementi, koito v momenta se izpolzvat
+//contains elements that are being used or needed
 class Library 
 {
 private:
-	User logged_user;
-	//std::vector<Song> songs;
+	User logged_user; //recently logged; current
+	AVLTree<Song> all_songs; //in the whole library
 	Playlist loaded_playlist;
-	//std::vector<Album> albums;
 
 public:
 	//big 4
@@ -20,6 +20,7 @@ public:
 
 	void add_user(const User& other);
 	void add_playlist(const Playlist& other);
+	void add_song(const Song& other);
 
 	void remove_user(const User& element);
 	void remove_playlist(const Playlist& element);

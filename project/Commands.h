@@ -1,23 +1,40 @@
 #pragma once
 #include <iostream>
-//dali prechat na TerminalDialog -> moje bez "_"
-class Commands //maham gi da ne sa static
+
+//class with static methods => it doesn't need any attributes => no objects
+class Commands 
 {
-public: //pravq sys setteri i getteri, posle shte mislq kak da go opravq
-	//user
-	 void sign_in(std::string& un, std::string& pw);
-	 void sign_up(std::string& un, std::string& pw);
-	 void change_data(int choice, std::string& input);
+public: 
+	//-------------general-----------------
+	static void welcome();
+	static void help();
+	//save
+	//exit
 
-	//song
-	 void add_song(std::string& name, std::string& artist, std::string& genre,
-					std::string& album, std::string& release_date);
-	 void rate_song(std::string& name, int rate);
+	//--------------user-------------------
+	static void sign_in();
+	static void sign_up();
+	static void change_data();
+	//-------------song--------------------
+	static void add_song();
+	static void rate_song();
+	//-------------playlist-----------------
+	static void generate_playlist();
+	static void save_playlist();
+	static void load_playlist();
+	static void show_all_info();
 
-	//playlist
-	 void generate_playlist(std::string& input);
-	 void save_playlist(std::string& name);
-	 void load_playlist(std::string& name);
-	 void show_all_info();
+private:
+	///user helpers///
+	static void sign_in_helper(std::string& un, std::string& pw);
+	static void sign_up_helper(std::string& un, std::string& pw);
+	static void change_data_helper(int choice, std::string& input);
+	///song helpers///
+	static void add_song_helper(std::string& name, std::string& artist, std::string& genre, std::string& album, int release_date);
+	static void rate_song_helper(std::string& name, int rate);
+	///playlist helpers///
+	static void generate_playlist_helper(std::string& input);
+	static void save_playlist_helper(std::string& name);
+	static void load_playlist_helper(std::string& name);
 };
 
