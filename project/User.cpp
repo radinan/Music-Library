@@ -6,8 +6,10 @@ void User::copy(const User& other)
 	password = other.password;
 	full_name = other.full_name;
 	birth_date = other.birth_date;
-	fav_genres = other.fav_genres;
-	playlists = other.playlists;
+	for (int i = 0; other.fav_genres[i] != "\0"; ++i)
+		fav_genres[i] = other.fav_genres[i];
+	for (int i = 0; other.playlists[i] != "\0"; ++i)
+		playlists[i] = other.playlists[i];
 }
 void User::clear()
 {
@@ -15,20 +17,26 @@ void User::clear()
 	password.clear();
 	full_name.clear();
 	birth_date.clear();
-	fav_genres.clear();
-	playlists.clear();
+	for (int i = 0; i < 10; ++i) //max size
+		fav_genres[i].clear();
+	for (int i = 0; i < 10; ++i)
+		playlists[i].clear();
 
-	//da se iztrie i ot faila
 }
 
 User::User()
 {
-	//da proverq moga li da mina bez tezi inicializacii
+	username.reserve(20);
 	username = "";
+	password.reserve(20);
 	password = "";
+	full_name.reserve(30);
 	full_name = "";
+	birth_date.reserve(11); // XX.YY.ZZZZ \0
 	birth_date = "";
-	//da proverq vektorite dali sa prazni
+	//fav_genres?
+	//playlists?
+
 } 
 User::User(const User& other) //copy
 {
@@ -55,32 +63,40 @@ User::~User()
 
 void User::set_username(const std::string& _username)
 {
+	//validation
 	username = _username;
 }
 void User::set_password(const std::string& _password)
 {
+	//validation
 	password = _password;
 }
 void User::set_full_name(const std::string& _full_name)
 {
+	//validation
 	full_name = _full_name;
 }
 void User::set_birth_date(const std::string& _birth_date)
 {
+	//validation
 	birth_date = _birth_date;
 }
 
 
 
-void User::add_genre(std::string genre)
+void User::add_fav_genre(const std::string& genre)
 {
-	fav_genres.push_back(genre);
+	int i = 0;
+	for (i; fav_genres[i] != "\0"; ++i) {}
+	if (i < 10)
+		fav_genres[i] = genre;
+		
 }
-void User::remove_genre(std::string genre)
+void User::remove_fav_genre(const std::string& genre)
 {
-	for (size_t i = 0; i < fav_genres.size(); ++i) //ili i<size (se taq)
-	{
-		if (fav_genres[i] == genre)
-			fav_genres.erase(fav_genres.begin() + i);
-	}
+	int i = 0;
+	for (i; fav_genres[i] != genre; ++i) {} //i=2
+
+	for (int j = i + 1; j < 10; ++j, ++i)
+		fav_genres[i] = fav_genres[j];
 }

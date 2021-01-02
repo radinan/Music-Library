@@ -1,27 +1,26 @@
 #pragma once
 #include <iostream>
 #include <algorithm>
+//first - BST ; then - AVL 
 
-//kinda fishy
-
-//the tree won't "own" the class T elements; it's only going to store them to let us use data faster
-//consider operator <>= for class T
-template <class T>
+template <class T> //edits
 class AVLTree
 {
 private:
 	struct Node
 	{
-		T data; ///Song data///
+		T data;
 		int height; //by default node is leaf => h=0
 		Node* left, * right;
-		Node(T& _data, int _height = 0, Node* _left = nullptr, Node* _right = nullptr)
-			: data(_data), height(_height), left(_left), right(_right) {}
+		Node(T data, int height = 0, Node* left = nullptr, Node* right = nullptr)
+			: data(data), height(height), left(left), right(right) {}
 	};
+
 	Node* root;
+
 private:
 	//--help functions for the constructors--//
-	Node* copy(Node* other_root)//&?
+	Node* copy(Node* other_root)
 	{
 		if (other_root == nullptr)
 			return nullptr;
@@ -30,7 +29,7 @@ private:
 		new_node->right = copy(other_root->right);
 		return root;
 	}
-	void del(Node* root) //&?
+	void del(Node*& root)
 	{
 		if (root == nullptr)
 			return;
@@ -55,7 +54,7 @@ private:
 	void setHeight(Node* node)
 	{
 		node->height = 1 + std::max
-			(getHeight(node->left),
+		(getHeight(node->left),
 			getHeight(node->right));
 	}
 	Node* getMinNode(Node* root) const
@@ -105,17 +104,19 @@ private:
 		}
 	}
 
-	//--help functions--// //!!!custom sort!!!!!!
-	Node* searchHelp(Node* root, T value) const //&? //returns ptr to element
+	//--help functions--//
+	Node* searchHelp(Node* root, int value) const //&? //returns ptr to element
 	{
-		if (root == nullptr || value == root->data)
+		if (root == nullptr)
+			return nullptr;
+		if (value == root->data) //can be merged with the upper one
 			return root;
 		if (value < root->data)
 			return searchHelp(root->left, value);
 		if (value > root->data)
 			return searchHelp(root->right, value);
 	}
-	Node* insertHelp(Node* root, T value)
+	Node* insertHelp(Node* root, int value) //or bool
 	{
 		//BST insertion:
 		if (root == nullptr)
@@ -130,8 +131,7 @@ private:
 		selfBalance(root);
 		return root;
 	}
-	//????check "remove" command?????? 
-	Node* removeHelp(Node* root, T value)
+	Node* removeHelp(Node* root, int value)
 	{
 		if (root == nullptr)
 			return root;
@@ -157,7 +157,7 @@ private:
 			else if (root->right == nullptr) //only left child
 			{
 				Node* temp = root->left;
-				delete root; 
+				delete root;
 				return temp;
 			}
 			//2 child nodes
@@ -166,7 +166,7 @@ private:
 			root->right = removeHelp(root->right, temp->data); //find min el and del
 		}
 
-		selfBalance(root);
+		//selfBalance(root);
 		return root;
 	}
 
@@ -226,7 +226,7 @@ public:
 	}
 
 	//--informative methods--//
-	bool isElement(T value) const
+	bool isElement(int value) const
 	{
 		return searchHelp(root, value) != nullptr;
 	}
@@ -236,19 +236,16 @@ public:
 	}
 
 	//--search, insertion, deletion--//
-	Node* search(T value) const
+	Node* search(int value) const
 	{
 		return searchHelp(root, value);
 	}
-	void insert(T value)
+	void insert(int value)
 	{
 		root = insertHelp(root, value);
 	}
-	void remove(T value)
+	void remove(int value)
 	{
 		removeHelp(root, value);
 	}
-
-	//custom sort -> maybe override > <
 };
-

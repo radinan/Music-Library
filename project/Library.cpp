@@ -2,38 +2,27 @@
 #include <iostream>
 #include <string>
 
-User& Library::get_user()
+User Library::get_user() const
 {
-	return logged_user;
+	return curr_user;
 }
-
-Playlist& Library::get_playlist()
+Playlist Library::get_playlist() const
 {
-	return loaded_playlist;
+	return curr_playlist;
 }
 
 
 void Library::add_user(const User& other)
 {
-	//maha lognatiq
-	logged_user = other;
+	curr_user = other;
 }
-
 void Library::add_playlist(const Playlist& other)
 {
-	//maha predniq
-	loaded_playlist = other;
+	curr_playlist = other;
 }
 
 void Library::add_song(const Song& other)
 {
-	all_songs.insert(other);
+	//all_songs.insert(other);
 }
-
-void Library::remove_user(const User& element)
-{}
-
-void Library::remove_playlist(const Playlist& element)
-{}
-//void Library::remove_album(const Album& element){}
 

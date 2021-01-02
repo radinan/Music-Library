@@ -7,6 +7,7 @@ void Song::copy(const Song& other)
 	genre = other.genre;
 	album = other.album;
 	release_year = other.release_year;
+	//reserve?
 	rating = other.rating;
 }
 void Song::clear()
@@ -22,18 +23,28 @@ void Song::clear()
 
 Song::Song()
 {
+	name.reserve(20);
+	name = "";
+	artist.reserve(20);
+	artist = "";
+	genre.reserve(20);
+	genre = "";
+	album.reserve(20);
+	album = "";
+	//release_year = 0;
+
 	rating.first = 0;
 	rating.second = 0;
 }
-Song::Song(std::string& _name, std::string& _artist, std::string& _genre, std::string& _album,
-			int _release_year)
+Song::Song(const std::string& _name, const std::string& _artist, const std::string& _genre, 
+		   const std::string& _album, int _release_year)
 {
 	name = _name;
 	artist = _artist;
 	genre = _genre;
 	album = _album;
 	release_year = _release_year;
-	//think about pairs
+
 	rating.first = 0;
 	rating.second = 0;
 }
@@ -59,24 +70,24 @@ void Song::set_rating(int rate)
 	++rating.first;
 	rating.second += rate;
 }
-double Song::get_rating()
+double Song::get_rating() const
 {
 	return (double)rating.second / rating.first; //casting int->double
 }
 
-std::string& Song::get_name()
+std::string Song::get_name() const
 {
 	return name;
 }
 
-void Song::song_info()
+void Song::song_info() const
 {
 	std::cout << "Name: " << name << "\n"
 		<< "Artist: " << artist << "\n"
 		<< "Genre: " << genre << "\n"
 		<< "Album" << album << "\n"
 		<< "Release date: " << release_year << "\n"
-		<< "Rating: " << get_rating();
+		<< "Rating: " << get_rating()<<"\n";
 }
 
 std::ostream& operator << (std::ostream& out, Song& song)

@@ -7,17 +7,15 @@
 class User //validaciq v setterite?
 {
 private:
-	//da gi napravq pairs?
 	std::string username; 
 	std::string password;
 	//-----------------------------------
 	std::string full_name;
 	std::string birth_date;
 
-	std::vector<std::string> fav_genres;
-	std::vector<Playlist> playlists;
+	std::string fav_genres[10]; //instead of vectors
+	std::string playlists[10];  //resizing vector of strings is too slow
 
-	//bool is_logged;
 private:
 	void copy(const User& other);
 	void clear();
@@ -34,8 +32,8 @@ public:
 	void set_full_name(const std::string& _full_name);
 	void set_birth_date(const std::string& _birth_date);
 
-	void add_genre(std::string genre);
-	void remove_genre(std::string genre);
+	void add_fav_genre(const std::string& genre);
+	void remove_fav_genre(const std::string& genre);
 
 };
 
