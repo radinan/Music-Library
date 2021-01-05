@@ -111,71 +111,196 @@ std::istream& operator >> (std::istream& in, Song& song)
 	return in;
 }
 
+//Priority: name, release_year, genre, rating //without break?
 bool operator>(const Song& left, const Song& right)
 {
 	switch (Song::sort_type)
 	{
-	case Sort_type::rating:
-		return left.get_rating() > right.get_rating(); break;
-
-	case Sort_type::genre:
-		return left.genre > right.genre; break;
-
+	case Sort_type::name:
+		if (left.name == right.name)
+		{
+			if (left.release_year == right.release_year)
+			{
+				if (left.genre == right.genre)
+				{
+					return left.get_rating() > right.get_rating();
+					break; 
+				}
+				return left.genre > right.genre;
+				break;
+			}
+			return left.release_year > right.release_year;
+			break;
+		}
+		return left.name > right.name;
+		break;
 	case Sort_type::release_year:
-		return left.release_year > right.release_year; break;
+		if (left.release_year == right.release_year)
+		{
+			if (left.name == right.name)
+			{
+				if (left.genre == right.genre)
+				{
+					return left.get_rating() > right.get_rating();
+					break;
+				}
+				return left.genre > right.genre;
+				break;
+			}
+			return left.name > right.name;
+			break;
+		}
+		return left.release_year > right.release_year;
+		break;
+	case Sort_type::genre:
+		if (left.genre == right.genre)
+		{
+			if (left.name == right.name)
+			{
+				if (left.release_year == right.release_year)
+				{
+					return left.get_rating() > right.get_rating();
+					break;
+				}
+				return left.release_year > right.release_year; 
+				break;
+			}
+			return left.name > right.name;
+			break;
+		}
+		return left.genre > right.genre;
+		break;
 
-	default:
-		return left.name > right.name; break;
+	case Sort_type::rating:
+		if (left.get_rating() == right.get_rating())
+		{
+			if (left.name == right.name)
+			{
+				if (left.release_year == right.release_year)
+				{
+					return left.genre > right.genre;
+					break;
+				}
+				return left.release_year > right.release_year;
+				break;
+			}
+			return left.name > right.name;
+			break;
+		}
+		return left.get_rating() > right.get_rating();
+		break;
 	}
 }
 bool operator<(const Song& left, const Song& right) 
 {
 	switch (Song::sort_type)
 	{
-	case Sort_type::rating:
-		return left.get_rating() < right.get_rating(); break;
-
-	case Sort_type::genre:
-		return left.genre < right.genre; break;
-
+	case Sort_type::name:
+		if (left.name == right.name)
+		{
+			if (left.release_year == right.release_year)
+			{
+				if (left.genre == right.genre)
+				{
+					return left.get_rating() < right.get_rating();
+					break;
+				}
+				return left.genre < right.genre;
+				break;
+			}
+			return left.release_year < right.release_year;
+			break;
+		}
+		return left.name < right.name;
+		break;
 	case Sort_type::release_year:
-		return left.release_year < right.release_year; break;
+		if (left.release_year == right.release_year)
+		{
+			if (left.name == right.name)
+			{
+				if (left.genre == right.genre)
+				{
+					return left.get_rating() < right.get_rating();
+					break;
+				}
+				return left.genre < right.genre;
+				break;
+			}
+			return left.name < right.name;
+			break;
+		}
+		return left.release_year < right.release_year;
+		break;
+	case Sort_type::genre:
+		if (left.genre == right.genre)
+		{
+			if (left.name == right.name)
+			{
+				if (left.release_year == right.release_year)
+				{
+					return left.get_rating() < right.get_rating();
+					break;
+				}
+				return left.release_year < right.release_year;
+				break;
+			}
+			return left.name < right.name;
+			break;
+		}
+		return left.genre < right.genre;
+		break;
 
-	default:
-		return left.name < right.name; break;
+	case Sort_type::rating:
+		if (left.get_rating() == right.get_rating())
+		{
+			if (left.name == right.name)
+			{
+				if (left.release_year == right.release_year)
+				{
+					return left.genre < right.genre;
+					break;
+				}
+				return left.release_year < right.release_year;
+				break;
+			}
+			return left.name < right.name;
+			break;
+		}
+		return left.get_rating() < right.get_rating();
+		break;
 	}
 }
 bool operator==(const Song& left, const Song& right) 
 {
 	switch (Song::sort_type)
 	{
-	case Sort_type::rating:
-		return left.get_rating() == right.get_rating(); break;
-
-	case Sort_type::genre:
-		return left.genre == right.genre; break;
+	case Sort_type::name:
+		return left.name == right.name; break;
 
 	case Sort_type::release_year:
 		return left.release_year == right.release_year; break;
 
-	default:
-		return left.name == right.name; break;
+	case Sort_type::genre:
+		return left.genre == right.genre; break;
+
+	case Sort_type::rating:
+		return left.get_rating() == right.get_rating(); break;
 	}
 }
 bool operator!=(const Song& left, const Song& right) 
 {
 	switch (Song::sort_type)
 	{
-	case Sort_type::rating:
-		return left.get_rating() != right.get_rating(); break;
-
-	case Sort_type::genre:
-		return left.genre != right.genre; break;
+	case Sort_type::name:
+		return left.name != right.name; break;
 
 	case Sort_type::release_year:
 		return left.release_year != right.release_year; break;
 
-	default:
-		return left.name != right.name; break;
+	case Sort_type::genre:
+		return left.genre != right.genre; break;
+
+	case Sort_type::rating:
+		return left.get_rating() != right.get_rating(); break;
 	}
 }
