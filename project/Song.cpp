@@ -89,6 +89,7 @@ void Song::song_info() const
 		<< "Release date: " << release_year << "\n"
 		<< "Rating: " << get_rating()<<"\n";
 }
+
 //overloading operators
 std::ostream& operator << (std::ostream& out, Song& song)
 {
@@ -109,6 +110,68 @@ std::istream& operator >> (std::istream& in, Song& song)
 	in >> song.release_year; in.get();
 	in >> song.rating.first; in >> song.rating.second; in.get();
 	return in;
+}
+
+//more operators overloading
+bool operator > (const Song& song, size_t value) //by year or rating
+{
+	switch (Song::sort_type)
+	{
+	case Sort_type::release_year:
+		return song.release_year > value; break;
+	case Sort_type::rating:
+		return song.get_rating() > value; break;
+	}
+}
+bool operator < (const Song& song, size_t value) //by year or rating
+{
+	switch (Song::sort_type)
+	{
+	case Sort_type::release_year:
+		return song.release_year < value; break;
+	case Sort_type::rating:
+		return song.get_rating() < value; break;
+	}
+}
+bool operator == (const Song& song, size_t value) //by year or rating
+{
+	switch (Song::sort_type)
+	{
+	case Sort_type::release_year:
+		return song.release_year == value; break;
+	case Sort_type::rating:
+		return song.get_rating() == value; break;
+	}
+}
+bool operator != (const Song& song, size_t value) //by year or rating
+{
+	switch (Song::sort_type)
+	{
+	case Sort_type::release_year:
+		return song.release_year != value; break;
+	case Sort_type::rating:
+		return song.get_rating() != value; break;
+	}
+}
+bool operator == (const Song& song, std::string str) //by name or genre
+{
+	switch (Song::sort_type)
+	{
+	case Sort_type::name:
+		return song.name == str; break;
+	case Sort_type::genre:
+		return song.genre == str; break;
+	}
+}
+bool operator != (const Song& song, std::string str) //by name or genre
+{
+	switch (Song::sort_type)
+	{
+	case Sort_type::name:
+		return song.name != str; break;
+	case Sort_type::genre:
+		return song.genre != str; break;
+	}
 }
 
 //Priority: name, release_year, genre, rating //without break?

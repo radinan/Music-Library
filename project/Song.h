@@ -6,7 +6,7 @@
 //starting the programm		 -> all data from txt file -> AVL Tree
 //exiting the programm(save) -> all data from AVL Tree -> txt file
 
-enum class Sort_type {name, rating, genre, release_year}; //sorting types
+enum class Sort_type {name, release_year, genre, rating}; //sorting types
 class Song
 {
 private:
@@ -14,7 +14,7 @@ private:
 	std::string artist; 
 	std::string genre; 
 	std::string album;
-	int release_year =0; 
+	size_t release_year =0; 
 	std::pair <int, int> rating; //num of votes, sum of votes
 private:
 	//constructor helpers
@@ -40,6 +40,13 @@ public:
 	void song_info() const;
 
 	//overloading operators
+	friend bool operator > (const Song& song, size_t value);
+	friend bool operator < (const Song& song, size_t value);
+	friend bool operator == (const Song& song, size_t value);
+	friend bool operator == (const Song& song, std::string str);
+	friend bool operator != (const Song& song, size_t value);
+	friend bool operator != (const Song& song, std::string str);
+
 	friend std::ostream& operator << (std::ostream& out, Song& song); 
 	friend std::istream& operator >> (std::istream& in, Song& song); 
 
