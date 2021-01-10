@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include "Song.h"
 
 
 //--AVL Tree-- 
@@ -117,7 +118,7 @@ private:
 		return left_rotate(node);
 	}
 
-	//helpers
+	//helpers (main)
 	Node* insert_help(Node* root, Song& element)
 	{
 		//1. BST insert
@@ -233,14 +234,18 @@ private:
 
 		return root; //returning the root node at the end
 	}
-	void copy_insert_helper(Node* _root)
+	//helpers (other)
+	Node* copy_insert_helper(Node* _root)
 	{
 		if (_root == nullptr)
-			return;
+			return nullptr;
 
+		//Node* new_node = new Node(_root->data);
 		insert(_root->data);
 		copy_insert_helper(_root->left);
 		copy_insert_helper(_root->right);
+
+		return root;
 	}
 	void inorder_help(Node* root) const
 	{
@@ -266,12 +271,14 @@ private:
 			return 0;
 		return 1 + sizeHelp(root->left) + sizeHelp(root->right); //number of all nodes
 	}
+	//helpers (playlist)
 
 public:
 	AVLTree() : root(nullptr) {}
 	AVLTree(const AVLTree& other)
 	{
-		root = copy(other.root);
+		//root = copy(other.root);
+		root = copy_insert_helper(other.root);
 	}
 	AVLTree& operator=(const AVLTree& other)
 	{
@@ -317,5 +324,138 @@ public:
 	const size_t size() const
 	{
 		return sizeHelp(root);
+	}
+
+	//playlist funcs
+	void rating_bigger(double x, AVLTree& other) //works
+	{
+		rating_bigger_helper(other.root, x);
+	}
+	void rating_bigger_helper(Node* _root, double x)
+	{
+		if (_root == nullptr) return;
+		if (_root->data > x) insert(_root->data);
+
+		if (_root->left != nullptr)
+		{
+			if (_root->left->data > x)
+				year_bigger_helper(_root->left, x);
+		}
+		if (_root->right != nullptr)
+		{
+			if (_root->right->data > x)
+				year_bigger_helper(_root->right, x);
+		}
+	}
+
+	void genre_plus(std::string& x, AVLTree& other) //works !!!WHITE SPACES!!!
+	{
+		genre_plus_helper(other.root, x);
+	}
+	void genre_plus_helper(Node* _root, std::string& x) 
+	{
+		if (_root == nullptr) return;
+		if (_root->data == x)
+		{
+			insert(_root->data);
+			if (_root->left != nullptr) genre_plus_helper(_root->left, x); //so it can check duplicates
+			if (_root->left != nullptr) genre_plus_helper(_root->right, x);
+		}
+
+		if (_root->left != nullptr)
+		{
+			if (_root->data > x)
+				genre_plus_helper(_root->left, x);
+		}
+		if (_root->right != nullptr)
+		{
+			if (_root->data < x)
+				genre_plus_helper(_root->right, x);
+		}
+	}
+
+	void genre_minus(std::string& x, AVLTree& other) //works !!!WHITE SPACES!!!
+	{
+		genre_minus_helper(other.root, x);
+	}
+	void genre_minus_helper(Node* _root, std::string& x)
+	{
+		if (_root == nullptr) return;
+		if (_root->data != x)
+			insert(_root->data);
+
+		if (_root->left != nullptr) genre_minus_helper(_root->left, x); //so it can check duplicates
+		if (_root->left != nullptr) genre_minus_helper(_root->right, x);
+
+	}
+
+	void year_bigger(size_t x, AVLTree& other) //works
+	{
+		
+		year_bigger_helper(other.root, x);
+		
+	}
+	void year_bigger_helper(Node* _root, size_t x)
+	{
+		if (_root == nullptr) return;
+		if (_root->data > x) insert(_root->data);
+
+		if (_root->left != nullptr)
+		{
+			if (_root->left->data > x)
+				year_bigger_helper(_root->left, x);
+		}
+		if (_root->right != nullptr)
+		{
+			if (_root->right->data > x)
+				year_bigger_helper(_root->right, x);
+		}
+	}
+
+	void year_smaller(size_t x, AVLTree& other) //works
+	{
+		year_smaller_helper(other.root, x);
+	}
+	void year_smaller_helper(Node* _root, size_t x)
+	{
+		if (_root == nullptr) return;
+		if (_root->data < x) insert(_root->data);
+
+		if (_root->left != nullptr)
+		{
+			if (_root->left->data < x)
+				year_smaller_helper(_root->left, x);
+		}
+		if (_root->right != nullptr)
+		{
+			if (_root->right->data < x)
+				year_smaller_helper(_root->right, x);
+		}
+	}
+
+	void year_equals(size_t x, AVLTree& other) //works
+	{
+		year_equals_helper(other.root, x);
+	}
+	void year_equals_helper(Node* _root, size_t x)
+	{
+		if (_root == nullptr) return;
+		if (_root->data == x)
+		{
+			insert(_root->data);
+			if (_root->left != nullptr) year_equals_helper(_root->left, x); //so it can check duplicates
+			if (_root->left != nullptr) year_equals_helper(_root->right, x);
+		}
+
+		if (_root->left != nullptr)
+		{
+			if (_root->data > x)
+				year_equals_helper(_root->left, x);
+		}
+		if (_root->right != nullptr)
+		{
+			if (_root->data < x)
+				year_equals_helper(_root->right, x);
+		}
 	}
 };
