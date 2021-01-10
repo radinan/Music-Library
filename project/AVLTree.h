@@ -359,7 +359,7 @@ public:
 		{
 			insert(_root->data);
 			if (_root->left != nullptr) genre_plus_helper(_root->left, x); //so it can check duplicates
-			if (_root->left != nullptr) genre_plus_helper(_root->right, x);
+			if (_root->right != nullptr) genre_plus_helper(_root->right, x);
 		}
 
 		if (_root->left != nullptr)
@@ -385,7 +385,7 @@ public:
 			insert(_root->data);
 
 		if (_root->left != nullptr) genre_minus_helper(_root->left, x); //so it can check duplicates
-		if (_root->left != nullptr) genre_minus_helper(_root->right, x);
+		if (_root->right != nullptr) genre_minus_helper(_root->right, x);
 
 	}
 
@@ -444,7 +444,7 @@ public:
 		{
 			insert(_root->data);
 			if (_root->left != nullptr) year_equals_helper(_root->left, x); //so it can check duplicates
-			if (_root->left != nullptr) year_equals_helper(_root->right, x);
+			if (_root->right != nullptr) year_equals_helper(_root->right, x);
 		}
 
 		if (_root->left != nullptr)
