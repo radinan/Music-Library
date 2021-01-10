@@ -9,17 +9,16 @@
 //		-> delete:		O(logn) best/worst case
 //		-> search:		O(logn) best/worst case
 
-template <class T>
-class AVL
+class AVLTree
 {
 private:
 	struct Node
 	{
-		T data;
+		Song data;
 		Node* left = nullptr, * right = nullptr;
 		size_t height = 0; //by default node is a leaf
 
-		Node(const T& _data) : data(_data) {}
+		Node(const Song& _data) : data(_data) {}
 	};
 	Node* root;
 private:
@@ -34,17 +33,6 @@ private:
 		new_Node->right = copy(other_root->right);
 
 		return root; //returning pointer to copied tree
-	}
-	Node* copy_insert(Node* other_root)
-	{
-		if (other_root == nullptr)
-			return nullptr;
-
-		insert(other_root->data);
-		copy_insert(other_root->left);
-		copy_insert(other_root->right);
-
-		return root;
 	}
 	void del(Node* root)
 	{
@@ -130,7 +118,7 @@ private:
 	}
 
 	//helpers
-	Node* insert_help(Node* root, T& element)
+	Node* insert_help(Node* root, Song& element)
 	{
 		//1. BST insert
 		//empty/end of tree
@@ -168,7 +156,7 @@ private:
 
 		return root; //returning the root node at the end
 	}
-	Node* search_help(Node* root, T& element) const //returns either the element, or nullptr
+	Node* search_help(Node* root, Song& element) const //returns either the element, or nullptr
 	{
 		//BST search
 		//empty/end of tree or found 
@@ -179,7 +167,7 @@ private:
 		else if (element > root->data) //go in right subtree
 			search_help(root->right, element);
 	}
-	Node* remove_help(Node* root, T& element)
+	Node* remove_help(Node* root, Song& element)
 	{
 		//1. BST remove
 		//empty/end of tree 
@@ -245,6 +233,15 @@ private:
 
 		return root; //returning the root node at the end
 	}
+	void copy_insert_helper(Node* _root)
+	{
+		if (_root == nullptr)
+			return;
+
+		insert(_root->data);
+		copy_insert_helper(_root->left);
+		copy_insert_helper(_root->right);
+	}
 	void inorder_help(Node* root) const
 	{
 		if (root != nullptr)
@@ -271,41 +268,44 @@ private:
 	}
 
 public:
-	AVL() : root(nullptr) {}
-	AVL(const AVL& other)
+	AVLTree() : root(nullptr) {}
+	AVLTree(const AVLTree& other)
 	{
-		//root = copy(other.root); //here's the change
-		root = copy_insert(other.root);
+		root = copy(other.root);
 	}
-	AVL& operator=(const AVL& other)
+	AVLTree& operator=(const AVLTree& other)
 	{
-		if (this != other)
+		if (this != &other)
 		{
 			del(root);
 			root = copy(other.root);
 		}
 		return *this;
 	}
-	~AVL()
+	~AVLTree()
 	{
 		del(root);
 	}
 
 	//main functions
-	void insert(T& element)
+	void insert(Song& element)
 	{
 		root = insert_help(root, element);
 	}
-	Node* search(T& element) const
+	Node* search(Song& element) const
 	{
 		return search_help(root, element);
 	}
-	void remove(T& element)
+	void remove(Song& element)
 	{
 		root = remove_help(root, element);
 	}
 
 	//other
+	void copy_insert(AVLTree& other)
+	{
+		copy_insert_helper(other.root); //copying tree by insert()
+	}
 	void inorder() const
 	{
 		inorder_help(root);
