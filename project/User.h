@@ -1,8 +1,9 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include <vector>
+#include <unordered_set> //is it already included?
 #include "Playlist.h"
+
 
 class User //validaciq v setterite?
 {
@@ -13,8 +14,8 @@ private:
 	std::string full_name;
 	std::string birth_date;
 
-	std::string fav_genres[10]; //instead of vectors
-	std::string playlists[10];  //resizing vector of strings is too slow
+	std::unordered_set<std::string> fav_genres; //good for custom el add/remove 
+	//std::vector<std::string> playlists;  //choosing type (maybe hash table)
 
 private:
 	void copy(const User& other);
@@ -22,7 +23,7 @@ private:
 public:
 	User();
 	User(const User& other); //copy
-	User(const std::string& user, const std::string& pass);
+	User(const std::string& _username, const std::string& _password); //username + password
 	User& operator=(const User& other);
 	~User();
 
