@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include "Song.h"
+#include "Library.h"
+#include "User.h"
 
 
 //--AVL Tree-- 
@@ -326,7 +328,7 @@ public:
 		return sizeHelp(root);
 	}
 
-	//playlist funcs
+	//playlist funcs //add const?
 	void rating_bigger(double x, AVLTree& other) //works
 	{
 		rating_bigger_helper(other.root, x);
@@ -364,12 +366,12 @@ public:
 
 		if (_root->left != nullptr)
 		{
-			if (_root->data > x)
+			if (_root->data > x || _root->left->data == x) // || catches the case where 2 duplicates are split left/right
 				genre_plus_helper(_root->left, x);
 		}
 		if (_root->right != nullptr)
 		{
-			if (_root->data < x)
+			if (_root->data < x || _root->right->data == x)
 				genre_plus_helper(_root->right, x);
 		}
 	}
@@ -387,6 +389,16 @@ public:
 		if (_root->left != nullptr) genre_minus_helper(_root->left, x); //so it can check duplicates
 		if (_root->right != nullptr) genre_minus_helper(_root->right, x);
 
+	}
+
+	void genres_fav(std::unordered_set<std::string>& genres, AVLTree& other)
+	{
+		std::unordered_set<std::string > ::iterator it;
+		for (it = genres.begin(); it != genres.end(); ++it)
+		{
+			std::string x = *it;
+			genre_plus(x, other);
+		}
 	}
 
 	void year_bigger(size_t x, AVLTree& other) //works
