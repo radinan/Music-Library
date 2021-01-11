@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include "Song.h"
-#include "Library.h"
+//#include "Library.h"
 #include "User.h"
 
 
@@ -121,7 +121,7 @@ private:
 	}
 
 	//helpers (main)
-	Node* insert_help(Node* root, Song& element)
+	Node* insert_help(Node* root, const Song& element)
 	{
 		//1. BST insert
 		//empty/end of tree
@@ -159,7 +159,7 @@ private:
 
 		return root; //returning the root node at the end
 	}
-	Node* search_help(Node* root, Song& element) const //returns either the element, or nullptr
+	Node* search_help(Node* root, const Song& element) const //returns either the element, or nullptr
 	{
 		//BST search
 		//empty/end of tree or found 
@@ -170,7 +170,7 @@ private:
 		else if (element > root->data) //go in right subtree
 			search_help(root->right, element);
 	}
-	Node* remove_help(Node* root, Song& element)
+	Node* remove_help(Node* root, const Song& element)
 	{
 		//1. BST remove
 		//empty/end of tree 
@@ -297,21 +297,21 @@ public:
 	}
 
 	//main functions
-	void insert(Song& element)
+	void insert(const Song& element)
 	{
 		root = insert_help(root, element);
 	}
-	Node* search(Song& element) const
+	Node* search(const Song& element) const
 	{
 		return search_help(root, element);
 	}
-	void remove(Song& element)
+	void remove(const Song& element)
 	{
 		root = remove_help(root, element);
 	}
 
 	//other
-	void copy_insert(AVLTree& other)
+	void copy_insert(const AVLTree& other)
 	{
 		copy_insert_helper(other.root); //copying tree by insert()
 	}
@@ -327,9 +327,13 @@ public:
 	{
 		return sizeHelp(root);
 	}
+	bool is_empty()
+	{
+		return root == nullptr;
+	}
 
 	//playlist funcs //add const?
-	void rating_bigger(double x, AVLTree& other) //works
+	void rating_bigger(double x, const AVLTree& other) //works
 	{
 		rating_bigger_helper(other.root, x);
 	}
@@ -350,7 +354,7 @@ public:
 		}
 	}
 
-	void genre_plus(std::string& x, AVLTree& other) //works !!!WHITE SPACES!!!
+	void genre_plus(std::string& x, const AVLTree& other) //works !!!WHITE SPACES!!!
 	{
 		genre_plus_helper(other.root, x);
 	}
@@ -376,7 +380,7 @@ public:
 		}
 	}
 
-	void genre_minus(std::string& x, AVLTree& other) //works !!!WHITE SPACES!!!
+	void genre_minus(std::string& x, const AVLTree& other) //works !!!WHITE SPACES!!!
 	{
 		genre_minus_helper(other.root, x);
 	}
@@ -391,7 +395,7 @@ public:
 
 	}
 
-	void genres_fav(std::unordered_set<std::string>& genres, AVLTree& other)
+	void genres_fav(std::unordered_set<std::string>& genres, const AVLTree& other)
 	{
 		std::unordered_set<std::string > ::iterator it;
 		for (it = genres.begin(); it != genres.end(); ++it)
@@ -401,7 +405,7 @@ public:
 		}
 	}
 
-	void year_bigger(size_t x, AVLTree& other) //works
+	void year_bigger(size_t x, const AVLTree& other) //works
 	{
 		
 		year_bigger_helper(other.root, x);
@@ -424,7 +428,7 @@ public:
 		}
 	}
 
-	void year_smaller(size_t x, AVLTree& other) //works
+	void year_smaller(size_t x, const AVLTree& other) //works
 	{
 		year_smaller_helper(other.root, x);
 	}
@@ -445,7 +449,7 @@ public:
 		}
 	}
 
-	void year_equals(size_t x, AVLTree& other) //works
+	void year_equals(size_t x, const AVLTree& other) //works
 	{
 		year_equals_helper(other.root, x);
 	}

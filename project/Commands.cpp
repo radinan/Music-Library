@@ -1,9 +1,9 @@
 #include "Commands.h"
-#include "User.h"
-#include "Library.h"
+//#include "User.h"
+//#include "Library.h"
 #include <string>
 
-Library lib;
+
 
 //--general--
 void Commands::welcome()
@@ -19,7 +19,7 @@ void Commands::help()
 }
 
 //--user--
-void Commands::sign_in()
+void Commands::sign_in(Library& lib)
 {
 	std::string un, pw;
 
@@ -28,16 +28,16 @@ void Commands::sign_in()
 	std::cout << "Enter password: ";
 	std::cin >> pw;
 	//validation
-	sign_in_helper(un, pw);
+	sign_in_helper(lib, un, pw);
 }
-void Commands::sign_in_helper(const std::string& un, const std::string& pw)
+void Commands::sign_in_helper(Library& lib, const std::string& un, const std::string& pw)
 {
 	//checks in file
 	User user;//func load_user() -> set data from file
 	lib.add_user(user);
 }
 
-void Commands::sign_up()
+void Commands::sign_up(Library& lib)
 {
 	std::string un, pw;  //~~r_pw
 
@@ -47,16 +47,16 @@ void Commands::sign_up()
 	std::cin >> pw;
 	//~~repeat password
 	//validation
-	sign_up_helper(un, pw);
+	sign_up_helper(lib, un, pw);
 }
-void Commands::sign_up_helper(const std::string& un, const std::string& pw)
+void Commands::sign_up_helper(Library& lib, const std::string& un, const std::string& pw)
 {
 	User new_user(un, pw);
 	lib.add_user(new_user);
 	//change file
 }
 
-void Commands::change_data()
+void Commands::change_data(Library& lib)
 {
 	std::string input;
 	int command = 0; //may not be int
@@ -108,9 +108,9 @@ void Commands::change_data()
 		//validation
 	}
 
-	change_data_helper(command, input);
+	change_data_helper(lib, command, input);
 }
-void Commands::change_data_helper(int choice, const std::string& input)
+void Commands::change_data_helper(Library& lib, int choice, const std::string& input)
 {
 	Playlist playlist;
 	if (choice == 1)
@@ -140,7 +140,7 @@ void Commands::change_data_helper(int choice, const std::string& input)
 }
 
 //--song--
-void Commands::add_song()
+void Commands::add_song(Library& lib)
 {
 	std::string name, artist, genre,
 		album;
@@ -157,15 +157,15 @@ void Commands::add_song()
 	std::cout << "Enter release date: ";
 	std::cin >> release_date;
 	//validation
-	add_song_helper(name, artist, genre, album, release_date);
+	add_song_helper(lib, name, artist, genre, album, release_date);
 }
-void Commands::add_song_helper(const std::string& name, const std::string& artist, const std::string& genre, const std::string& album, int release_date) 
+void Commands::add_song_helper(Library& lib, const std::string& name, const std::string& artist, const std::string& genre, const std::string& album, int release_date)
 {
 	Song song(name, artist, genre, album, release_date);
 	lib.add_song(song); //changes the Tree w all songs
 }
 
-void Commands::rate_song()
+void Commands::rate_song(Library& lib)
 {
 	std::string name;
 	int rate = 0;
@@ -174,17 +174,16 @@ void Commands::rate_song()
 	std::cout << "Enter rating: ";
 	std::cin >> rate;
 	//validation
-	rate_song_helper(name, rate);
+	rate_song_helper(lib, name, rate);
 }
-void Commands::rate_song_helper(const std::string& name, int rate)
+void Commands::rate_song_helper(Library& lib, const std::string& name, int rate)
 {
-	//finds in tree
+	//lib.get_songs(). SEARCH BY NAME
 	//song.set_rating(rate);
 }
 
-
 //--playlist--
-void Commands::generate_playlist()
+void Commands::generate_playlist(Library& lib)
 {
 	//&& ||
 	std::string input;
@@ -197,29 +196,25 @@ void Commands::generate_playlist()
 		"6. from year \n" <<
 		"7. after year \n";
 	std::getline(std::cin, input); // [command] (value) && [command] (value) || [command] (value)
-	generate_playlist_helper(input);
+	generate_playlist_helper(lib, input);
 }
-void Commands::generate_playlist_helper(const std::string& input) 
+void Commands::generate_playlist_helper(Library& lib, const std::string& input)
 {
-	//f-q koqto da prerabotva inputa (returnva string[])
-	//vector ot dvoiki <comanda,value> ->string
-
-	//cikyl za obhojdane na vsichki komandi
-	//za 1va komanda vzima ot faila podhodqshti elementi i gi dobavq v array
-	//za dr komandi filtrira Tree
-
-	//save_playlist(..) po default "<username>'s playlist"
-
+	Expression expr(input);
+	AVLTree playlist = expr.do_expression(lib); //parses the input and creates tree with songs
+	playlist.inorder();
+	//sort by name
+	//create DLList and add it to Playlist
 }
 
-void Commands::save_playlist()
+void Commands::save_playlist(Library& lib)
 {
 	std::string input;
 	std::cout << "Enter new name: ";
 	std::cin >> input;
-	save_playlist_helper(input);
+	save_playlist_helper(lib,input);
 }
-void Commands::save_playlist_helper(const std::string& name)
+void Commands::save_playlist_helper(Library& lib, const std::string& name)
 {
 	//ako ima v Library playlist s takova ime
 	//vikame loadnitiq 
@@ -227,14 +222,14 @@ void Commands::save_playlist_helper(const std::string& name)
 	//ako nqma -> load_playlilst()
 }
 
-void Commands::load_playlist()
+void Commands::load_playlist(Library& lib)
 {
 	std::string input;
 	std::cout << "Enter name: ";
 	std::cin >> input;
-	load_playlist_helper(input);
+	load_playlist_helper(lib, input);
 }
-void Commands::load_playlist_helper(const std::string& name)
+void Commands::load_playlist_helper(Library& lib, const std::string& name)
 {
 	//lib.curr_playlist ?
 	//curr_user.playlists ?
@@ -243,7 +238,7 @@ void Commands::load_playlist_helper(const std::string& name)
 	//pl.all_songs_name();
 }
 
-void Commands::show_all_info()
+void Commands::show_all_info(Library& lib)
 {
 	lib.get_playlist().all_songs_info();
 }

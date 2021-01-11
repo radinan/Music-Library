@@ -11,7 +11,7 @@ class Playlist //validaciq za input(simvoli intervali i tn)
 private:
 	std::string name; 
 	int size = 0; //count of songs
-	Song songs[max_size]; //maximum 20 songs
+	Song songs[max_size]; //maximum 20 songs //DLList
 
 public:
 	void add_song(const Song& other);

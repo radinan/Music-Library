@@ -6,7 +6,7 @@
 //starting the programm		 -> all data from txt file -> AVL Tree
 //exiting the programm(save) -> all data from AVL Tree -> txt file
 
-enum class Sort_type {name, release_year, genre, rating}; //sorting types
+enum class Priority {name, release_year, genre, rating}; //sorting types
 class Song
 {
 private:
@@ -14,7 +14,7 @@ private:
 	std::string artist; 
 	std::string genre; 
 	std::string album;
-	size_t release_year =0; 
+	size_t release_year = 0; 
 	std::pair <int, int> rating; //num of votes, sum of votes
 private:
 	//constructor helpers
@@ -22,7 +22,7 @@ private:
 	void clear();
 	//!add bool funcs for data validation ;)
 public:
-	static Sort_type sort_type; //same for all objects
+	static Priority priority; //same for all objects
 public:
 	//constructors
 	Song();
@@ -41,10 +41,16 @@ public:
 
 	//overloading operators
 	friend bool operator > (const Song& song, size_t value);
+	friend bool operator > (const Song& song, double value);
+	friend bool operator > (const Song& song, std::string str);
 	friend bool operator < (const Song& song, size_t value);
+	friend bool operator < (const Song& song, double value);
+	friend bool operator < (const Song& song, std::string str);
 	friend bool operator == (const Song& song, size_t value);
+	friend bool operator == (const Song& song, double value);
 	friend bool operator == (const Song& song, std::string str);
 	friend bool operator != (const Song& song, size_t value);
+	friend bool operator != (const Song& song, double value);
 	friend bool operator != (const Song& song, std::string str);
 
 	friend std::ostream& operator << (std::ostream& out, Song& song); 
@@ -54,6 +60,7 @@ public:
 	friend bool operator<(const Song& left, const Song& right);
 	friend bool operator==(const Song& left, const Song& right);
 	friend bool operator!=(const Song& left, const Song& right);
+
 
 };
 

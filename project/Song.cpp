@@ -1,6 +1,6 @@
 #include "Song.h"
 
-Sort_type Song::sort_type = Sort_type::name; //by default by name
+Priority Song::priority = Priority::name; //by default by name
 
 //constructor helpers
 void Song::copy(const Song& other)
@@ -73,7 +73,10 @@ void Song::set_rating(int rate)
 }
 double Song::get_rating() const
 {
-	return (double)rating.second / rating.first; //casting int->double
+	if (rating.first == 0)
+		return 0;
+	else
+		return (double)rating.second / rating.first; //casting int->double
 }
 std::string Song::get_name() const
 {
@@ -113,63 +116,109 @@ std::istream& operator >> (std::istream& in, Song& song)
 }
 
 //more operators overloading
-bool operator > (const Song& song, size_t value) //by year or rating
+bool operator > (const Song& song, size_t value) //by year
 {
-	switch (Song::sort_type)
+	switch (Song::priority)
 	{
-	case Sort_type::release_year:
+	case Priority::release_year:
 		return song.release_year > value; break;
-	case Sort_type::rating:
+	}
+}
+bool operator < (const Song& song, size_t value) //by year 
+{
+	switch (Song::priority)
+	{
+	case Priority::release_year:
+		return song.release_year < value; break;
+	}
+}
+bool operator == (const Song& song, size_t value) //by year
+{
+	switch (Song::priority)
+	{
+	case Priority::release_year:
+		return song.release_year == value; break;
+	}
+}
+bool operator != (const Song& song, size_t value) //by year
+{
+	switch (Song::priority)
+	{
+	case Priority::release_year:
+		return song.release_year != value; break;
+	}
+}
+
+bool operator > (const Song& song, double value) //by rating
+{
+	switch (Song::priority)
+	{
+	case Priority::rating:
 		return song.get_rating() > value; break;
 	}
 }
-bool operator < (const Song& song, size_t value) //by year or rating
+bool operator < (const Song& song, double value) //by rating
 {
-	switch (Song::sort_type)
+	switch (Song::priority)
 	{
-	case Sort_type::release_year:
-		return song.release_year < value; break;
-	case Sort_type::rating:
+	case Priority::rating:
 		return song.get_rating() < value; break;
 	}
 }
-bool operator == (const Song& song, size_t value) //by year or rating
+bool operator == (const Song& song, double value) //by rating
 {
-	switch (Song::sort_type)
+	switch (Song::priority)
 	{
-	case Sort_type::release_year:
-		return song.release_year == value; break;
-	case Sort_type::rating:
+	case Priority::rating:
 		return song.get_rating() == value; break;
 	}
 }
-bool operator != (const Song& song, size_t value) //by year or rating
+bool operator != (const Song& song, double value) //by rating
 {
-	switch (Song::sort_type)
+	switch (Song::priority)
 	{
-	case Sort_type::release_year:
-		return song.release_year != value; break;
-	case Sort_type::rating:
+	case Priority::rating:
 		return song.get_rating() != value; break;
+	}
+}
+
+bool operator > (const Song& song, std::string str)
+{
+	switch (Song::priority)
+	{
+	case Priority::name:
+		return song.name > str; break;
+	case Priority::genre:
+		return song.genre > str; break;
+	}
+}
+bool operator < (const Song& song, std::string str)
+{
+	switch (Song::priority)
+	{
+	case Priority::name:
+		return song.name < str; break;
+	case Priority::genre:
+		return song.genre < str; break;
 	}
 }
 bool operator == (const Song& song, std::string str) //by name or genre
 {
-	switch (Song::sort_type)
+	switch (Song::priority)
 	{
-	case Sort_type::name:
+	case Priority::name:
 		return song.name == str; break;
-	case Sort_type::genre:
+	case Priority::genre:
 		return song.genre == str; break;
 	}
 }
 bool operator != (const Song& song, std::string str) //by name or genre
 {
-	switch (Song::sort_type)
+	switch (Song::priority)
 	{
-	case Sort_type::name:
+	case Priority::name:
 		return song.name != str; break;
-	case Sort_type::genre:
+	case Priority::genre:
 		return song.genre != str; break;
 	}
 }
@@ -177,9 +226,9 @@ bool operator != (const Song& song, std::string str) //by name or genre
 //Priority: name, release_year, genre, rating //without break?
 bool operator>(const Song& left, const Song& right)
 {
-	switch (Song::sort_type)
+	switch (Song::priority)
 	{
-	case Sort_type::name:
+	case Priority::name:
 		if (left.name == right.name)
 		{
 			if (left.release_year == right.release_year)
@@ -197,7 +246,7 @@ bool operator>(const Song& left, const Song& right)
 		}
 		return left.name > right.name;
 		break;
-	case Sort_type::release_year:
+	case Priority::release_year:
 		if (left.release_year == right.release_year)
 		{
 			if (left.name == right.name)
@@ -215,7 +264,7 @@ bool operator>(const Song& left, const Song& right)
 		}
 		return left.release_year > right.release_year;
 		break;
-	case Sort_type::genre:
+	case Priority::genre:
 		if (left.genre == right.genre)
 		{
 			if (left.name == right.name)
@@ -234,7 +283,7 @@ bool operator>(const Song& left, const Song& right)
 		return left.genre > right.genre;
 		break;
 
-	case Sort_type::rating:
+	case Priority::rating:
 		if (left.get_rating() == right.get_rating())
 		{
 			if (left.name == right.name)
@@ -256,9 +305,9 @@ bool operator>(const Song& left, const Song& right)
 }
 bool operator<(const Song& left, const Song& right) 
 {
-	switch (Song::sort_type)
+	switch (Song::priority)
 	{
-	case Sort_type::name:
+	case Priority::name:
 		if (left.name == right.name)
 		{
 			if (left.release_year == right.release_year)
@@ -276,7 +325,7 @@ bool operator<(const Song& left, const Song& right)
 		}
 		return left.name < right.name;
 		break;
-	case Sort_type::release_year:
+	case Priority::release_year:
 		if (left.release_year == right.release_year)
 		{
 			if (left.name == right.name)
@@ -294,7 +343,7 @@ bool operator<(const Song& left, const Song& right)
 		}
 		return left.release_year < right.release_year;
 		break;
-	case Sort_type::genre:
+	case Priority::genre:
 		if (left.genre == right.genre)
 		{
 			if (left.name == right.name)
@@ -313,7 +362,7 @@ bool operator<(const Song& left, const Song& right)
 		return left.genre < right.genre;
 		break;
 
-	case Sort_type::rating:
+	case Priority::rating:
 		if (left.get_rating() == right.get_rating())
 		{
 			if (left.name == right.name)
@@ -335,35 +384,35 @@ bool operator<(const Song& left, const Song& right)
 }
 bool operator==(const Song& left, const Song& right) 
 {
-	switch (Song::sort_type)
+	switch (Song::priority)
 	{
-	case Sort_type::name:
+	case Priority::name:
 		return left.name == right.name; break;
 
-	case Sort_type::release_year:
+	case Priority::release_year:
 		return left.release_year == right.release_year; break;
 
-	case Sort_type::genre:
+	case Priority::genre:
 		return left.genre == right.genre; break;
 
-	case Sort_type::rating:
+	case Priority::rating:
 		return left.get_rating() == right.get_rating(); break;
 	}
 }
 bool operator!=(const Song& left, const Song& right) 
 {
-	switch (Song::sort_type)
+	switch (Song::priority)
 	{
-	case Sort_type::name:
+	case Priority::name:
 		return left.name != right.name; break;
 
-	case Sort_type::release_year:
+	case Priority::release_year:
 		return left.release_year != right.release_year; break;
 
-	case Sort_type::genre:
+	case Priority::genre:
 		return left.genre != right.genre; break;
 
-	case Sort_type::rating:
+	case Priority::rating:
 		return left.get_rating() != right.get_rating(); break;
 	}
 }

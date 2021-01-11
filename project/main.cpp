@@ -1,157 +1,46 @@
 #include <iostream>
-#include <fstream>
 #include <string>
+//#include "AVLTree.h"
+//#include "Library.h"
+//#include "User.h"
+#include "Commands.h"
+
 
 // NOTES
-//moje da smenq std::string sys char*
-//janrovete moje s enum
 //moje validaciq sled vseki cin i posle
 //funkciq izcqlo za validacii
-//!!!predi exit tr se setnat vs bool na 0
-
-class Songs
-{
-public:
-	std::string name;
-	std::string artist;
-	std::string genre;
-	std::string album;
-	int release_year;
-	std::pair<int, int> rating;
-
-	friend std::ostream& operator << (std::ostream& out, Songs& song);
-	friend std::istream& operator >> (std::istream& in, Songs& song);
-
-};
-std::ostream& operator << (std::ostream& out, Songs& song)
-{
-	//std::ofstream out("songs.txt");
-	out << song.name << "\n" << song.artist << "\n" << song.genre << "\n" << song.album << "\n"
-		<< song.release_year << "\n" << song.rating.first << " " << song.rating.second << "\n";
-	//out.close();
-	return out;
-}
-std::istream& operator >> (std::istream& in, Songs& song)
-{
-
-	std::getline(in, song.name);
-	std::getline(in, song.artist);
-	std::getline(in, song.genre);
-	std::getline(in, song.album);
-	in >> song.release_year; in.get();
-	in >> song.rating.first;
-	in >> song.rating.second; in.get();
-	return in;
-}
-
-class Users
-{
-public:
-	char un[10];
-	char pw[10];
-
-
-	friend std::ostream& operator << (std::ostream& out, Users& user);
-	//friend std::istream& operator >> (std::istream& in, Users& user);
-};
-std::ostream& operator << (std::ostream& out, Users& user)
-{
-	out << user.un << "\n" << user.pw<<"\n";
-	return out;
-}
-
-void* operator new(size_t size)
-{
-	std::cout << "Alocating: " << size << "bytes\n";
-	return malloc(size);
-}
-
-class Test
-{
-public:
-	char commands[5][10] ;
-	Test()
-	{
-		commands[0][0] = 'a';
-		commands[0][1] = 'b';
-		commands[1][0] = 'c';
-
-		std::cout << "Constructor" << std::endl;
-	}
-	~Test()
-	{
-		std::cout << "Destructor" << std::endl;
-	}
-};
-class TestTest
-{
-public:
-	Test commanda;
-	TestTest()
-	{
-		std::cout << "2Constructor2" << std::endl;
-
-	}
-	~TestTest()
-	{
-		std::cout << "2Destructor2" << std::endl;
-
-	}
-};
 
 int main()
 {
-	/*std::pair<int, int> rate{ 5, 5 }, rate1{ 6,3 };
-	Songs song{ "A", "A", "A", "A", 1876, rate },
-		song1{ "B", "B", "B", "B", 10876, rate1 };
-	Songs songg, songg1, songa;
 
-	std::ofstream out("songs.txt");
-	out << song << song1;
-	out.close();
+	/*Song song1("A", "B", "rock", "D", 5), song2("AA", "BB", "rock", "DD", 6);
+	Song::property = Property::genre;
+	AVLTree tr;
+	tr.insert(song1);
+	tr.insert(song2);
 
-	std::string str = "First Name", filestr;
-	std::ifstream in("songs.txt");
-	for( ; ;)
-	{
-		in >> songg;
-		if (songg.name == str)
-		{
-			std::cout << songg << "\n";// << songg1;
+	AVLTree tr1;
+	std::string genr = "rock";
+	tr1.genre_minus(genr,tr);
+	tr1.inorder();*/
+	Library lib;
 
-			break;
-		}
-		std::cout << songg << "\n";// << songg1;
+	User user1("user1", "useruser");
+	lib.add_user(user1);
+	lib.get_user().add_fav_genre("a");
+	lib.get_user().add_fav_genre("indie");
+	std::unordered_set<std::string> genres = lib.get_user().get_fav_genres(); 
 
-	}
 
-	in.close();*/
-	
-	/*Users user{ "first","pw" }, user1{ "second","pass" }, user2{ "third","psa" };
-	
-	std::ofstream out("users.txt", std::ios::out | std::ios::binary);
-	out.write((char*)&user, sizeof(Users));
-	out.write((char*)&user1, sizeof(Users));
-	out.write((char*)&user2, sizeof(Users));
-	out.close();
+	Song song1("a", "b", "a", "a", 1), song2("A", "B", "a", "a", 5),
+		song3("AA", "BB", "indie", "a", 6), song4("AAA", "BB", "indie", "a", 6),
+		song5("aa", "bb", "heavy metal", "A", 7);
+	AVLTree tree;
+	tree.insert(song1);
+	tree.insert(song2);
+	tree.insert(song3);
+	tree.insert(song4);
+	tree.insert(song5);
 
-	Users uuser;
-	std::string str = "third";
-
-	std::ifstream file("users.txt", std::ios::in | std::ios::binary);
-	file.seekg(0);
-	int n = sizeof(Songs);
-	while (file.read((char*)&uuser, sizeof(Users)) && uuser.un != str){}
-	if (uuser.un == str)
-		std::cout << uuser;
-	file.close();*/
-
-	//char ya[5][10] = { "ysssa", "aa", "yo", "za", "sa" };
-	//std::cout << ya[2]; //qkoooo
-	Test a;
-	TestTest ya;
-	//no heap allocation here ;)
-	
-
-	return 0;
+	Commands::generate_playlist(lib);
 }
