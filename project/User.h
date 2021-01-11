@@ -32,6 +32,7 @@ public:
 	void set_password(const std::string& _password);
 	void set_full_name(const std::string& _full_name);
 	void set_birth_date(const std::string& _birth_date);
+	const std::unordered_set<std::string>& get_fav_genres() const; //const& so not being changed
 
 	void add_fav_genre(const std::string& genre);
 	void remove_fav_genre(const std::string& genre);

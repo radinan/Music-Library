@@ -76,6 +76,10 @@ void User::set_birth_date(const std::string& _birth_date)
 	//validation
 	birth_date = _birth_date;
 }
+const std::unordered_set<std::string>& User::get_fav_genres() const
+{
+	return fav_genres;
+}
 
 
 
