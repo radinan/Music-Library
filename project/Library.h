@@ -11,9 +11,9 @@ class Library
 private: //!!!think about copies and whether you want to change the original user or not!!!
 	User curr_user; //recently logged; current
 	Playlist curr_playlist;
-	AVLTree all_songs; //in the whole library
+	AVLTree all_songs; //in the whole library //the original avl tree with all songs is always sorted by name!
 public:
-	Library();
+	Library(const AVLTree& other);
 	~Library();
 
 	User& get_user();
@@ -23,6 +23,7 @@ public:
 	void add_user(const User& other);
 	void add_playlist(const Playlist& other);
 	void add_song(const Song& other);
+
 
 };
 
