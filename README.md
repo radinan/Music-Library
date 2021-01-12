@@ -24,4 +24,12 @@ Overall: pay attention to const and &
 <br>  5.1 check all_songs
 <br>  5.2 big 4
 <br>
+<br>6. Playlist
+<br>  6.1 add Linked list (singly or doubly)
+<br>  6.2 fill the methods
+<br>
+<br>7. Parser
+<br>  7.1 fix bugs
+<br>  7.2 create custom queue class
+
 <img src="https://octocat-generator-assets.githubusercontent.com/my-octocat-1608367107981.png" id="octocat" alt="" />
