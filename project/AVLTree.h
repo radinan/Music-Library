@@ -4,7 +4,6 @@
 //#include "Library.h"
 #include "User.h"
 
-
 //--AVL Tree-- 
 // self-balancing BST;  |B(n)| <= 1;
 // Time complexity:
@@ -12,6 +11,8 @@
 //		-> delete:		O(logn) best/worst case
 //		-> search:		O(logn) best/worst case
 
+
+//the original avl tree with all songs is always sorted by name!
 class AVLTree
 {
 private:
@@ -159,16 +160,16 @@ private:
 
 		return root; //returning the root node at the end
 	}
-	Node* search_help(Node* root, const Song& element) const //returns either the element, or nullptr
+	Node* find_help(Node* root, const Song& element)  //returns either the element, or nullptr
 	{
 		//BST search
 		//empty/end of tree or found 
 		if (root == nullptr || root->data == element)
 			return root;
 		else if (element < root->data) //go in left subtree
-			search_help(root->left, element);
+			find_help(root->left, element);
 		else if (element > root->data) //go in right subtree
-			search_help(root->right, element);
+			find_help(root->right, element);
 	}
 	Node* remove_help(Node* root, const Song& element)
 	{
@@ -236,6 +237,21 @@ private:
 
 		return root; //returning the root node at the end
 	}
+	//search by name
+	Node* find_help(Node* root, const std::string& name) //overload
+	{
+		//BST search
+		//empty/end of tree or found 
+		if (root == nullptr)
+			return nullptr;
+		if (root->data == name)
+			return root;
+		else if (root->data > name) //go in left subtree
+			find_help(root->left, name);
+		else if (root->data < name) //go in right subtree
+			find_help(root->right, name);
+	}
+
 	//helpers (other)
 	Node* copy_insert_helper(Node* _root)
 	{
@@ -301,14 +317,20 @@ public:
 	{
 		root = insert_help(root, element);
 	}
-	Node* search(const Song& element) const
+	Node* find(const Song& element) 
 	{
-		return search_help(root, element);
+		return find_help(root, element);
+	}
+	Node* find(const std::string& name) //overload
+	{
+
+		return find_help(root, name);
 	}
 	void remove(const Song& element)
 	{
 		root = remove_help(root, element);
 	}
+
 
 	//other
 	void copy_insert(const AVLTree& other)
