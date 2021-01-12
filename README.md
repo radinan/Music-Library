@@ -2,26 +2,26 @@
 
 Overall: pay attention to const and &
 
-1. AVLTree
-  1.1 check all playlist funcs for corner cases!
-  1.2 "White Spaces" in funcs with strings
-  
-2. Commands
-  2.1 validation
-  2.2 add files
-  2.3 work with tree
-  2.4 parser for playlist
-  
-3. User
-  3.1 choose Playlist type
-  3.2 consider validaiton inside setters
-  
-4. Song
-  4.1 consider validation methods
-  4.2 public or private setters and getters?
-  
-5. Library
-  5.1 check all_songs
-  5.2 big 4
-
+<br>1. AVLTree
+<br>  1.1 check all playlist funcs for corner cases!
+<br>  1.2 "White Spaces" in funcs with strings
+<br>  
+<br>2. Commands
+<br>  2.1 validation
+<br>  2.2 add files
+<br>  2.3 parser for playlist
+<br>  
+<br>3. User
+<br>  3.1 choose Playlist type
+<br>  3.2 consider validaiton inside setters
+<br>  
+<br>4. Song
+<br>  4.1 consider validation methods
+<br>  4.2 public or private setters and getters?
+<br>  4.3 const std::string& in the operator overloading?
+<br>  
+<br>5. Library
+<br>  5.1 check all_songs
+<br>  5.2 big 4
+<br>
 <img src="https://octocat-generator-assets.githubusercontent.com/my-octocat-1608367107981.png" id="octocat" alt="" />
