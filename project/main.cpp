@@ -23,16 +23,11 @@ int main()
 	std::string genr = "rock";
 	tr1.genre_minus(genr,tr);
 	tr1.inorder();*/
-	Library lib;
-
-	User user1("user1", "useruser");
-	lib.add_user(user1);
-	lib.get_user().add_fav_genre("a");
-	lib.get_user().add_fav_genre("indie");
-	std::unordered_set<std::string> genres = lib.get_user().get_fav_genres(); 
 
 
-	Song song1("a", "b", "a", "a", 1), song2("A", "B", "a", "a", 5),
+
+
+	/*Song song1("a", "b", "a", "a", 1), song2("A", "B", "a", "a", 5),
 		song3("AA", "BB", "indie", "a", 6), song4("AAA", "BB", "indie", "a", 6),
 		song5("aa", "bb", "heavy metal", "A", 7);
 	AVLTree tree;
@@ -42,5 +37,28 @@ int main()
 	tree.insert(song4);
 	tree.insert(song5);
 
-	Commands::generate_playlist(lib);
+	Library lib(tree);
+
+	User user1("user1", "useruser");
+	lib.add_user(user1);
+	lib.get_user().add_fav_genre("a");
+	lib.get_user().add_fav_genre("indie");
+	std::unordered_set<std::string> genres = lib.get_user().get_fav_genres();
+
+	*/
+	//Commands::generate_playlist(lib);
+
+	//check search_n
+	Song song1("a", "b", "a", "a", 1), song2("A", "B", "a", "a", 5), song3("AA", "BB", "indie", "a", 6),
+	song4("AAA", "BB", "indie", "a", 6),
+		song5("aaa", "bb", "heavy metal", "A", 7);
+	AVLTree tree;
+	tree.insert(song1);
+	tree.insert(song2);
+	tree.insert(song3);
+	tree.insert(song4);
+	tree.insert(song5);
+
+	tree.find("a")->data.set_rating(5);
+	std::cout << tree.find("a")->data.get_rating();
 }
