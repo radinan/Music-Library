@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 
-Library::Library() {}
+Library::Library(const AVLTree& other) : all_songs(other){}
 
 Library::~Library() {}
 
