@@ -1,8 +1,31 @@
 #include "Playlist.h"
 #include <sstream>
 
+
+void Playlist::copy(const Playlist& other)
+{
+	name = other.name;
+	size = other.size;
+	songs = other.songs;
+}
+void Playlist::clear()
+{
+	name.clear();
+	size = 0;
+	songs.clear();
+}
+
 //fill:
 Playlist::Playlist(){} //add linked list w songs
+Playlist& Playlist::operator=(const Playlist& other)
+{
+	if (this != &other)
+	{
+		clear();
+		copy(other);
+	}
+	return *this;
+}
 Playlist::~Playlist(){}
 
 void Playlist::add_song(const Song& other) //song's name?
@@ -15,16 +38,25 @@ void Playlist::add_song(const Song& other) //song's name?
 	else
 		std::cout << "No free space in the playlist \n";
 }
+std::string& Playlist::get_name() 
+{
+	return name;
+}
+
 void Playlist::set_name(const std::string& _name)
 {
 	//validation
 	name = _name;
 }
-
-void Playlist::all_songs_info() 
+const std::list<std::string>& Playlist::get_songs()
 {
-	//search every song's name in the treeand cout info
+	return songs;
 }
+void Playlist::set_songs(std::list<std::string> other)
+{
+	songs = other;
+}
+
 
 void Playlist::load_playlist(std::string& playlist)
 {
