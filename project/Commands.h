@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include "Library.h"
-#include "Parser.h"
+#include "Parser.h" 
 
 //class with static methods => it doesn't need any attributes => no objects
 class Commands 
@@ -27,7 +27,7 @@ private:
 	///user helpers///
 	static void sign_in_helper(Library& lib, const std::string& un, const std::string& pw);
 	static void sign_up_helper(Library& lib, const std::string& un, const std::string& pw);
-	static void change_data_helper(Library& lib, int choice, const std::string& input);
+	static void change_data_helper(Library& lib, int choice, const std::string& config);
 	///song helpers///
 	static void add_song_helper(Library& lib, const std::string& name, const std::string& artist, const std::string& genre, const std::string& album, int release_date);
 	static void rate_song_helper(Library& lib, const std::string& name, int rate);

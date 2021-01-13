@@ -207,14 +207,19 @@ void Commands::generate_playlist(Library& lib)
 }
 void Commands::generate_playlist_helper(Library& lib, const std::string& input)
 {
-	//FIX!
+	Expression expr(input);
+	AVLTree pl_tree = expr.do_expression(lib); //parses the input and creates tree with songs
+	//playlist.inorder(); //to check if it works properly
+	Song::priority = Priority::name; //to sort the playlist in alphabetical order
+	AVLTree alph(pl_tree); //sorted playlist
 
-	/*Expression expr(input);
-	AVLTree playlist = expr.do_expression(lib); //parses the input and creates tree with songs
-	playlist.inorder();*/
-	//sort by name
-	//create DLList and add it to Playlist
+	std::list<std::string> list;
+	alph.insert_to_list(list);
+	Playlist playlist;		 //creating playlist
+	playlist.set_songs(list);//with chosen songs
+	lib.set_playlist(playlist); //setting it in the library (auto setting to the user)
 }
+
 
 void Commands::save_playlist(Library& lib)
 {
@@ -225,10 +230,10 @@ void Commands::save_playlist(Library& lib)
 }
 void Commands::save_playlist_helper(Library& lib, const std::string& name)
 {
-	//ako ima v Library playlist s takova ime
-	//vikame loadnitiq 
-	//p.change_name(name);
-	//ako nqma -> load_playlilst()
+	if (lib.is_loaded()) //if it's loaded in library
+		lib.get_playlist().set_name(name);
+	else
+		std::cout << "No playlist loaded.\n";
 }
 
 void Commands::load_playlist(Library& lib)
@@ -240,14 +245,20 @@ void Commands::load_playlist(Library& lib)
 }
 void Commands::load_playlist_helper(Library& lib, const std::string& name)
 {
-	//lib.curr_playlist ?
-	//curr_user.playlists ?
-
-	//lib.add_playlist();
-	//pl.all_songs_name();
+	if (!lib.check_playlist(name)) //checks if it's not already loaded
+	{
+		if (lib.get_user().is_playlist(name)) //seaarch in current user's playlist for name
+		{
+			lib.set_playlist(lib.get_user().get_playlist(name)); //if found -> add it to lib.curr_playlist
+		}
+		else
+			std::cout << "No playlist found.\n";
+	}
+	else
+		std::cout << "Playlist " << name << " is already loaded.";
 }
 
 void Commands::show_all_info(Library& lib)
 {
-	lib.get_playlist().all_songs_info();
+	lib.all_songs_info();
 }
