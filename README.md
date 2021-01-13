@@ -17,8 +17,7 @@ Overall: pay attention to const and &
 <br>  2.3 parser for playlist
 <br>  
 <br>3. User
-<br>  3.1 choose Playlist type
-<br>  3.2 consider validaiton inside setters
+<br>  3.1 consider validaiton inside setters
 <br>  
 <br>4. Song
 <br>  4.1 consider validation methods
@@ -26,7 +25,7 @@ Overall: pay attention to const and &
 <br>  4.3 const std::string& in the operator overloading?
 <br>  
 <br>5. Library
-<br>  5.1 all_songs_info
+<br>  5.1 all_songs_info()
 <br>
 <br>6. Playlist
 <br>  6.1 add Linked list (singly or doubly)
