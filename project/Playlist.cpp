@@ -1,55 +1,71 @@
 #include "Playlist.h"
+#include <sstream>
 
+//fill:
+Playlist::Playlist(){} //add linked list w songs
+Playlist::~Playlist(){}
 
-void Playlist::add_song(const Song& other)
+void Playlist::add_song(const Song& other) //song's name?
 {
-	if (size + 1 <= max_size  ) //if there is free space in the playlist
+	if (size <= max_size  ) //if there is free space in the playlist
 	{
-		songs[size] = other;
+		songs.push_back(other.get_name());
 		++size;
-
 	}
 	else
 		std::cout << "No free space in the playlist \n";
 }
-void Playlist::remove_song(const std::string& _name) //removing it from the playlist, not deleting it from the file
-{
-	if (size == 0)
-		return;
-
-	for (int i = 0; i < size; ++i)
-	{
-		if (songs[i].get_name() == _name)
-		{
-			for (int j = i + 1; j < size; ++j, ++i)
-			{
-				songs[i] = songs[j];
-			}
-		}
-	}
-	
-	--size;
-}
-
-void Playlist::change_name(const std::string& _name)
+void Playlist::set_name(const std::string& _name)
 {
 	//validation
 	name = _name;
 }
 
-void Playlist::all_songs_name() const
+void Playlist::all_songs_info() 
 {
-	for (int i = 0; i < size; ++i)
-	{
-		std::cout << songs[i].get_name() << std::endl;
-	}
-}
-void Playlist::all_songs_info() const
-{
-	for (int i = 0; i < size; ++i) 
-	{
-		songs[i].song_info();
-		std::cout << std::endl;
-	}
+	//search every song's name in the treeand cout info
 }
 
+void Playlist::load_playlist(std::string& playlist)
+{
+	std::istringstream ss(playlist);
+	ss >> size;
+	ss.get();
+	int i = 0;
+	while (std::getline(ss, playlist, '|')) // name        song+song
+	{
+		if (i == 0)//name
+		{
+			name = playlist;
+			++i;
+		}
+		else //song
+		{
+			std::string song = playlist;
+			std::istringstream ss1(song);
+			while (std::getline(ss1, song, '+'))
+			{
+				songs.push_back(song);
+			}
+		}
+	}
+}
+std::ostream& operator<< (std::ostream& out, Playlist& playlist)
+{
+	out << playlist.size << " ";
+	out << playlist.name; 
+	out << "|"; //indicator for ending of "name"
+
+	std::list<std::string>::iterator it = playlist.songs.begin();
+	if (it != playlist.songs.end())	//fixed problem: (song+song+song+)
+	{
+		out << *it;
+		++it;
+	}
+	for (; it != playlist.songs.end(); ++it)
+	{
+		out << "+" << *it; // + separates different songs' names 
+	}
+
+	return out;
+}
