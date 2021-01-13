@@ -4,6 +4,11 @@
 //#include "Library.h"
 #include "User.h"
 
+//added search(std::string) and helper
+//and changed both search fs to find
+
+
+
 //--AVL Tree-- 
 // self-balancing BST;  |B(n)| <= 1;
 // Time complexity:
@@ -11,8 +16,8 @@
 //		-> delete:		O(logn) best/worst case
 //		-> search:		O(logn) best/worst case
 
-
 //the original avl tree with all songs is always sorted by name!
+
 class AVLTree
 {
 private:
@@ -289,7 +294,118 @@ private:
 			return 0;
 		return 1 + sizeHelp(root->left) + sizeHelp(root->right); //number of all nodes
 	}
+
 	//helpers (playlist)
+	void rating_bigger_helper(Node* _root, double x)
+	{
+		if (_root == nullptr) return;
+		if (_root->data > x) insert(_root->data);
+
+		if (_root->left != nullptr)
+		{
+			if (_root->left->data > x)
+				year_bigger_helper(_root->left, x);
+		}
+		if (_root->right != nullptr)
+		{
+			if (_root->right->data > x)
+				year_bigger_helper(_root->right, x);
+		}
+	}
+	void genre_plus_helper(Node* _root, std::string& x)
+	{
+		if (_root == nullptr) return;
+		if (_root->data == x)
+		{
+			insert(_root->data);
+			if (_root->left != nullptr) genre_plus_helper(_root->left, x); //so it can check duplicates
+			if (_root->right != nullptr) genre_plus_helper(_root->right, x);
+		}
+
+		if (_root->left != nullptr)
+		{
+			if (_root->data > x || _root->left->data == x) // || catches the case where 2 duplicates are split left/right
+				genre_plus_helper(_root->left, x);
+		}
+		if (_root->right != nullptr)
+		{
+			if (_root->data < x || _root->right->data == x)
+				genre_plus_helper(_root->right, x);
+		}
+	}
+	void genre_minus_helper(Node* _root, std::string& x)
+	{
+		if (_root == nullptr) return;
+		if (_root->data != x)
+			insert(_root->data);
+
+		if (_root->left != nullptr) genre_minus_helper(_root->left, x); //so it can check duplicates
+		if (_root->right != nullptr) genre_minus_helper(_root->right, x);
+
+	}
+	void year_bigger_helper(Node* _root, size_t x)
+	{
+		if (_root == nullptr) return;
+		if (_root->data > x) insert(_root->data);
+
+		if (_root->left != nullptr)
+		{
+			if (_root->left->data > x)
+				year_bigger_helper(_root->left, x);
+		}
+		if (_root->right != nullptr)
+		{
+			if (_root->right->data > x)
+				year_bigger_helper(_root->right, x);
+		}
+	}
+	void year_smaller_helper(Node* _root, size_t x)
+	{
+		if (_root == nullptr) return;
+		if (_root->data < x) insert(_root->data);
+
+		if (_root->left != nullptr)
+		{
+			if (_root->left->data < x)
+				year_smaller_helper(_root->left, x);
+		}
+		if (_root->right != nullptr)
+		{
+			if (_root->right->data < x)
+				year_smaller_helper(_root->right, x);
+		}
+	}
+	void year_equals_helper(Node* _root, size_t x)
+	{
+		if (_root == nullptr) return;
+		if (_root->data == x)
+		{
+			insert(_root->data);
+			if (_root->left != nullptr) year_equals_helper(_root->left, x); //so it can check duplicates
+			if (_root->right != nullptr) year_equals_helper(_root->right, x);
+		}
+
+		if (_root->left != nullptr)
+		{
+			if (_root->data > x)
+				year_equals_helper(_root->left, x);
+		}
+		if (_root->right != nullptr)
+		{
+			if (_root->data < x)
+				year_equals_helper(_root->right, x);
+		}
+	}
+
+	void insert_to_list_helper(Node* root, std::list<std::string> playlist)
+	{
+		if (root != nullptr)
+		{
+			insert_to_list_helper(root->left, playlist);
+			playlist.push_back(root->data.get_name());
+			insert_to_list_helper(root->right, playlist);
+		}
+	}
 
 public:
 	AVLTree() : root(nullptr) {}
@@ -359,64 +475,14 @@ public:
 	{
 		rating_bigger_helper(other.root, x);
 	}
-	void rating_bigger_helper(Node* _root, double x)
-	{
-		if (_root == nullptr) return;
-		if (_root->data > x) insert(_root->data);
-
-		if (_root->left != nullptr)
-		{
-			if (_root->left->data > x)
-				year_bigger_helper(_root->left, x);
-		}
-		if (_root->right != nullptr)
-		{
-			if (_root->right->data > x)
-				year_bigger_helper(_root->right, x);
-		}
-	}
-
 	void genre_plus(std::string& x, const AVLTree& other) //works !!!WHITE SPACES!!!
 	{
 		genre_plus_helper(other.root, x);
 	}
-	void genre_plus_helper(Node* _root, std::string& x) 
-	{
-		if (_root == nullptr) return;
-		if (_root->data == x)
-		{
-			insert(_root->data);
-			if (_root->left != nullptr) genre_plus_helper(_root->left, x); //so it can check duplicates
-			if (_root->right != nullptr) genre_plus_helper(_root->right, x);
-		}
-
-		if (_root->left != nullptr)
-		{
-			if (_root->data > x || _root->left->data == x) // || catches the case where 2 duplicates are split left/right
-				genre_plus_helper(_root->left, x);
-		}
-		if (_root->right != nullptr)
-		{
-			if (_root->data < x || _root->right->data == x)
-				genre_plus_helper(_root->right, x);
-		}
-	}
-
 	void genre_minus(std::string& x, const AVLTree& other) //works !!!WHITE SPACES!!!
 	{
 		genre_minus_helper(other.root, x);
 	}
-	void genre_minus_helper(Node* _root, std::string& x)
-	{
-		if (_root == nullptr) return;
-		if (_root->data != x)
-			insert(_root->data);
-
-		if (_root->left != nullptr) genre_minus_helper(_root->left, x); //so it can check duplicates
-		if (_root->right != nullptr) genre_minus_helper(_root->right, x);
-
-	}
-
 	void genres_fav(std::unordered_set<std::string>& genres, const AVLTree& other)
 	{
 		std::unordered_set<std::string > ::iterator it;
@@ -426,74 +492,23 @@ public:
 			genre_plus(x, other);
 		}
 	}
-
 	void year_bigger(size_t x, const AVLTree& other) //works
 	{
 		
 		year_bigger_helper(other.root, x);
 		
 	}
-	void year_bigger_helper(Node* _root, size_t x)
-	{
-		if (_root == nullptr) return;
-		if (_root->data > x) insert(_root->data);
-
-		if (_root->left != nullptr)
-		{
-			if (_root->left->data > x)
-				year_bigger_helper(_root->left, x);
-		}
-		if (_root->right != nullptr)
-		{
-			if (_root->right->data > x)
-				year_bigger_helper(_root->right, x);
-		}
-	}
-
 	void year_smaller(size_t x, const AVLTree& other) //works
 	{
 		year_smaller_helper(other.root, x);
 	}
-	void year_smaller_helper(Node* _root, size_t x)
-	{
-		if (_root == nullptr) return;
-		if (_root->data < x) insert(_root->data);
-
-		if (_root->left != nullptr)
-		{
-			if (_root->left->data < x)
-				year_smaller_helper(_root->left, x);
-		}
-		if (_root->right != nullptr)
-		{
-			if (_root->right->data < x)
-				year_smaller_helper(_root->right, x);
-		}
-	}
-
 	void year_equals(size_t x, const AVLTree& other) //works
 	{
 		year_equals_helper(other.root, x);
 	}
-	void year_equals_helper(Node* _root, size_t x)
-	{
-		if (_root == nullptr) return;
-		if (_root->data == x)
-		{
-			insert(_root->data);
-			if (_root->left != nullptr) year_equals_helper(_root->left, x); //so it can check duplicates
-			if (_root->right != nullptr) year_equals_helper(_root->right, x);
-		}
 
-		if (_root->left != nullptr)
-		{
-			if (_root->data > x)
-				year_equals_helper(_root->left, x);
-		}
-		if (_root->right != nullptr)
-		{
-			if (_root->data < x)
-				year_equals_helper(_root->right, x);
-		}
+	void insert_to_list(std::list<std::string> playlist)
+	{
+		insert_to_list_helper(root, playlist);
 	}
 };
