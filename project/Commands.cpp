@@ -3,8 +3,6 @@
 //#include "Library.h"
 #include <string>
 
-
-
 //--general--
 void Commands::welcome()
 {
@@ -33,8 +31,22 @@ void Commands::sign_in(Library& lib)
 void Commands::sign_in_helper(Library& lib, const std::string& un, const std::string& pw)
 {
 	//checks in file
-	User user;//func load_user() -> set data from file
-	lib.add_user(user);
+	std::ifstream file("users.txt");
+	if (file.is_open())
+	{
+		while (!file.eof())
+		{
+			User user;
+			file >> user; //load data from file
+			if (user.check_username_password(un, pw)) 
+			{
+				lib.set_user(user); //check?
+			}
+		}
+		//if not found: cout<<"wrong data"; (flag)
+		file.close();
+	}
+
 }
 
 void Commands::sign_up(Library& lib)
@@ -52,13 +64,14 @@ void Commands::sign_up(Library& lib)
 void Commands::sign_up_helper(Library& lib, const std::string& un, const std::string& pw)
 {
 	User new_user(un, pw);
-	lib.add_user(new_user);
-	//change file
+	lib.set_user(new_user);
+	//no//change in file yet
 }
 
 void Commands::change_data(Library& lib)
 {
-	std::string input;
+	//may change command to char or string (user may enter 1. not just 1)
+	std::string config; //configuration
 	int command = 0; //may not be int
 	std::cout <<
 		"Enter number of command: \n" <<
@@ -73,69 +86,62 @@ void Commands::change_data(Library& lib)
 	if (command == 1)
 	{
 		std::cout << "Enter new username: ";
-		std::cin >> input;
+		std::cin >> config;
 		//validation
 	}
 	else if (command == 2)
 	{
 		//~repeat old
 		std::cout << "Enter new password: ";
-		std::cin >> input;
+		std::cin >> config;
 		//validation
 	}
 	else if (command == 3)
 	{
 		std::cout << "Enter new full name: ";
-		std::getline(std::cin, input);
+		std::getline(std::cin, config);
 		//validation
 	}
 	else if (command == 4)
 	{
 		std::cout << "Enter new birth date: ";
-		std::cin >> input;
+		std::cin >> config;
 		//validation
 	}
 	else if (command == 5) 
 	{
 		std::cout << "Enter genre you want to add: ";
-		std::getline(std::cin, input);
+		std::getline(std::cin, config);
 		//validation
 	}
 	else if (command == 6)
 	{
 		std::cout << "Enter genre you want to remove: ";
-		std::getline(std::cin, input);
+		std::getline(std::cin, config);
 		//validation
 	}
 
-	change_data_helper(lib, command, input);
+	//check here for whitespaces(before or after)
+	change_data_helper(lib, command, config);
 }
-void Commands::change_data_helper(Library& lib, int choice, const std::string& input)
+void Commands::change_data_helper(Library& lib, int choice, const std::string& config)
 {
-	Playlist playlist;
-	if (choice == 1)
+	//switch case => faster than if else
+	switch (choice)
 	{
-		lib.get_user().set_username(input);
-	}
-	else if(choice == 2)
-	{
-		lib.get_user().set_password(input);
-	}
-	else if (choice == 3)
-	{ 
-		lib.get_user().set_full_name(input);
-	}
-	else if (choice == 4)
-	{ 
-		lib.get_user().set_birth_date(input);
-	}
-	else if (choice == 5) 
-	{
-		lib.get_user().add_fav_genre(input);
-	}
-	else if (choice == 6)
-	{
-		lib.get_user().remove_fav_genre(input);
+	case 1:
+		lib.get_user().set_username(config); break;
+	case 2:
+		lib.get_user().set_password(config); break;
+	case 3:
+		lib.get_user().set_full_name(config); break;
+	case 4:
+		lib.get_user().set_birth_date(config); break;
+	case 5:
+		lib.get_user().add_fav_genre(config); break;
+	case 6:
+		lib.get_user().remove_fav_genre(config); break;
+	//default?
 	}
 }
 
@@ -171,15 +177,16 @@ void Commands::rate_song(Library& lib)
 	int rate = 0;
 	std::cout << "Enter song: ";
 	std::cin >> name;
-	std::cout << "Enter rating: ";
+	std::cout << "Enter rating: ";// 1-6 ? 
 	std::cin >> rate;
 	//validation
 	rate_song_helper(lib, name, rate);
 }
 void Commands::rate_song_helper(Library& lib, const std::string& name, int rate)
 {
-	//lib.get_songs(). SEARCH BY NAME
-	//song.set_rating(rate);
+	//original all_songs must be always sorted by name!
+	lib.get_songs().find(name)->data.set_rating(rate);
+
 }
 
 //--playlist--
@@ -200,9 +207,11 @@ void Commands::generate_playlist(Library& lib)
 }
 void Commands::generate_playlist_helper(Library& lib, const std::string& input)
 {
-	Expression expr(input);
+	//FIX!
+
+	/*Expression expr(input);
 	AVLTree playlist = expr.do_expression(lib); //parses the input and creates tree with songs
-	playlist.inorder();
+	playlist.inorder();*/
 	//sort by name
 	//create DLList and add it to Playlist
 }
