@@ -41,6 +41,9 @@ public:
 	void remove_fav_genre(const std::string& genre);
 	void add_playlist(const Playlist& other);
 
+	bool is_playlist(const std::string & name);
+	Playlist& get_playlist(const std::string& name);
+
 	friend std::ostream& operator<< (std::ostream& out, User& user);
 	friend std::istream& operator>> (std::istream& in, User& user);
 };

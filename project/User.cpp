@@ -103,6 +103,27 @@ void User::add_playlist(const Playlist& other)
 	playlists.push_back(other);
 }
 
+
+bool User::is_playlist(const std::string& name)
+{
+	for (auto i : playlists)
+	{
+		if (i.get_name() == name)
+			return true;
+	}
+	return false;
+}
+Playlist& User::get_playlist(const std::string& name)
+{
+	for (auto i : playlists)
+	{
+		if (i.get_name() == name)
+			return i;
+	}
+}
+
+
+
 std::ostream& operator<< (std::ostream& out, User& user)
 {
 	out << user.username; out << "\n";
