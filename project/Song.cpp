@@ -110,8 +110,8 @@ std::istream& operator >> (std::istream& in, Song& song)
 	std::getline(in, song.artist);
 	std::getline(in, song.genre);
 	std::getline(in, song.album);
-	in >> song.release_year; in.get();
-	in >> song.rating.first; in >> song.rating.second; in.get();
+	in >> song.release_year; in.get(); //new line
+	in >> song.rating.first; in >> song.rating.second; in.get(); //new line
 	return in;
 }
 
