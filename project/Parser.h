@@ -6,7 +6,6 @@
 #include <sstream>
 //:)))))))))))))
 //change enum to enum class
-//re-read the whole code!
 
 class Command
 {
@@ -182,8 +181,8 @@ private:
         std::stringstream ss(st);
         while (std::getline(ss, st, delimeter)) //reads and splits: command && command...
         {
-            std::string str = ss.str();//inache dava problem
-            Command co(str);
+            //std::string str = ss.str();//inache dava problem
+            Command co(st);
             q_co.push(co); //pushing it parsed
         }
     }
