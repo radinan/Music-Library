@@ -3,7 +3,6 @@
 #include <string>
 #include <fstream>
 
-//added default constructor
 
 //Library::Library(const AVLTree& other) : all_songs(other){}
 Library::Library() 
@@ -39,6 +38,23 @@ AVLTree& Library::get_songs()
 }
 
 
+void Library::all_songs_info()
+{
+	//search every song's name in the tree and cout info
+	for (auto const& i : curr_playlist.get_songs())
+	{
+		all_songs.find(i)->data.song_info();
+	}
+}
+bool Library::check_playlist(const std::string& name)
+{
+	return (curr_playlist.get_name() == name);
+}
+bool Library::is_loaded() //for playlist
+{
+	return loaded_pl;
+}
+
 
 void Library::set_user(const User& other)
 {
@@ -46,11 +62,14 @@ void Library::set_user(const User& other)
 }
 void Library::set_playlist(const Playlist& other)
 {
+	//add to curr_user!
 	curr_playlist = other;
+	loaded_pl = 1;
 }
 
 void Library::add_song(const Song& other)
 {
 	all_songs.insert(other);
 }
+
 
