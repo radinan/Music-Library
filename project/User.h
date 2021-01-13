@@ -5,7 +5,7 @@
 #include "Playlist.h"
 
 
-class User //validaciq v setterite?
+class User //validation inside setters?
 {
 private:
 	std::string username; 
@@ -32,7 +32,10 @@ public:
 	void set_password(const std::string& _password);
 	void set_full_name(const std::string& _full_name);
 	void set_birth_date(const std::string& _birth_date);
+
 	const std::unordered_set<std::string>& get_fav_genres() const; //const& so not being changed
+	
+	bool check_username_password(const std::string& _username, const std::string& _password);
 
 	void add_fav_genre(const std::string& genre);
 	void remove_fav_genre(const std::string& genre);

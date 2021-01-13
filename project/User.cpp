@@ -84,6 +84,12 @@ const std::unordered_set<std::string>& User::get_fav_genres() const
 }
 
 
+
+bool User::check_username_password(const std::string& _username, const std::string& _password)
+{
+	return (username == _username && password == _password);
+}
+
 void User::add_fav_genre(const std::string& genre)
 {
 	fav_genres.insert(genre);
