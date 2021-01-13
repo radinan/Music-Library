@@ -1,4 +1,5 @@
 #include "User.h"
+#include <sstream>
 
 void User::copy(const User& other)
 {
@@ -7,20 +8,21 @@ void User::copy(const User& other)
 	full_name = other.full_name;
 	birth_date = other.birth_date;
 	fav_genres = other.fav_genres;
-	//playlist
+	playlists = other.playlists;
 }
-void User::clear()
+void User::clear() //is this necessary?
 {
 	username.clear();
 	password.clear();
 	full_name.clear();
 	birth_date.clear();
 	fav_genres.clear();
-	//playlist
+	playlists.clear();
 }
 
-User::User() //they have their own default constructors; should I initialize them?
+User::User() //they have their own default constructors;
 {
+	/*
 	//or without reserve?
 
 	username.reserve(20);
@@ -33,7 +35,7 @@ User::User() //they have their own default constructors; should I initialize the
 	//birth_date = "";
 	//fav_genres?
 	//playlists?
-
+	*/
 } 
 User::User(const User& other) //copy
 {
@@ -82,13 +84,74 @@ const std::unordered_set<std::string>& User::get_fav_genres() const
 }
 
 
-
 void User::add_fav_genre(const std::string& genre)
 {
 	fav_genres.insert(genre);
 }
 void User::remove_fav_genre(const std::string& genre)
 {
-	//if(fav_genres.find(genre) != fav_genres.end())
 	fav_genres.erase(genre);
+}
+void User::add_playlist(const Playlist& other)
+{
+	playlists.push_back(other);
+}
+
+std::ostream& operator<< (std::ostream& out, User& user)
+{
+	out << user.username; out << "\n";
+	out << user.password; out << "\n";
+	out << user.full_name; out << "\n";
+	out << user.birth_date; out << "\n";
+
+	std::unordered_set<std::string>::iterator it = user.fav_genres.begin();
+	if (it != user.fav_genres.end()) 	//fixed problem: genre+genre+genre+ 
+	{
+		out << *it; //first
+		++it;
+	}
+	for (; it != user.fav_genres.end(); ++it)
+	{
+		out << "+" << *it;  //first + second ...
+	}
+	out << "\n";
+
+	std::vector<Playlist>::size_type sz = user.playlists.size();
+	int i = 0;
+	for (; i < sz - 1; ++i)
+	{
+		out << user.playlists[i] << "~";
+	}
+	out << user.playlists[i];
+
+	return out;
+}
+std::istream& operator>> (std::istream& in, User& user)
+{
+	in >> user.username; in.get();
+	in >> user.password; in.get();
+	std::getline(in, user.full_name);
+	in >> user.birth_date; in.get();
+	//genres:
+	std::string line;
+	std::getline(in, line); //saving the whole line into a string
+	std::istringstream ss(line);
+	while (std::getline(ss, line, '+')) //splitting
+	{
+		user.fav_genres.insert(line);
+	}
+
+	//playlists
+	std::string line1;// = "name|song+song~name|song+song+song";
+	std::getline(in, line1);
+	std::istringstream ss1(line1);
+	while (std::getline(ss1, line1, '~')) //name|song+song
+	{
+		//std::string playlist = line1;
+		Playlist pl;
+		pl.load_playlist(line1);
+		user.add_playlist(pl);
+	}
+
+	return in;
 }
