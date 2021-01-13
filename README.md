@@ -26,8 +26,7 @@ Overall: pay attention to const and &
 <br>  4.3 const std::string& in the operator overloading?
 <br>  
 <br>5. Library
-<br>  5.1 check all_songs
-<br>  5.2 big 4
+<br>  5.1 all_songs_info
 <br>
 <br>6. Playlist
 <br>  6.1 add Linked list (singly or doubly)
