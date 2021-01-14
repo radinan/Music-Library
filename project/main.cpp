@@ -57,7 +57,8 @@ int main()
 	tree.insert(song4);
 	tree.insert(song5);
 
-
+	/*
+	//TEST Playlist funcs in tree
 	tree.find("a")->data.set_rating(4);
 	tree.find("b")->data.set_rating(4);
 
@@ -70,20 +71,21 @@ int main()
 	AVLTree emp;
 	//std::string str = "a";
 	cpy.year_bigger(1, emp);
-	cpy.inorder();
+	cpy.inorder();*/
 
 
-
-
-	//Library lib(tree);//created library
+	/*
+	//PLAYLIST test check
+	Library lib(tree);//created library
 	//Commands::welcome();
 	//Commands::help();
-	//Commands::sign_up(lib); //lib->curr_user
+	Commands::sign_up(lib); //lib->curr_user
 	//Commands::change_data(lib);
 	//Commands::help();
 	//Commands::add_song(lib);
 	//Commands::rate_song(lib);
-	//Commands::generate_playlist(lib);
+	Commands::generate_playlist(lib);
+	*/
 
-	//std::cout << "END";
+	std::cout << "END";
 }

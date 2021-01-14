@@ -19,14 +19,14 @@ void Song::clear()
 	artist.clear();
 	genre.clear();
 	album.clear();
-	release_year = 0;
-	rating.first = 0;
-	rating.second = 0;
+	//release_year = 0; //they're going to be freed anyway
+	//rating.first = 0;
+	//rating.second = 0;
 }
 //constructors
 Song::Song()
 {
-	name.reserve(20);
+	/*name.reserve(20);
 	name = "";
 	artist.reserve(20);
 	artist = "";
@@ -34,13 +34,13 @@ Song::Song()
 	genre = "";
 	album.reserve(20);
 	album = "";
-	//release_year = 0;
+	//release_year = 0;*/
 
 	rating.first = 0;
 	rating.second = 0;
 }
 Song::Song(const std::string& _name, const std::string& _artist, const std::string& _genre, 
-		   const std::string& _album, int _release_year)
+		   const std::string& _album, size_t _release_year)
 {
 	name = _name;
 	artist = _artist;
@@ -66,7 +66,7 @@ Song::~Song()
 }
 
 //setters and getters
-void Song::set_rating(int rate)
+void Song::set_rating(size_t rate)
 {
 	++rating.first;
 	rating.second += rate;
@@ -76,7 +76,7 @@ double Song::get_rating() const
 	if (rating.first == 0)
 		return 0;
 	else
-		return (double)rating.second / rating.first; //casting int->double
+		return (double)rating.second / rating.first; //casting size_t->double
 }
 std::string Song::get_name() const
 {

@@ -98,7 +98,7 @@ void User::remove_fav_genre(const std::string& genre)
 {
 	fav_genres.erase(genre);
 }
-void User::add_playlist(const Playlist& other)
+void User::add_playlist(Playlist& other)
 {
 	playlists.push_back(other);
 }

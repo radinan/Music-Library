@@ -22,13 +22,13 @@ private:
     {
         //perfect case with valid input
         std::string one, two, three; //allowing further validation inside this func
-        std::istringstream ss(co);
-        ss >> one;
-        ss >> two;
-        ss.get(); //white space
-        std::getline(ss, three);
+        std::istringstream ss2(co);
+        ss2 >> one;
+        ss2 >> two;
+        ss2.get(); //white space
+        std::getline(ss2, three);
 
-        //think about switch case
+        //switch case not suitable for strings
         if (one == "rating")
         {
             Command::type = Type::rating;
@@ -84,7 +84,7 @@ public:
     {
         parse_command();
     }
-
+    //think about returning empty tree
     AVLTree& do_command(Library& lib, AVLTree& original) //return type???
     {
         switch (type) //depending on the type and operator calling diff funcs
@@ -95,9 +95,9 @@ public:
             case Op::bigger: //rating > [opt]
             {
                 Song::priority = Priority::rating;
-                AVLTree prior;
-                prior.rating_bigger(stod(opt), original); //stod converts string into double (covers white space)
-                return prior;
+                AVLTree prior; //empty tree for the func
+                original.rating_bigger(stod(opt), prior); //stod converts string into double (covers white space)
+                return original;
             }
             }
         case Type::genre:
@@ -107,23 +107,23 @@ public:
             {
                 Song::priority = Priority::genre;
                 AVLTree prior;
-                prior.genre_plus(opt, original);
-                return prior;
+                original.genre_plus(opt, prior);
+                return original;
             }
             case Op::minus:
             {
                 Song::priority = Priority::genre;
                 AVLTree prior;
-                prior.genre_minus(opt, original);
-                return prior;
+                original.genre_minus(opt, prior);
+                return original;
             }
             case Op::only:
             {
                 Song::priority = Priority::genre;
                 AVLTree prior;
                 std::unordered_set<std::string> genres = lib.get_user().get_fav_genres();
-                prior.genres_fav(genres, original);
-                return prior;
+                original.genres_fav(genres, prior);
+                return original;
             }
             }
         case Type::year:
@@ -132,36 +132,36 @@ public:
             case Op::equals:
             {
                 Song::priority = Priority::release_year;
-                AVLTree prior;
                 if (stoi(opt) > 0)
                 {
                     size_t x = stoi(opt);
-                    prior.year_equals(x, original);
-                    return prior;
+                    AVLTree prior; //empty tree
+                    original.year_equals(x, prior);
+                    return original;
                 }
                 else break; //default?
             }
             case Op::bigger:
             {
                 Song::priority = Priority::release_year;
-                AVLTree prior;
                 if (stoi(opt) > 0)
                 {
                     size_t x = stoi(opt);
-                    prior.year_bigger(x, original);
-                    return prior;
+                    AVLTree prior;
+                    original.year_bigger(x, prior);
+                    return original;
                 }
                 else break;
             }
             case Op::smaller:
             {
                 Song::priority = Priority::release_year;
-                AVLTree prior;
                 if (stoi(opt) > 0)
                 {
                     size_t x = stoi(opt);
-                    prior.year_smaller(x, original);
-                    return prior;
+                    AVLTree prior;
+                    original.year_smaller(x, prior);
+                    return original;
                 }
                 else break;
             }
@@ -178,10 +178,9 @@ private:
     void parse_statement() //adds to queue
     {
         char delimeter('&');
-        std::stringstream ss(st);
-        while (std::getline(ss, st, delimeter)) //reads and splits: command && command...
+        std::stringstream ss1(st);
+        while (std::getline(ss1, st, delimeter)) //reads and splits: command && command...
         {
-            //std::string str = ss.str();//inache dava problem
             Command co(st);
             q_co.push(co); //pushing it parsed
         }
@@ -194,13 +193,11 @@ public:
         parse_statement();
     }
     ~Statement() {}
-    AVLTree& do_statement(Library& lib) //bool node* or tree&
+    AVLTree& do_statement(Library& lib, AVLTree& original) //bool node* or tree&
     {
-        AVLTree original(lib.get_songs());
-
         while (!q_co.empty()) //all elements
         {
-            original = q_co.front().do_command(lib, original); //change the playlist tree
+            q_co.front().do_command(lib, original); //change the playlist tree
             if (original.is_empty()) //doesn't find matching songs
                 break;
             q_co.pop(); //get next command
@@ -226,22 +223,27 @@ private:
     }
 public:
     Expression() {}
-    Expression(const std::string& _input) 
-        : input(_input) 
+    Expression(const std::string& _input)
+        : input(_input)
     {
         parse_expression();
     }
     ~Expression() {}
 
-    AVLTree& do_expression(Library& lib)
+    AVLTree& do_expression(Library& lib, AVLTree& main)
     {
+
         while (!q_st.empty()) //all elements
         {
-            AVLTree pl_tree = q_st.front().do_statement(lib); //playlist tree
-            if (pl_tree.is_empty()) //if no tree for the criteria => empty
+            AVLTree original(main);
+            q_st.front().do_statement(lib, original); //playlist tree
+            if (original.is_empty()) //if no tree for the criteria => empty
                 q_st.pop(); //check next statement
             else
-                return pl_tree; //return the playlist
+            {
+                main = original;
+                return main; //return the playlist
+            }
         }
         //return empty?
     }

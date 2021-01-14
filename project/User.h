@@ -39,7 +39,7 @@ public:
 
 	void add_fav_genre(const std::string& genre);
 	void remove_fav_genre(const std::string& genre);
-	void add_playlist(const Playlist& other);
+	void add_playlist(Playlist& other);
 
 	bool is_playlist(const std::string & name);
 	Playlist& get_playlist(const std::string& name);

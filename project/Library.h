@@ -15,8 +15,8 @@ private: //!!!think about copies and whether you want to change the original use
 	AVLTree all_songs; //in the whole library 
 					   //the original avl tree with all songs is always sorted by name!
 public:
-	//Library(const AVLTree& other);
 	Library();
+	Library(const AVLTree& other); //constructor with the loaded tree
 	~Library();
 
 	User& get_user();
@@ -28,7 +28,7 @@ public:
 	bool is_loaded(); //for playlist
 
 	void set_user(const User& other); //loads user
-	void set_playlist(const Playlist& other); //loads playlist
+	void set_playlist(Playlist& other); //loads playlist
 	void add_song(const Song& other); //adds song to the tree
 
 

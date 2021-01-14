@@ -4,7 +4,6 @@
 #include <fstream>
 
 
-//Library::Library(const AVLTree& other) : all_songs(other){}
 Library::Library() 
 {
 	//loads all song data to the file
@@ -22,6 +21,7 @@ Library::Library()
 	else
 		std::cout << "Unable to open file \n";
 }
+Library::Library(const AVLTree& other) : all_songs(other) {}
 Library::~Library() {}
 
 User& Library::get_user() 
@@ -60,10 +60,11 @@ void Library::set_user(const User& other)
 {
 	curr_user = other;
 }
-void Library::set_playlist(const Playlist& other)
+void Library::set_playlist(Playlist& other)
 {
-	//add to curr_user!
 	curr_playlist = other;
+	//adding to curr_user:
+	curr_user.add_playlist(curr_playlist);
 	loaded_pl = 1;
 }
 

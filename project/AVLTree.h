@@ -359,7 +359,7 @@ private:
 		year_equals_helper(other, x, root->right);
 	}
 
-	void insert_to_list_helper(Node* root, std::list<std::string> playlist)
+	void insert_to_list_helper(Node* root, std::list<std::string>& playlist)
 	{
 		if (root != nullptr)
 		{
@@ -474,7 +474,7 @@ public:
 		*this = other;
 	}
 
-	void insert_to_list(std::list<std::string> playlist)
+	void insert_to_list(std::list<std::string>& playlist)
 	{
 		insert_to_list_helper(root, playlist);
 	}
