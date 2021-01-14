@@ -237,7 +237,7 @@ void Commands::generate_playlist(Library& lib)
 {
 	//&& ||
 	std::string input;
-	std::cout << "Choose criteria (more than 1, with '&&' or '||'): \n" <<
+	std::cout << "Choose criteria (more than 1, with '&' or '|'): \n" <<
 		"1. rating > ... \n" <<
 		"2. genre + ... \n" <<
 		"3. genre - ... \n" <<
@@ -250,19 +250,22 @@ void Commands::generate_playlist(Library& lib)
 	std::getline(std::cin, input); // [command] (value) && [command] (value) || [command] (value)
 	generate_playlist_helper(lib, input);
 }
-void Commands::generate_playlist_helper(Library& lib, const std::string& input)
+//only with correct data for now!!!
+void Commands::generate_playlist_helper(Library& lib, const std::string& input) 
 {
 	Expression expr(input);
-	AVLTree pl_tree = expr.do_expression(lib); //parses the input and creates tree with songs
-	//playlist.inorder(); //to check if it works properly
-	Song::priority = Priority::name; //to sort the playlist in alphabetical order
-	AVLTree alph(pl_tree); //sorted playlist
+	AVLTree main(lib.get_songs());
+	expr.do_expression(lib, main); //parses the input and creates tree with songs
+	//main.inorder(); //to check if it works -> it does ;)
 
-	std::list<std::string> list;
-	alph.insert_to_list(list);
-	Playlist playlist;		 //creating playlist
-	playlist.set_songs(list);//with chosen songs
-	lib.set_playlist(playlist); //setting it in the library (auto setting to the user)
+	Song::priority = Priority::name; 
+	AVLTree alph(main); //sorted playlist in alphabetical order
+
+	std::list<std::string> list; //empty
+	alph.insert_to_list(list);	 //fill with songs' names
+	Playlist playlist;			 //creating playlist
+	playlist.set_songs(list);   
+	lib.set_playlist(playlist); //setting it in the library (auto setting to the curr_user)
 }
 
 
@@ -273,7 +276,7 @@ void Commands::save_playlist(Library& lib)
 	std::cin >> input;
 	save_playlist_helper(lib,input);
 }
-void Commands::save_playlist_helper(Library& lib, const std::string& name)
+void Commands::save_playlist_helper(Library& lib, const std::string& name) //fix to be changed in user also(aka check references)
 {
 	if (lib.is_loaded()) //if it's loaded in library
 		lib.get_playlist().set_name(name);
@@ -288,7 +291,7 @@ void Commands::load_playlist(Library& lib)
 	std::cin >> input;
 	load_playlist_helper(lib, input);
 }
-void Commands::load_playlist_helper(Library& lib, const std::string& name)
+void Commands::load_playlist_helper(Library& lib, const std::string& name) //to work, must fix load-func first
 {
 	if (!lib.check_playlist(name)) //checks if it's not already loaded
 	{
