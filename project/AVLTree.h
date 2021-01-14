@@ -31,17 +31,17 @@ private:
 	};
 	Node* root;
 private:
-	Node* copy(Node* other_root)
+	Node* copy(Node* other_root,Node* curr)
 	{
 		//empty tree
 		if (other_root == nullptr)
 			return nullptr;
 		//else
-		Node* new_Node = new Node(other_root->data); //copying node
-		new_Node->left = copy(other_root->left);	 //copying children
-		new_Node->right = copy(other_root->right);
+		curr = new Node(other_root->data); //copying node
+		curr->left = copy(other_root->left, curr->left);	 //copying children
+		curr->right = copy(other_root->right, curr->right);
 
-		return root; //returning pointer to copied tree
+		return curr; //returning pointer to copied tree
 	}
 	void del(Node* root)
 	{
@@ -296,105 +296,67 @@ private:
 	}
 
 	//helpers (playlist)
-	void rating_bigger_helper(Node* _root, double x)
+	void rating_bigger_helper(AVLTree& other, double x, Node* root)
 	{
-		if (_root == nullptr) return;
-		if (_root->data > x) insert(_root->data);
-
-		if (_root->left != nullptr)
-		{
-			if (_root->left->data > x)
-				year_bigger_helper(_root->left, x);
-		}
-		if (_root->right != nullptr)
-		{
-			if (_root->right->data > x)
-				year_bigger_helper(_root->right, x);
-		}
-	}
-	void genre_plus_helper(Node* _root, std::string& x)
-	{
-		if (_root == nullptr) return;
-		if (_root->data == x)
-		{
-			insert(_root->data);
-			if (_root->left != nullptr) genre_plus_helper(_root->left, x); //so it can check duplicates
-			if (_root->right != nullptr) genre_plus_helper(_root->right, x);
-		}
-
-		if (_root->left != nullptr)
-		{
-			if (_root->data > x || _root->left->data == x) // || catches the case where 2 duplicates are split left/right
-				genre_plus_helper(_root->left, x);
-		}
-		if (_root->right != nullptr)
-		{
-			if (_root->data < x || _root->right->data == x)
-				genre_plus_helper(_root->right, x);
-		}
-	}
-	void genre_minus_helper(Node* _root, std::string& x)
-	{
-		if (_root == nullptr) return;
-		if (_root->data != x)
-			insert(_root->data);
-
-		if (_root->left != nullptr) genre_minus_helper(_root->left, x); //so it can check duplicates
-		if (_root->right != nullptr) genre_minus_helper(_root->right, x);
+		if (root == nullptr) 
+			return;
+		
+		rating_bigger_helper(other, x, root->left);
+		if (root->data > x)
+			other.insert(root->data);
+		rating_bigger_helper(other, x, root->right);
 
 	}
-	void year_bigger_helper(Node* _root, size_t x)
+	void genre_plus_helper(AVLTree& other, std::string& x, Node* root)
 	{
-		if (_root == nullptr) return;
-		if (_root->data > x) insert(_root->data);
+		if (root == nullptr) 
+			return;
 
-		if (_root->left != nullptr)
-		{
-			if (_root->left->data > x)
-				year_bigger_helper(_root->left, x);
-		}
-		if (_root->right != nullptr)
-		{
-			if (_root->right->data > x)
-				year_bigger_helper(_root->right, x);
-		}
+		genre_plus_helper(other, x, root->left);
+		if (root->data == x)
+			other.insert(root->data);
+		genre_plus_helper(other, x, root->right);
 	}
-	void year_smaller_helper(Node* _root, size_t x)
+	void genre_minus_helper(AVLTree& other, std::string& x, Node* root)
 	{
-		if (_root == nullptr) return;
-		if (_root->data < x) insert(_root->data);
+		if (root == nullptr)
+			return;
 
-		if (_root->left != nullptr)
-		{
-			if (_root->left->data < x)
-				year_smaller_helper(_root->left, x);
-		}
-		if (_root->right != nullptr)
-		{
-			if (_root->right->data < x)
-				year_smaller_helper(_root->right, x);
-		}
+		genre_minus_helper(other, x, root->left);
+		if (root->data != x)
+			other.insert(root->data);
+		genre_minus_helper(other, x, root->right);
+
 	}
-	void year_equals_helper(Node* _root, size_t x)
+	void year_bigger_helper(AVLTree& other, size_t x, Node* root)
 	{
-		if (_root == nullptr) return;
-		if (_root->data == x)
-		{
-			insert(_root->data);
-			if (_root->left != nullptr) year_equals_helper(_root->left, x); //so it can check duplicates
-			if (_root->right != nullptr) year_equals_helper(_root->right, x);
-		}
+		if (root == nullptr)
+			return;
 
-		if (_root->left != nullptr)
-		{
-			if (_root->data > x)
-				year_equals_helper(_root->left, x);
-		}
-		if (_root->right != nullptr)
-		{
-			if (_root->data < x)
-				year_equals_helper(_root->right, x);
-		}
+		year_bigger_helper(other, x, root->left);
+		if (root->data > x)
+			other.insert(root->data);
+		year_bigger_helper(other, x, root->right);
+	}
+	void year_smaller_helper(AVLTree& other, size_t x, Node* root)
+	{
+		if (root == nullptr)
+			return;
+
+		year_smaller_helper(other, x, root->left);
+		if (root->data < x)
+			other.insert(root->data);
+		year_smaller_helper(other, x, root->right);
+	}
+	void year_equals_helper(AVLTree& other, size_t x, Node* root)
+	{
+		if (root == nullptr)
+			return;
+
+		year_equals_helper(other, x, root->left);
+		if (root->data == x)
+			other.insert(root->data);
+		year_equals_helper(other, x, root->right);
 	}
 
 	void insert_to_list_helper(Node* root, std::list<std::string> playlist)
@@ -409,7 +371,7 @@ private:
 
 public:
 	AVLTree() : root(nullptr) {}
-	AVLTree(const AVLTree& other)
+	AVLTree(const AVLTree& other) //may add 2 different constructors (one with flag?)
 	{
 		//root = copy(other.root);
 		root = copy_insert_helper(other.root);
@@ -419,7 +381,7 @@ public:
 		if (this != &other)
 		{
 			del(root);
-			root = copy(other.root);
+			root = copy(other.root, root);
 		}
 		return *this;
 	}
@@ -470,20 +432,24 @@ public:
 		return root == nullptr;
 	}
 
-	//playlist funcs //add const?
-	void rating_bigger(double x, const AVLTree& other) //works
+	//playlist funcs //filters the tree on criteria:
+	void rating_bigger(double x, AVLTree& other) //works
 	{
-		rating_bigger_helper(other.root, x);
+		rating_bigger_helper(other, x, root);
+		*this = other;
 	}
-	void genre_plus(std::string& x, const AVLTree& other) //works !!!WHITE SPACES!!!
+	void genre_plus(std::string& x, AVLTree& other) //works !!!WHITE SPACES!!!
 	{
-		genre_plus_helper(other.root, x);
+		genre_plus_helper(other, x, root);
+		*this = other;
 	}
-	void genre_minus(std::string& x, const AVLTree& other) //works !!!WHITE SPACES!!!
+	void genre_minus(std::string& x, AVLTree& other) //works !!!WHITE SPACES!!!
 	{
-		genre_minus_helper(other.root, x);
+		genre_minus_helper(other, x, root);
+		*this = other;
 	}
-	void genres_fav(std::unordered_set<std::string>& genres, const AVLTree& other)
+	//not tested after the fixes:
+	void genres_fav(std::unordered_set<std::string>& genres, AVLTree& other)
 	{
 		std::unordered_set<std::string > ::iterator it;
 		for (it = genres.begin(); it != genres.end(); ++it)
@@ -492,19 +458,20 @@ public:
 			genre_plus(x, other);
 		}
 	}
-	void year_bigger(size_t x, const AVLTree& other) //works
+	void year_bigger(size_t x, AVLTree& other) //works
 	{
-		
-		year_bigger_helper(other.root, x);
-		
+		year_bigger_helper(other, x, root);
+		*this = other;
 	}
-	void year_smaller(size_t x, const AVLTree& other) //works
+	void year_smaller(size_t x, AVLTree& other) //works
 	{
-		year_smaller_helper(other.root, x);
+		year_smaller_helper(other, x, root);
+		*this = other;
 	}
-	void year_equals(size_t x, const AVLTree& other) //works
+	void year_equals(size_t x, AVLTree& other) //works
 	{
-		year_equals_helper(other.root, x);
+		year_equals_helper(other, x, root);
+		*this = other;
 	}
 
 	void insert_to_list(std::list<std::string> playlist)

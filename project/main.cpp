@@ -25,8 +25,6 @@ int main()
 	tr1.inorder();*/
 
 
-
-
 	/*Song song1("a", "b", "a", "a", 1), song2("A", "B", "a", "a", 5),
 		song3("AA", "BB", "indie", "a", 6), song4("AAA", "BB", "indie", "a", 6),
 		song5("aa", "bb", "heavy metal", "A", 7);
@@ -49,9 +47,9 @@ int main()
 	//Commands::generate_playlist(lib);
 
 	//check search_n
-	Song song1("a", "b", "a", "a", 1), song2("A", "B", "a", "a", 5), song3("AA", "BB", "indie", "a", 6),
-	song4("AAA", "BB", "indie", "a", 6),
-		song5("aaa", "bb", "heavy metal", "A", 7);
+	Song song1("a", "a", "a", "a", 1), song2("b", "b", "b", "b", 2), song3("c", "c", "c", "c", 3),
+		 song4("d", "d", "d", "d", 4), song5("e", "e", "e", "e", 5);
+
 	AVLTree tree;
 	tree.insert(song1);
 	tree.insert(song2);
@@ -59,6 +57,33 @@ int main()
 	tree.insert(song4);
 	tree.insert(song5);
 
-	tree.find("a")->data.set_rating(5);
-	std::cout << tree.find("a")->data.get_rating();
+
+	tree.find("a")->data.set_rating(4);
+	tree.find("b")->data.set_rating(4);
+
+	Song::priority = Priority::rating;
+	AVLTree cpy(tree); //the copy constructor copies all data in a new priority way
+	AVLTree empt;
+	cpy.rating_bigger(3, empt); //delete elements 
+
+	Song::priority = Priority::release_year; //!!don't forget!
+	AVLTree emp;
+	//std::string str = "a";
+	cpy.year_bigger(1, emp);
+	cpy.inorder();
+
+
+
+
+	//Library lib(tree);//created library
+	//Commands::welcome();
+	//Commands::help();
+	//Commands::sign_up(lib); //lib->curr_user
+	//Commands::change_data(lib);
+	//Commands::help();
+	//Commands::add_song(lib);
+	//Commands::rate_song(lib);
+	//Commands::generate_playlist(lib);
+
+	//std::cout << "END";
 }
