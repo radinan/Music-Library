@@ -29,8 +29,8 @@ private:
 	static void sign_up_helper(Library& lib, const std::string& un, const std::string& pw);
 	static void change_data_helper(Library& lib, int choice, const std::string& config);
 	///song helpers///
-	static void add_song_helper(Library& lib, const std::string& name, const std::string& artist, const std::string& genre, const std::string& album, int release_date);
-	static void rate_song_helper(Library& lib, const std::string& name, int rate);
+	static void add_song_helper(Library& lib, const std::string& name, const std::string& artist, const std::string& genre, const std::string& album, size_t release_year);
+	static void rate_song_helper(Library& lib, const std::string& name, size_t rate);
 	///playlist helpers///
 	static void generate_playlist_helper(Library& lib, const std::string& input);
 	static void save_playlist_helper(Library& lib, const std::string& name);

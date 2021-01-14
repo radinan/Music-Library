@@ -3,6 +3,9 @@
 //#include "Library.h"
 #include <string>
 
+//using cin.ignore() before every getline 
+//so the input buffer is cleared of any left over new line characters from the previous input
+
 //--general--
 void Commands::welcome()
 {
@@ -16,7 +19,7 @@ void Commands::help()
 		<< "3. ..... \n";
 }
 
-//--user--
+//--user-- //Y
 void Commands::sign_in(Library& lib)
 {
 	std::string un, pw;
@@ -55,8 +58,11 @@ void Commands::sign_up(Library& lib)
 
 	std::cout << "Enter username: ";
 	std::cin >> un;
+	//std::getline(std::cin, un, ' ');
 	std::cout << "Enter password: ";
 	std::cin >> pw;
+	//std::getline(std::cin, pw, ' ');
+
 	//~~repeat password
 	//validation
 	sign_up_helper(lib, un, pw);
@@ -71,8 +77,7 @@ void Commands::sign_up_helper(Library& lib, const std::string& un, const std::st
 void Commands::change_data(Library& lib)
 {
 	//may change command to char or string (user may enter 1. not just 1)
-	std::string config; //configuration
-	int command = 0; //may not be int
+	int command = 0; //or char
 	std::cout <<
 		"Enter number of command: \n" <<
 		"1. username \n" <<
@@ -83,7 +88,38 @@ void Commands::change_data(Library& lib)
 		"6. remove favourite genres \n";
 	std::cin >> command;
 
-	if (command == 1)
+	std::string config; //configuration
+	switch (command)
+	{
+	case 1:
+		std::cout << "Enter new username: ";
+		std::cin >> config;
+		break;
+	case 2:
+		std::cout << "Enter new password: ";
+		std::cin >> config;
+		break;
+	case 3:
+		std::cout << "Enter new full name: ";
+		std::cin.ignore(); //else getline is not working properly
+		std::getline(std::cin, config);
+		break;
+	case 4:
+		std::cout << "Enter new birth date: ";
+		std::cin >> config;
+		break;
+	case 5:
+		std::cout << "Enter genre you want to add: ";
+		std::cin.ignore(); 
+		std::getline(std::cin, config);
+		break;
+	case 6:
+		std::cout << "Enter genre you want to remove: ";
+		std::cin.ignore(); 
+		std::getline(std::cin, config);
+		break;
+	}
+	/*if (command == 1)
 	{
 		std::cout << "Enter new username: ";
 		std::cin >> config;
@@ -119,7 +155,7 @@ void Commands::change_data(Library& lib)
 		std::cout << "Enter genre you want to remove: ";
 		std::getline(std::cin, config);
 		//validation
-	}
+	}*/
 
 	//check here for whitespaces(before or after)
 	change_data_helper(lib, command, config);
@@ -145,48 +181,55 @@ void Commands::change_data_helper(Library& lib, int choice, const std::string& c
 	}
 }
 
-//--song--
+//--song-- //Y
 void Commands::add_song(Library& lib)
 {
 	std::string name, artist, genre,
 		album;
-	int release_date;
+	size_t release_year;
 	//many inputs
 	std::cout << "Enter name: ";
-	std::cin >> name;
+	std::cin.ignore();
+	std::getline(std::cin, name);
+
 	std::cout << "Enter artist: ";
-	std::cin >> artist;
+	std::getline(std::cin, artist);
+
 	std::cout << "Enter genre: ";
-	std::cin >> genre;
+	std::getline(std::cin, genre);
+
 	std::cout << "Enter album: ";
-	std::cin >> album;
+	std::getline(std::cin, album);
+
 	std::cout << "Enter release date: ";
-	std::cin >> release_date;
+	std::cin >> release_year;
 	//validation
-	add_song_helper(lib, name, artist, genre, album, release_date);
+	add_song_helper(lib, name, artist, genre, album, release_year);
 }
-void Commands::add_song_helper(Library& lib, const std::string& name, const std::string& artist, const std::string& genre, const std::string& album, int release_date)
+void Commands::add_song_helper(Library& lib, const std::string& name, const std::string& artist, const std::string& genre, const std::string& album, size_t release_year)
 {
-	Song song(name, artist, genre, album, release_date);
+	Song song(name, artist, genre, album, release_year);
 	lib.add_song(song); //changes the Tree w all songs
 }
 
 void Commands::rate_song(Library& lib)
 {
 	std::string name;
-	int rate = 0;
+	size_t rate = 0;
+
 	std::cout << "Enter song: ";
-	std::cin >> name;
+	std::cin.ignore();
+	std::getline(std::cin, name);
+
 	std::cout << "Enter rating: ";// 1-6 ? 
 	std::cin >> rate;
 	//validation
 	rate_song_helper(lib, name, rate);
 }
-void Commands::rate_song_helper(Library& lib, const std::string& name, int rate)
+void Commands::rate_song_helper(Library& lib, const std::string& name, size_t rate)
 {
-	//original all_songs must be always sorted by name!
+	//original all_songs is always sorted by name!
 	lib.get_songs().find(name)->data.set_rating(rate);
-
 }
 
 //--playlist--
@@ -195,13 +238,15 @@ void Commands::generate_playlist(Library& lib)
 	//&& ||
 	std::string input;
 	std::cout << "Choose criteria (more than 1, with '&&' or '||'): \n" <<
-		"1. rating higher than \n" <<
-		"2. included genres \n" <<
-		"3. excluded genres \n" <<
-		"4. only favourite genres \n" <<
-		"5. before year \n" <<
-		"6. from year \n" <<
-		"7. after year \n";
+		"1. rating > ... \n" <<
+		"2. genre + ... \n" <<
+		"3. genre - ... \n" <<
+		"4. genre ! \n" <<
+		"5. year > \n" <<
+		"6. year = \n" <<
+		"7. year < \n";
+
+	std::cin.ignore();
 	std::getline(std::cin, input); // [command] (value) && [command] (value) || [command] (value)
 	generate_playlist_helper(lib, input);
 }
