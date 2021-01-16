@@ -46,7 +46,7 @@ int main()
 	*/
 	//Commands::generate_playlist(lib);
 
-	//check search_n
+	//for tests
 	Song song1("a", "a", "a", "a", 1), song2("b", "b", "b", "b", 2), song3("c", "c", "c", "c", 3),
 		 song4("d", "d", "d", "d", 4), song5("e", "e", "e", "e", 5);
 
@@ -74,18 +74,24 @@ int main()
 	cpy.inorder();*/
 
 
-	/*
+	
 	//PLAYLIST test check
 	Library lib(tree);//created library
 	//Commands::welcome();
 	//Commands::help();
-	Commands::sign_up(lib); //lib->curr_user
+	//Commands::sign_up(lib); //lib->curr_user
 	//Commands::change_data(lib);
 	//Commands::help();
 	//Commands::add_song(lib);
 	//Commands::rate_song(lib);
-	Commands::generate_playlist(lib);
-	*/
+	//Commands::generate_playlist(lib);
+	//Commands::change_data(lib);
+	//Commands::change_data(lib);
+	//Commands::save_user_data(lib);
+	//Commands::sign_up(lib);
+	//Commands::change_data(lib);
+	//Commands::save_user_data(lib);
+	Commands::sign_in(lib);
 
 	std::cout << "END";
 }
