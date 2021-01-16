@@ -34,6 +34,7 @@ public:
 	void set_birth_date(const std::string& _birth_date);
 
 	const std::unordered_set<std::string>& get_fav_genres() const; //const& so not being changed
+	std::string get_name(); //by copy
 	
 	bool check_username_password(const std::string& _username, const std::string& _password);
 

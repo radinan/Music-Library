@@ -82,6 +82,11 @@ const std::unordered_set<std::string>& User::get_fav_genres() const
 {
 	return fav_genres;
 }
+std::string User::get_name() //by copy
+{
+	return username;
+}
+
 
 
 
@@ -143,14 +148,20 @@ std::ostream& operator<< (std::ostream& out, User& user)
 	}
 	out << "\n";
 
-	std::vector<Playlist>::size_type sz = user.playlists.size();
-	int i = 0;
-	for (; i < sz - 1; ++i)
+	if (!user.playlists.empty())
 	{
-		out << user.playlists[i] << "~";
-	}
-	out << user.playlists[i];
+		std::vector<Playlist>::size_type sz = user.playlists.size();
 
+		int i = 0;
+		for (; i < sz - 1; ++i) //PROBLEM!
+		{
+			out << user.playlists[i] << "~";
+		}
+		out << user.playlists[i];
+		out << "\n";
+	}
+	else
+		out << "\n";
 	return out;
 }
 std::istream& operator>> (std::istream& in, User& user)

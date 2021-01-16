@@ -98,6 +98,5 @@ std::ostream& operator<< (std::ostream& out, Playlist& playlist)
 	{
 		out << "+" << *it; // + separates different songs' names 
 	}
-
 	return out;
 }
