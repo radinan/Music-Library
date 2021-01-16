@@ -2,6 +2,8 @@
 //#include "User.h"
 //#include "Library.h"
 #include <string>
+#include <fstream>
+#include <stdio.h> //for rename func
 
 //using cin.ignore() before every getline 
 //so the input buffer is cleared of any left over new line characters from the previous input
@@ -19,7 +21,7 @@ void Commands::help()
 		<< "3. ..... \n";
 }
 
-//--user-- //Y
+//--user-- 
 void Commands::sign_in(Library& lib)
 {
 	std::string un, pw;
@@ -67,11 +69,12 @@ void Commands::sign_up(Library& lib)
 	//validation
 	sign_up_helper(lib, un, pw);
 }
-void Commands::sign_up_helper(Library& lib, const std::string& un, const std::string& pw)
+void Commands::sign_up_helper(Library& lib, const std::string& un, const std::string& pw) //add criteria!
 {
+	//if username is free
 	User new_user(un, pw);
 	lib.set_user(new_user);
-	//no//change in file yet
+	save_new_user_helper(lib);
 }
 
 void Commands::change_data(Library& lib)
@@ -166,6 +169,7 @@ void Commands::change_data_helper(Library& lib, int choice, const std::string& c
 	switch (choice)
 	{
 	case 1:
+		save_username_helper(lib, config); //username is used as a unique identificator!
 		lib.get_user().set_username(config); break;
 	case 2:
 		lib.get_user().set_password(config); break;
@@ -181,7 +185,105 @@ void Commands::change_data_helper(Library& lib, int choice, const std::string& c
 	}
 }
 
-//--song-- //Y
+
+void Commands::save_new_user_helper(Library& lib)
+{
+	std::ofstream out("users.txt", std::ios::app); //go at the end of the file (is it a new line?)
+	if (!out.is_open())
+	{
+		std::cout << "Unable to open file.\n";
+		return;
+	}
+	out << lib.get_user();
+	out.close();
+}
+
+void Commands::save_username_helper(Library& lib, const std::string& un)
+{
+	std::cout << "Saving all changes. Please, don't close the window\n";
+	//read from user.txt -> write to user1.txt (check if x == old_username)
+	//delete user.txt
+	//rename user1.txt to user.txt
+	std::string x;
+	std::ifstream in("users.txt");
+	if (!in.is_open())
+	{
+		std::cout << "Unable to open file1\n";
+		return;
+	}
+	std::ofstream out("users1.txt");
+	if (!out.is_open())
+	{
+		std::cout << "Unable to open file2\n";
+		return;
+	}
+	while (!in.eof())
+	{
+		std::getline(in, x);
+		if (x == lib.get_user().get_name())
+		{
+			out << un << "\n";
+		}
+		else
+			out << x << "\n"; //does it get the "\n" ? check!!
+	}
+	in.close();
+	out.close();
+	remove("users.txt");
+	std::rename("users1.txt", "users.txt"); //to remove warning: if(.. == NULL) return;
+	std::cout << "Successfully saved.\n";
+}
+
+void Commands::save_user_data(Library& lib) //not for username!
+{
+	std::cout << "Saving all changes. Please, don't close the window\n";
+	save_user_data_helper(lib);
+}
+void Commands::save_user_data_helper(Library& lib)
+{
+	//read from user.txt -> write to user1.txt 
+	//delete user.txt
+	//rename user1.txt to user.txt
+	std::string x;
+	std::ifstream in("users.txt");
+	if (!in.is_open())
+	{
+		std::cout << "Unable to open file1\n";
+		return;
+	}
+	std::ofstream out("users1.txt");
+	if (!out.is_open())
+	{
+		std::cout << "Unable to open file2\n";
+		return;
+	}
+	while (!in.eof())
+	{
+		std::getline(in, x);
+		if (x == lib.get_user().get_name()) //found the user we want to update
+		{
+			out << lib.get_user();
+			for (int i = 0; i < 5; ++i) //6 new lines of data, but the first is already read 
+			{
+				std::getline(in, x);
+			}
+		}
+		else
+		{
+			out << x <<"\n"; //does it take "\n" ? CHECK!!
+		}
+	}
+	in.close();
+	out.close();
+	remove("users.txt");
+	std::rename("users1.txt", "users.txt"); //to remove warning: if(.. == NULL) return;
+	std::cout << "Successfully saved.\n";
+}
+
+
+
+
+//--song-- 
 void Commands::add_song(Library& lib)
 {
 	std::string name, artist, genre,
@@ -206,7 +308,8 @@ void Commands::add_song(Library& lib)
 	//validation
 	add_song_helper(lib, name, artist, genre, album, release_year);
 }
-void Commands::add_song_helper(Library& lib, const std::string& name, const std::string& artist, const std::string& genre, const std::string& album, size_t release_year)
+void Commands::add_song_helper(Library& lib, const std::string& name, const std::string& artist, const std::string& genre, 
+	const std::string& album, size_t release_year)
 {
 	Song song(name, artist, genre, album, release_year);
 	lib.add_song(song); //changes the Tree w all songs
@@ -232,8 +335,8 @@ void Commands::rate_song_helper(Library& lib, const std::string& name, size_t ra
 	lib.get_songs().find(name)->data.set_rating(rate);
 }
 
-//--playlist--
-void Commands::generate_playlist(Library& lib)
+//--playlist--//only with correct data for now!!!
+void Commands::generate_playlist(Library& lib) // .... & ... | ...
 {
 	//&& ||
 	std::string input;
@@ -250,8 +353,7 @@ void Commands::generate_playlist(Library& lib)
 	std::getline(std::cin, input); // [command] (value) && [command] (value) || [command] (value)
 	generate_playlist_helper(lib, input);
 }
-//only with correct data for now!!!
-void Commands::generate_playlist_helper(Library& lib, const std::string& input) 
+void Commands::generate_playlist_helper(Library& lib, const std::string& input)  //
 {
 	Expression expr(input);
 	AVLTree main(lib.get_songs());

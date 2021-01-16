@@ -14,6 +14,7 @@ public:
 	static void sign_in(Library& lib);
 	static void sign_up(Library& lib);
 	static void change_data(Library& lib);
+	static void save_user_data(Library& lib); //not for username!
 	//-------------song-------------------//
 	static void add_song(Library& lib);
 	static void rate_song(Library& lib);
@@ -28,8 +29,12 @@ private:
 	static void sign_in_helper(Library& lib, const std::string& un, const std::string& pw);
 	static void sign_up_helper(Library& lib, const std::string& un, const std::string& pw);
 	static void change_data_helper(Library& lib, int choice, const std::string& config);
+	static void save_new_user_helper(Library& lib);
+	static void save_username_helper(Library& lib, const std::string& un);
+	static void save_user_data_helper(Library& lib);
 	///song helpers///
-	static void add_song_helper(Library& lib, const std::string& name, const std::string& artist, const std::string& genre, const std::string& album, size_t release_year);
+	static void add_song_helper(Library& lib, const std::string& name, const std::string& artist, const std::string& genre, 
+							const std::string& album, size_t release_year);
 	static void rate_song_helper(Library& lib, const std::string& name, size_t rate);
 	///playlist helpers///
 	static void generate_playlist_helper(Library& lib, const std::string& input);
