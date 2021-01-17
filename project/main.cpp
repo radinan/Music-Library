@@ -74,28 +74,90 @@ int main()
 	cpy.inorder();*/
 
 
-	
-	//PLAYLIST test check
+	//!!!consider moving class commands into class library!!!
+	//test check
 	Library lib;//created library
-
-	//Commands::welcome();
-	//Commands::help();
-	//Commands::sign_up(lib); //lib->curr_user
-	//Commands::change_data(lib);
-	//Commands::help();
-	//Commands::add_song(lib);
-	//Commands::rate_song(lib);
-	Commands::generate_playlist(lib);
-	//Commands::change_data(lib);
-	//Commands::change_data(lib);
-	//Commands::save_user_data(lib);
-	//Commands::sign_up(lib);
-	//Commands::change_data(lib);
-	//Commands::save_user_data(lib);
-	//Commands::sign_in(lib);
-	//Commands::add_song(lib);
-	//Commands::add_song(lib);
-	//Commands::save_songs(lib);
+	int input = -1;
+	Commands::welcome();
+	while(input != 0)//eternal loop
+	{
+		std::cin >> input;
+		switch (input)
+		{
+		case 0:
+		{
+			std::cout << "Exiting..\n";
+			break; 
+		}
+		case 1:
+		{
+			std::cout << "---Help--- \n";
+			Commands::help();
+			break;
+		}
+		case 2:
+		{
+			std::cout << "---Sign in---\n";
+			Commands::sign_in(lib);
+			break;
+		}
+		case 3:
+		{
+			std::cout << "---Sign up---\n";
+			Commands::sign_up(lib);
+			break;
+		}
+		case 4:
+		{
+			std::cout << "---Change data---\n";
+			Commands::change_data(lib);
+			break;
+		}
+		case 5:
+		{
+			std::cout << "---Save changes---\n";
+			Commands::save_user_data(lib);
+			break;
+		}
+		case 6:
+		{
+			std::cout << "---Add song---\n";
+			Commands::add_song(lib);
+			break;
+		}
+		case 7:
+		{
+			std::cout << "---Rate song---\n";
+			Commands::rate_song(lib);
+			break;
+		}
+		case 8:
+		{
+			std::cout << "---Generate playlist---\n";
+			Commands::generate_playlist(lib);
+			break;
+		}
+		case 9:
+		{
+			std::cout << "---Change playlist's name---\n";
+			Commands::save_playlist(lib);
+			break;
+		}
+		case 10:
+		{
+			std::cout << "---Load playlist---\n";
+			Commands::load_playlist(lib);
+			break;
+		}
+		case 11:
+		{
+			std::cout << "---Show all song's info---\n";
+			Commands::show_all_info(lib);
+			break;
+		}
+		}
+	}
+	Commands::save_songs;
 	
 
 	std::cout << "END";
