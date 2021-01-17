@@ -62,7 +62,7 @@ bool Library::is_loaded() //for playlist
 }
 
 
-void Library::set_user(const User& other)
+void Library::set_user(User& other)
 {
 	curr_user = other;
 }
@@ -74,7 +74,7 @@ void Library::set_playlist(Playlist& other)
 	loaded_pl = 1;
 }
 
-void Library::add_song(const Song& other)
+void Library::add_song(Song& other)
 {
 	all_songs.insert(other);
 }

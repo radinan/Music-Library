@@ -405,20 +405,25 @@ void Commands::generate_playlist_helper(Library& lib, const std::string& input) 
 	Playlist playlist;			 //creating playlist
 	playlist.set_songs(list);   
 	lib.set_playlist(playlist); //setting it in the library (auto setting to the curr_user)
+	
+	save_playlist(lib);
 }
-
 
 void Commands::save_playlist(Library& lib)
 {
 	std::string input;
-	std::cout << "Enter new name: ";
+	std::cout << "Enter playlist's name: ";
 	std::cin >> input;
 	save_playlist_helper(lib,input);
 }
 void Commands::save_playlist_helper(Library& lib, const std::string& name) //fix to be changed in user also(aka check references)
 {
 	if (lib.is_loaded()) //if it's loaded in library
+	{
+		std::string old_name = lib.get_playlist().get_name();
+		lib.get_user().get_playlist(old_name).set_name(name); //changes name in curr_user
 		lib.get_playlist().set_name(name);
+	}
 	else
 		std::cout << "No playlist loaded.\n";
 }

@@ -27,9 +27,9 @@ public:
 	bool check_playlist(const std::string& name);
 	bool is_loaded(); //for playlist
 
-	void set_user(const User& other); //loads user
+	void set_user(User& other); //loads user
 	void set_playlist(Playlist& other); //loads playlist
-	void add_song(const Song& other); //adds song to the tree
+	void add_song(Song& other); //adds song to the tree
 
 
 };

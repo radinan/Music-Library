@@ -120,7 +120,7 @@ bool User::is_playlist(const std::string& name)
 }
 Playlist& User::get_playlist(const std::string& name)
 {
-	for (auto i : playlists)
+	for (auto& i : playlists)
 	{
 		if (i.get_name() == name)
 			return i;
