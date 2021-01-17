@@ -85,7 +85,7 @@ int main()
 	//Commands::help();
 	//Commands::add_song(lib);
 	//Commands::rate_song(lib);
-	//Commands::generate_playlist(lib);
+	Commands::generate_playlist(lib);
 	//Commands::change_data(lib);
 	//Commands::change_data(lib);
 	//Commands::save_user_data(lib);
@@ -94,8 +94,9 @@ int main()
 	//Commands::save_user_data(lib);
 	//Commands::sign_in(lib);
 	//Commands::add_song(lib);
-	Commands::add_song(lib);
-	Commands::save_songs(lib);
+	//Commands::add_song(lib);
+	//Commands::save_songs(lib);
+	
 
 	std::cout << "END";
 }

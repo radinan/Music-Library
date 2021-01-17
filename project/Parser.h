@@ -10,7 +10,7 @@
 class Command
 {
 private:
-    std::string co; //think about white spaces
+    std::string str_command; //think about white spaces
 
     enum Type { rating, genre, year }; //type
     Type type;
@@ -22,13 +22,12 @@ private:
     {
         //perfect case with valid input
         std::string one, two, three; //allowing further validation inside this func
-        std::istringstream ss2(co);
+        std::istringstream ss2(str_command);
         ss2 >> one;
         ss2 >> two;
         ss2.get(); //white space
         std::getline(ss2, three);
 
-        //switch case not suitable for strings
         if (one == "rating")
         {
             Command::type = Type::rating;
@@ -43,7 +42,7 @@ private:
         }
         else
         {
-            //wrong
+            //throw
         }
 
         if (two == "+")
@@ -72,7 +71,7 @@ private:
         }
         else
         {
-            //wrong
+            //throw
         }
 
         //validation?
@@ -80,12 +79,12 @@ private:
     }
 public:
     Command(const std::string& _co)
-        : co(_co)
+        : str_command(_co)
     {
         parse_command();
     }
     //think about returning empty tree
-    AVLTree& do_command(Library& lib, AVLTree& original) //return type???
+    AVLTree& do_command(Library& lib, AVLTree& original)
     {
         switch (type) //depending on the type and operator calling diff funcs
         {
@@ -169,38 +168,47 @@ public:
         }
     }
 };
+
 class Statement
 {
 private:
-    std::string st;
-    std::queue<Command> q_co; //all commands (separated by &&)
+    std::string str_statement;
+    std::queue<Command> q_command; //all commands (separated by &&)
 private:
     void parse_statement() //adds to queue
     {
-        char delimeter('&');
-        std::stringstream ss1(st);
-        while (std::getline(ss1, st, delimeter)) //reads and splits: command && command...
+        std::stringstream ss1(str_statement);
+        while (std::getline(ss1, str_statement, '&')) //reads and splits: command & command...
         {
-            Command co(st);
-            q_co.push(co); //pushing it parsed
+            std::string str = str_statement;
+            while (str.back() == ' ')
+            {
+                str.pop_back();
+            }
+            while (str.front() == ' ')
+            {
+                str.erase(0, 1);
+            }
+            Command command(str); //removes spaces at the beginning and the end of the string
+            q_command.push(command); //pushing it parsed
         }
     }
 public:
     Statement() {}
     Statement(const std::string& _st)
-        : st(_st)
+        : str_statement(_st)
     {
         parse_statement();
     }
     ~Statement() {}
-    AVLTree& do_statement(Library& lib, AVLTree& original) //bool node* or tree&
+    AVLTree& do_statement(Library& lib, AVLTree& original) 
     {
-        while (!q_co.empty()) //all elements
+        while (!q_command.empty()) //all elements
         {
-            q_co.front().do_command(lib, original); //change the playlist tree
+            q_command.front().do_command(lib, original); //change the playlist tree
             if (original.is_empty()) //doesn't find matching songs
                 break;
-            q_co.pop(); //get next command
+            q_command.pop(); //get next command
         }
         return original; //returns either empty or playlist tree
     }
@@ -209,23 +217,31 @@ public:
 class Expression //WHITE SPACES!!!!!
 {
 private:
-    std::string input; //user's input
-    std::queue<Statement> q_st; //all statements (separated by ||)
+    std::string str_expression; //user's input
+    std::queue<Statement> q_statetement; //all statements (separated by |)
 private:
     void parse_expression() //adds to queue
     {
-        char delimeter('|');
-        std::stringstream ss(input);
-        while (std::getline(ss, input, delimeter)) //reads and splits: statement || statement...
+        std::stringstream ss(str_expression);
+        while (std::getline(ss, str_expression, '|')) //reads and splits: statement | statement...
         {
-            Statement st(input);
-            q_st.push(st); //pushing it parsed
+            std::string str1 = str_expression;
+            while (str1.back() == ' ')
+            {
+                str1.pop_back();
+            }
+            while (str1.front() == ' ')
+            {
+                str1.erase(0, 1);
+            }
+            Statement statement(str1); //removing spaces at the beginning and end of the string
+            q_statetement.push(statement); //pushing it parsed
         }
     }
 public:
     Expression() {}
     Expression(const std::string& _input)
-        : input(_input)
+        : str_expression(_input)
     {
         parse_expression();
     }
@@ -234,12 +250,12 @@ public:
     AVLTree& do_expression(Library& lib, AVLTree& main)
     {
 
-        while (!q_st.empty()) //all elements
+        while (!q_statetement.empty()) //all elements
         {
             AVLTree original(main);
-            q_st.front().do_statement(lib, original); //playlist tree
+            q_statetement.front().do_statement(lib, original); //playlist tree
             if (original.is_empty()) //if no tree for the criteria => empty
-                q_st.pop(); //check next statement
+                q_statetement.pop(); //check next statement
             else
             {
                 main = original;
@@ -249,4 +265,5 @@ public:
         //return empty?
     }
 };
+
 

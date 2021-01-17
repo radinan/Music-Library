@@ -377,7 +377,7 @@ void Commands::generate_playlist(Library& lib) // .... & ... | ...
 {
 	//&& ||
 	std::string input;
-	std::cout << "Choose criteria (more than 1, with '&' or '|'): \n" <<
+	std::cout << "Choose criteria (more than 1, separated with '&' or '|'): \n" <<
 		"1. rating > ... \n" <<
 		"2. genre + ... \n" <<
 		"3. genre - ... \n" <<
@@ -386,8 +386,8 @@ void Commands::generate_playlist(Library& lib) // .... & ... | ...
 		"6. year = \n" <<
 		"7. year < \n";
 
-	std::cin.ignore();
-	std::getline(std::cin, input); // [command] (value) && [command] (value) || [command] (value)
+	//std::cin.ignore();
+	std::getline(std::cin, input); // [command] (value) & [command] (value) | [command] (value)
 	generate_playlist_helper(lib, input);
 }
 void Commands::generate_playlist_helper(Library& lib, const std::string& input)  //
