@@ -9,7 +9,6 @@ class Playlist //validaciq za input(simvoli intervali i tn)
 {
 private:
 	std::string name; 
-	size_t size = 0;
 	const size_t max_size = 20;
 
 	std::list<std::string> songs; // changes in tree will reflect in playlist without changing any data
@@ -27,6 +26,7 @@ public:
 	void set_name(const std::string& _name);
 	const std::list<std::string>& get_songs();
 	void set_songs(std::list<std::string> other);
+	size_t get_size();
 
 
 	void load_playlist(std::string& playlist);

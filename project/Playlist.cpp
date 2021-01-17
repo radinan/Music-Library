@@ -5,13 +5,11 @@
 void Playlist::copy(const Playlist& other)
 {
 	name = other.name;
-	size = other.size;
 	songs = other.songs;
 }
 void Playlist::clear()
 {
 	name.clear();
-	size = 0;
 	songs.clear();
 }
 
@@ -30,10 +28,9 @@ Playlist::~Playlist(){}
 
 void Playlist::add_song(const Song& other) //song's name?
 {
-	if (size <= max_size  ) //if there is free space in the playlist
+	if (get_size() <= max_size  ) //if there is free space in the playlist
 	{
 		songs.push_back(other.get_name());
-		++size;
 	}
 	else
 		std::cout << "No free space in the playlist \n";
@@ -56,13 +53,16 @@ void Playlist::set_songs(std::list<std::string> other)
 {
 	songs = other;
 }
+size_t Playlist::get_size()
+{
+	return songs.size();
+}
+
 
 
 void Playlist::load_playlist(std::string& playlist)
 {
 	std::istringstream ss(playlist);
-	ss >> size;
-	ss.get();
 	int i = 0;
 	while (std::getline(ss, playlist, '|')) // name        song+song
 	{
@@ -84,7 +84,6 @@ void Playlist::load_playlist(std::string& playlist)
 }
 std::ostream& operator<< (std::ostream& out, Playlist& playlist)
 {
-	out << playlist.size << " ";
 	out << playlist.name; 
 	out << "|"; //indicator for ending of "name"
 
