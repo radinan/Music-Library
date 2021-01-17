@@ -19,12 +19,9 @@ Overall: pay attention to const and &
 <br>  
 <br>4. Song
 <br>  4.1 consider validation methods
-<br>  4.2 const std::string& in the operator overloading?
 <br>
 <br>5. Data Structures:
 <br>  5.1 at the beginning -> songs -> hash table -> then pick and put in avl tree
 <br>
-<br>6. Parser
-<br>  6.1 white-spaces problem
 
 <img src="https://octocat-generator-assets.githubusercontent.com/my-octocat-1608367107981.png" id="octocat" alt="" />
