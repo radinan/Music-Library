@@ -11,14 +11,26 @@
 //--general--
 void Commands::welcome()
 {
-	std::cout << "Welcome! Type 'help' for list of all commands." << std::endl;
+	std::cout << "Welcome! Type 1 for list of all commands." << std::endl;
 }
 void Commands::help()
 {
 	std::cout << "List of all commands: \n"
-		<< "1. ..... \n"
-		<< "2. ..... \n"
-		<< "3. ..... \n";
+		<< "0 - exit\n"
+		<< "1 - help menu \n"
+		<< "--User--\n"
+		<< "2 - sign in \n"
+		<< "3 - sign up \n"
+		<< "4 - change data \n"
+		<< "5 - save changes \n"
+		<< "--Song--\n"
+		<< "6 - add song \n"
+		<< "7 - rate song \n"
+		<< "--Playlist--\n"
+		<< "8 - generate playlist \n"
+		<< "9 - change playlist's name \n"
+		<< "10 - load playlist\n"
+		<< "11 - show info for all songs\n";
 }
 
 //--user-- 
@@ -77,18 +89,24 @@ void Commands::sign_up_helper(Library& lib, const std::string& un, const std::st
 		std::string x;
 		while (!file.eof())
 		{
-			std::getline(file, x);
-			if (x == un)
+			if (file.peek() != EOF)
 			{
-				file.close();
-				std::cout << "This username is already taken.\n";
-				return;
-			}
-			else
-			{
-				for (int i = 0; i < 5; ++i) //skip next 5 lines of data
+				std::getline(file, x);
+				if (x == un)
 				{
-					std::getline(file, x);
+					file.close();
+					std::cout << "This username is already taken.\n";
+					return;
+				}
+				else
+				{
+					for (int i = 0; i < 5; ++i) //skip next 5 lines of data
+					{
+						if (file.peek() != EOF)
+						{
+							std::getline(file, x);
+						}
+					}
 				}
 			}
 		}

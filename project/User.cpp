@@ -22,20 +22,12 @@ void User::clear() //is this necessary?
 
 User::User() //they have their own default constructors;
 {
-	/*
-	//or without reserve?
+	username = "#";
+	password = "#";
+	full_name = "#";
+	birth_date = "00.00.0000";
 
-	username.reserve(20);
-	//username = "";
-	password.reserve(20);
-	//password = "";
-	full_name.reserve(30);
-	//full_name = "";
-	birth_date.reserve(11); // XX.YY.ZZZZ \0
-	//birth_date = "";
-	//fav_genres?
-	//playlists?
-	*/
+
 } 
 User::User(const User& other) //copy
 {
@@ -166,10 +158,19 @@ std::ostream& operator<< (std::ostream& out, User& user)
 }
 std::istream& operator>> (std::istream& in, User& user)
 {
-	in >> user.username; in.get();
-	in >> user.password; in.get();
-	std::getline(in, user.full_name);
-	in >> user.birth_date; in.get();
+	in >> user.username; 
+	if(in.peek() == '\n')
+		in.get();
+
+	in >> user.password; 
+	if (in.peek() == '\n')
+		in.get();
+
+	if(in.peek() != '\n')
+		std::getline(in, user.full_name);
+
+	if (in.peek() != '\n')
+		in >> user.birth_date; in.get();
 	//genres:
 	std::string line;
 	std::getline(in, line); //saving the whole line into a string
