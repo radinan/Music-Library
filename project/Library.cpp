@@ -7,14 +7,20 @@
 Library::Library() 
 {
 	//loads all song data to the file
-	std::ofstream file ("songs.txt"); // opens file "songs"
+	std::ifstream file ("songs.txt"); // opens file "songs"
 	if (file.is_open())
 	{
 		while(!file.eof())
 		{
-			Song song;
-			file << song;
-			all_songs.insert(song);
+			char c = file.peek();
+			if (c >= 32) //is whitespace
+			{
+				Song song;
+				file >> song;
+				all_songs.insert(song);
+			}
+			else
+				break;
 		}
 		file.close();
 	}

@@ -369,6 +369,16 @@ private:
 		}
 	}
 
+	void save_to_file_helper(std::ofstream& file, Node* root)
+	{
+		if (root != nullptr)
+		{
+			save_to_file_helper(file, root->left);
+			file << root->data;
+			save_to_file_helper(file, root->right);
+		}
+	}
+
 public:
 	AVLTree() : root(nullptr) {}
 	AVLTree(const AVLTree& other) //may add 2 different constructors (one with flag?)
@@ -448,8 +458,7 @@ public:
 		genre_minus_helper(other, x, root);
 		*this = other;
 	}
-	//not tested after the fixes:
-	void genres_fav(std::unordered_set<std::string>& genres, AVLTree& other)
+	void genres_fav(std::unordered_set<std::string>& genres, AVLTree& other)	//not tested after the fixes:
 	{
 		std::unordered_set<std::string > ::iterator it;
 		for (it = genres.begin(); it != genres.end(); ++it)
@@ -478,4 +487,11 @@ public:
 	{
 		insert_to_list_helper(root, playlist);
 	}
+
+	void save_to_file(std::ofstream& file)
+	{
+		save_to_file_helper(file, root);
+	}
+
+
 };

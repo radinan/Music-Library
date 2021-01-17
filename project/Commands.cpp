@@ -39,39 +39,61 @@ void Commands::sign_in_helper(Library& lib, const std::string& un, const std::st
 	std::ifstream file("users.txt");
 	if (file.is_open())
 	{
-		while (!file.eof())
+		while (!file.eof()) 
 		{
 			User user;
 			file >> user; //load data from file
-			if (user.check_username_password(un, pw)) 
+			if (user.check_username_password(un, pw)) //correct data case
 			{
-				lib.set_user(user); //check?
+				lib.set_user(user); 
+				file.close();
+				std::cout << "You are successfully signed in.\n";
+				return;
 			}
 		}
-		//if not found: cout<<"wrong data"; (flag)
 		file.close();
 	}
+	std::cout << "Wrong username or password.\n";
 
 }
 
 void Commands::sign_up(Library& lib)
 {
-	std::string un, pw;  //~~r_pw
+	std::string un, pw;  
 
 	std::cout << "Enter username: ";
 	std::cin >> un;
-	//std::getline(std::cin, un, ' ');
 	std::cout << "Enter password: ";
 	std::cin >> pw;
-	//std::getline(std::cin, pw, ' ');
 
-	//~~repeat password
 	//validation
 	sign_up_helper(lib, un, pw);
 }
-void Commands::sign_up_helper(Library& lib, const std::string& un, const std::string& pw) //add criteria!
+void Commands::sign_up_helper(Library& lib, const std::string& un, const std::string& pw) 
 {
-	//if username is free
+	std::ifstream file("users.txt");
+	if (file.is_open()) //if username is free
+	{
+		std::string x;
+		while (!file.eof())
+		{
+			std::getline(file, x);
+			if (x == un)
+			{
+				file.close();
+				std::cout << "This username is already taken.\n";
+				return;
+			}
+			else
+			{
+				for (int i = 0; i < 5; ++i) //skip next 5 lines of data
+				{
+					std::getline(file, x);
+				}
+			}
+		}
+		file.close();
+	}
 	User new_user(un, pw);
 	lib.set_user(new_user);
 	save_new_user_helper(lib);
@@ -79,8 +101,7 @@ void Commands::sign_up_helper(Library& lib, const std::string& un, const std::st
 
 void Commands::change_data(Library& lib)
 {
-	//may change command to char or string (user may enter 1. not just 1)
-	int command = 0; //or char
+	size_t command = 0; //or char
 	std::cout <<
 		"Enter number of command: \n" <<
 		"1. username \n" <<
@@ -104,7 +125,7 @@ void Commands::change_data(Library& lib)
 		break;
 	case 3:
 		std::cout << "Enter new full name: ";
-		std::cin.ignore(); //else getline is not working properly
+		std::cin.ignore(); 
 		std::getline(std::cin, config);
 		break;
 	case 4:
@@ -163,9 +184,8 @@ void Commands::change_data(Library& lib)
 	//check here for whitespaces(before or after)
 	change_data_helper(lib, command, config);
 }
-void Commands::change_data_helper(Library& lib, int choice, const std::string& config)
+void Commands::change_data_helper(Library& lib, size_t choice, const std::string& config)
 {
-	//switch case => faster than if else
 	switch (choice)
 	{
 	case 1:
@@ -185,10 +205,10 @@ void Commands::change_data_helper(Library& lib, int choice, const std::string& c
 	}
 }
 
-
+//files:
 void Commands::save_new_user_helper(Library& lib)
 {
-	std::ofstream out("users.txt", std::ios::app); //go at the end of the file (is it a new line?)
+	std::ofstream out("users.txt", std::ios::app); //go at the end of the file
 	if (!out.is_open())
 	{
 		std::cout << "Unable to open file.\n";
@@ -196,11 +216,11 @@ void Commands::save_new_user_helper(Library& lib)
 	}
 	out << lib.get_user();
 	out.close();
+	std::cout << "You are successfully signed up.\n";
 }
 
 void Commands::save_username_helper(Library& lib, const std::string& un)
 {
-	std::cout << "Saving all changes. Please, don't close the window\n";
 	//read from user.txt -> write to user1.txt (check if x == old_username)
 	//delete user.txt
 	//rename user1.txt to user.txt
@@ -231,7 +251,7 @@ void Commands::save_username_helper(Library& lib, const std::string& un)
 	out.close();
 	remove("users.txt");
 	std::rename("users1.txt", "users.txt"); //to remove warning: if(.. == NULL) return;
-	std::cout << "Successfully saved.\n";
+	std::cout << "Username is successfully changed.\n";
 }
 
 void Commands::save_user_data(Library& lib) //not for username!
@@ -270,7 +290,7 @@ void Commands::save_user_data_helper(Library& lib)
 		}
 		else
 		{
-			out << x <<"\n"; //does it take "\n" ? CHECK!!
+			out << x <<"\n"; 
 		}
 	}
 	in.close();
@@ -281,8 +301,6 @@ void Commands::save_user_data_helper(Library& lib)
 }
 
 
-
-
 //--song-- 
 void Commands::add_song(Library& lib)
 {
@@ -290,17 +308,20 @@ void Commands::add_song(Library& lib)
 		album;
 	size_t release_year;
 	//many inputs
+
 	std::cout << "Enter name: ";
-	std::cin.ignore();
 	std::getline(std::cin, name);
 
 	std::cout << "Enter artist: ";
+	//std::cin.ignore();
 	std::getline(std::cin, artist);
 
 	std::cout << "Enter genre: ";
+	//std::cin.ignore();
 	std::getline(std::cin, genre);
 
 	std::cout << "Enter album: ";
+	//std::cin.ignore();
 	std::getline(std::cin, album);
 
 	std::cout << "Enter release date: ";
@@ -312,7 +333,12 @@ void Commands::add_song_helper(Library& lib, const std::string& name, const std:
 	const std::string& album, size_t release_year)
 {
 	Song song(name, artist, genre, album, release_year);
+	//possible check here if it's successfully constructed
+	//yes =>
 	lib.add_song(song); //changes the Tree w all songs
+	std::cout << "Song is successfully added.\n";// to the library.\n";
+	//no =>
+	//std::cout<<"Please enter correct data!\n";
 }
 
 void Commands::rate_song(Library& lib)
@@ -324,7 +350,7 @@ void Commands::rate_song(Library& lib)
 	std::cin.ignore();
 	std::getline(std::cin, name);
 
-	std::cout << "Enter rating: ";// 1-6 ? 
+	std::cout << "Enter rating(1-6): ";// 1-6 ? 
 	std::cin >> rate;
 	//validation
 	rate_song_helper(lib, name, rate);
@@ -333,6 +359,17 @@ void Commands::rate_song_helper(Library& lib, const std::string& name, size_t ra
 {
 	//original all_songs is always sorted by name!
 	lib.get_songs().find(name)->data.set_rating(rate);
+}
+
+void Commands::save_songs(Library& lib)
+{
+	std::ofstream file("songs.txt", std::ios::trunc); //delete and replace old content with the new data
+	if (!file.is_open())
+	{
+		std::cout << "Unable to update file.\n";
+		return;
+	}
+	lib.get_songs().save_to_file(file);
 }
 
 //--playlist--//only with correct data for now!!!

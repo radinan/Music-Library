@@ -47,7 +47,7 @@ int main()
 	//Commands::generate_playlist(lib);
 
 	//for tests
-	Song song1("a", "a", "a", "a", 1), song2("b", "b", "b", "b", 2), song3("c", "c", "c", "c", 3),
+	/*Song song1("a", "a", "a", "a", 1), song2("b", "b", "b", "b", 2), song3("c", "c", "c", "c", 3),
 		 song4("d", "d", "d", "d", 4), song5("e", "e", "e", "e", 5);
 
 	AVLTree tree;
@@ -55,7 +55,7 @@ int main()
 	tree.insert(song2);
 	tree.insert(song3);
 	tree.insert(song4);
-	tree.insert(song5);
+	tree.insert(song5);*/
 
 	/*
 	//TEST Playlist funcs in tree
@@ -76,7 +76,8 @@ int main()
 
 	
 	//PLAYLIST test check
-	Library lib(tree);//created library
+	Library lib;//created library
+
 	//Commands::welcome();
 	//Commands::help();
 	//Commands::sign_up(lib); //lib->curr_user
@@ -91,7 +92,10 @@ int main()
 	//Commands::sign_up(lib);
 	//Commands::change_data(lib);
 	//Commands::save_user_data(lib);
-	Commands::sign_in(lib);
+	//Commands::sign_in(lib);
+	//Commands::add_song(lib);
+	Commands::add_song(lib);
+	Commands::save_songs(lib);
 
 	std::cout << "END";
 }
