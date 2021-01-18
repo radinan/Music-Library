@@ -19,7 +19,6 @@ private:
 
 private:
 	void copy(const User& other);
-	void clear();
 public:
 	User();
 	User(const User& other); //copy

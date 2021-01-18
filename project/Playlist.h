@@ -15,7 +15,6 @@ private:
 								  // also it's easier to read from/write to file
 private:
 	void copy(const Playlist& other);
-	void clear();
 public:
 	Playlist();
 	Playlist& operator=(const Playlist& other);

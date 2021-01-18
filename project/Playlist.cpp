@@ -7,11 +7,7 @@ void Playlist::copy(const Playlist& other)
 	name = other.name;
 	songs = other.songs;
 }
-void Playlist::clear()
-{
-	name.clear();
-	songs.clear();
-}
+
 
 //fill:
 Playlist::Playlist(){} //add linked list w songs
@@ -19,7 +15,6 @@ Playlist& Playlist::operator=(const Playlist& other)
 {
 	if (this != &other)
 	{
-		clear();
 		copy(other);
 	}
 	return *this;

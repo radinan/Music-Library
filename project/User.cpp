@@ -10,15 +10,7 @@ void User::copy(const User& other)
 	fav_genres = other.fav_genres;
 	playlists = other.playlists;
 }
-void User::clear() //is this necessary?
-{
-	username.clear();
-	password.clear();
-	full_name.clear();
-	birth_date.clear();
-	fav_genres.clear();
-	playlists.clear();
-}
+
 
 User::User() //they have their own default constructors;
 {
@@ -26,8 +18,6 @@ User::User() //they have their own default constructors;
 	password = "#";
 	full_name = "#";
 	birth_date = "00.00.0000";
-
-
 } 
 User::User(const User& other) //copy
 {
@@ -40,14 +30,12 @@ User& User::operator=(const User& other)
 {
 	if (this != &other)
 	{
-		clear();
 		copy(other);
 	}
 	return *this;
 }
 User::~User()
 {
-	clear();
 }
 
 void User::set_username(const std::string& _username)

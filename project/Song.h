@@ -19,7 +19,6 @@ private:
 private:
 	//constructor helpers
 	void copy(const Song& other);
-	void clear();
 	//!add bool funcs for data validation ;)
 public:
 	static Priority priority; //same for all objects

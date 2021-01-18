@@ -13,16 +13,7 @@ void Song::copy(const Song& other)
 	//reserve?
 	rating = other.rating;
 }
-void Song::clear()
-{
-	name.clear(); //automatically calls str destructor
-	artist.clear();
-	genre.clear();
-	album.clear();
-	//release_year = 0; //they're going to be freed anyway
-	//rating.first = 0;
-	//rating.second = 0;
-}
+
 //constructors
 Song::Song()
 {
@@ -55,14 +46,12 @@ Song& Song::operator= (const Song& other)
 {
 	if (this != &other)
 	{
-		clear();
 		copy(other);
 	}
 	return *this;
 }
 Song::~Song()
 {
-	clear();
 }
 
 //setters and getters
