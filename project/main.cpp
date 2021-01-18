@@ -3,7 +3,7 @@
 //#include "AVLTree.h"
 //#include "Library.h"
 //#include "User.h"
-#include "Commands.h"
+#include "Library.h"
 
 
 // NOTES
@@ -44,7 +44,7 @@ int main()
 	std::unordered_set<std::string> genres = lib.get_user().get_fav_genres();
 
 	*/
-	//Commands::generate_playlist(lib);
+	//lib.generate_playlist(lib);
 
 	//for tests
 	/*Song song1("a", "a", "a", "a", 1), song2("b", "b", "b", "b", 2), song3("c", "c", "c", "c", 3),
@@ -76,12 +76,15 @@ int main()
 
 	//!!!consider moving class commands into class library!!!
 	//test check
+	//add user.txt with admin(or user)
 	Library lib;//created library
 	int input = -1;
-	Commands::welcome();
+	lib.welcome();
 	while(input != 0)//eternal loop
 	{
+		std::cout << std::endl << "Enter your command: ";
 		std::cin >> input;
+		std::cout << std::endl;
 		switch (input)
 		{
 		case 0:
@@ -92,73 +95,73 @@ int main()
 		case 1:
 		{
 			std::cout << "---Help--- \n";
-			Commands::help();
+			lib.help();
 			break;
 		}
 		case 2:
 		{
 			std::cout << "---Sign in---\n";
-			Commands::sign_in(lib);
+			lib.sign_in();
 			break;
 		}
 		case 3:
 		{
 			std::cout << "---Sign up---\n";
-			Commands::sign_up(lib);
+			lib.sign_up();
 			break;
 		}
 		case 4:
 		{
 			std::cout << "---Change data---\n";
-			Commands::change_data(lib);
+			lib.change_data();
 			break;
 		}
 		case 5:
 		{
 			std::cout << "---Save changes---\n";
-			Commands::save_user_data(lib);
+			lib.save_user_data();
 			break;
 		}
 		case 6:
 		{
-			std::cout << "---Add song---\n";
-			Commands::add_song(lib);
+			std::cout << "---Add song---\n"; //ebano e
+			lib.add_song();
 			break;
 		}
 		case 7:
 		{
 			std::cout << "---Rate song---\n";
-			Commands::rate_song(lib);
+			lib.rate_song();
 			break;
 		}
 		case 8:
 		{
-			std::cout << "---Generate playlist---\n";
-			Commands::generate_playlist(lib);
+			std::cout << "---Generate playlist---\n"; //not working
+			lib.generate_playlist();
 			break;
 		}
 		case 9:
 		{
 			std::cout << "---Change playlist's name---\n";
-			Commands::save_playlist(lib);
+			lib.save_playlist();
 			break;
 		}
 		case 10:
 		{
 			std::cout << "---Load playlist---\n";
-			Commands::load_playlist(lib);
+			lib.load_playlist();
 			break;
 		}
 		case 11:
 		{
 			std::cout << "---Show all song's info---\n";
-			Commands::show_all_info(lib);
+			lib.show_all_info();
 			break;
 		}
 		}
 	}
-	Commands::save_songs;
-	
 
-	std::cout << "END";
+	lib.save_songs();
+	
+	std::cout << "END\n";
 }
