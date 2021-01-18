@@ -121,12 +121,17 @@ std::ostream& operator<< (std::ostream& out, User& user)
 	{
 		out << *it; //first
 		++it;
+		for (; it != user.fav_genres.end(); ++it)
+		{
+			out << "+" << *it;  //first + second ...
+		}
+		out << "\n";
 	}
-	for (; it != user.fav_genres.end(); ++it)
+	else //empty set
 	{
-		out << "+" << *it;  //first + second ...
+		out << "#" << '\n'; //symbol for empty
 	}
-	out << "\n";
+
 
 	if (!user.playlists.empty())
 	{
@@ -141,43 +146,56 @@ std::ostream& operator<< (std::ostream& out, User& user)
 		out << "\n";
 	}
 	else
-		out << "\n";
+		out << "#"; //symbol for empty; no '\n'
 	return out;
 }
 std::istream& operator>> (std::istream& in, User& user)
 {
 	in >> user.username; 
-	if(in.peek() == '\n')
-		in.get();
+	in.get();
 
 	in >> user.password; 
-	if (in.peek() == '\n')
-		in.get();
+	in.get();
 
-	if(in.peek() != '\n')
-		std::getline(in, user.full_name);
+	std::getline(in, user.full_name);
 
-	if (in.peek() != '\n')
-		in >> user.birth_date; in.get();
+	in >> user.birth_date; in.get();
+
 	//genres:
-	std::string line;
-	std::getline(in, line); //saving the whole line into a string
-	std::istringstream ss(line);
-	while (std::getline(ss, line, '+')) //splitting
+	if (in.peek() != '#')
 	{
-		user.fav_genres.insert(line);
+		std::string line;
+		std::getline(in, line); //saving the whole line into a string
+		std::istringstream ss(line);
+		while (std::getline(ss, line, '+')) //splitting
+		{
+			user.fav_genres.insert(line);
+		}
+	}
+	else
+	{
+		in.get(); // #
+		in.get(); // \n
 	}
 
 	//playlists
-	std::string line1;// = "name|song+song~name|song+song+song";
-	std::getline(in, line1);
-	std::istringstream ss1(line1);
-	while (std::getline(ss1, line1, '~')) //name|song+song
+	if (in.peek() != '#')
 	{
-		//std::string playlist = line1;
-		Playlist pl;
-		pl.load_playlist(line1);
-		user.add_playlist(pl);
+		std::string line1;// = "name|song+song~name|song+song+song";
+		std::getline(in, line1);
+		std::istringstream ss1(line1);
+		while (std::getline(ss1, line1, '~')) //name|song+song
+		{
+			//std::string playlist = line1;
+			Playlist pl;
+			pl.load_playlist(line1);
+			user.add_playlist(pl);
+		}
+	}
+	else
+	{
+		in.get(); // #
+		in.get(); // \n		//or without?
 	}
 
 	return in;

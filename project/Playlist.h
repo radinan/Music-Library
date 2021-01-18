@@ -28,7 +28,7 @@ public:
 	size_t get_size();
 
 
-	void load_playlist(std::string& playlist);
+	void load_playlist(std::string& line);
 	friend std::ostream& operator<< (std::ostream& out, Playlist& playlist);
 
 };

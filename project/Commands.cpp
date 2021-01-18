@@ -1,6 +1,5 @@
 #include "Commands.h"
-//#include "User.h"
-//#include "Library.h"
+#include <iostream>
 #include <string>
 #include <fstream>
 #include <stdio.h> //for rename func
@@ -66,7 +65,6 @@ void Commands::sign_in_helper(Library& lib, const std::string& un, const std::st
 		file.close();
 	}
 	std::cout << "Wrong username or password.\n";
-
 }
 
 void Commands::sign_up(Library& lib)
@@ -89,24 +87,18 @@ void Commands::sign_up_helper(Library& lib, const std::string& un, const std::st
 		std::string x;
 		while (!file.eof())
 		{
-			if (file.peek() != EOF)
+			std::getline(file, x); //might move this upwards
+			if (x == un)
 			{
-				std::getline(file, x);
-				if (x == un)
+				file.close();
+				std::cout << "This username is already taken.\n";
+				return;
+			}
+			else
+			{
+				for (int i = 0; i < 5; ++i) //skip next 5 lines of data
 				{
-					file.close();
-					std::cout << "This username is already taken.\n";
-					return;
-				}
-				else
-				{
-					for (int i = 0; i < 5; ++i) //skip next 5 lines of data
-					{
-						if (file.peek() != EOF)
-						{
-							std::getline(file, x);
-						}
-					}
+					std::getline(file, x);
 				}
 			}
 		}
@@ -161,44 +153,6 @@ void Commands::change_data(Library& lib)
 		std::getline(std::cin, config);
 		break;
 	}
-	/*if (command == 1)
-	{
-		std::cout << "Enter new username: ";
-		std::cin >> config;
-		//validation
-	}
-	else if (command == 2)
-	{
-		//~repeat old
-		std::cout << "Enter new password: ";
-		std::cin >> config;
-		//validation
-	}
-	else if (command == 3)
-	{
-		std::cout << "Enter new full name: ";
-		std::getline(std::cin, config);
-		//validation
-	}
-	else if (command == 4)
-	{
-		std::cout << "Enter new birth date: ";
-		std::cin >> config;
-		//validation
-	}
-	else if (command == 5) 
-	{
-		std::cout << "Enter genre you want to add: ";
-		std::getline(std::cin, config);
-		//validation
-	}
-	else if (command == 6)
-	{
-		std::cout << "Enter genre you want to remove: ";
-		std::getline(std::cin, config);
-		//validation
-	}*/
-
 	//check here for whitespaces(before or after)
 	change_data_helper(lib, command, config);
 }
@@ -232,6 +186,7 @@ void Commands::save_new_user_helper(Library& lib)
 		std::cout << "Unable to open file.\n";
 		return;
 	}
+	out << '\n'; //because we are appending to the file
 	out << lib.get_user();
 	out.close();
 	std::cout << "You are successfully signed up.\n";
@@ -255,15 +210,20 @@ void Commands::save_username_helper(Library& lib, const std::string& un)
 		std::cout << "Unable to open file2\n";
 		return;
 	}
-	while (!in.eof())
+	while (!in.eof()) //?????????????????????????????????????????????????????????????????????????????????????????????
 	{
 		std::getline(in, x);
-		if (x == lib.get_user().get_name())
+		if (in.peek() != EOF) //if it's not the last element
 		{
-			out << un << "\n";
+			if (x == lib.get_user().get_name())
+			{
+				out << un << "\n";
+			}
+			else
+				out << x << "\n"; //does it get the "\n" ? check!!
 		}
 		else
-			out << x << "\n"; //does it get the "\n" ? check!!
+			out << x; //without new line (every txt file auto puts \n at it's end)
 	}
 	in.close();
 	out.close();
@@ -274,7 +234,7 @@ void Commands::save_username_helper(Library& lib, const std::string& un)
 
 void Commands::save_user_data(Library& lib) //not for username!
 {
-	std::cout << "Saving all changes. Please, don't close the window\n";
+	//std::cout << "Saving all changes. Please, don't close the window\n"; //it's pretty fast as far as I've tested it
 	save_user_data_helper(lib);
 }
 void Commands::save_user_data_helper(Library& lib)
@@ -282,7 +242,6 @@ void Commands::save_user_data_helper(Library& lib)
 	//read from user.txt -> write to user1.txt 
 	//delete user.txt
 	//rename user1.txt to user.txt
-	std::string x;
 	std::ifstream in("users.txt");
 	if (!in.is_open())
 	{
@@ -297,18 +256,15 @@ void Commands::save_user_data_helper(Library& lib)
 	}
 	while (!in.eof())
 	{
-		std::getline(in, x);
-		if (x == lib.get_user().get_name()) //found the user we want to update
+		User user;
+		in >> user;
+		if (user.get_name() == lib.get_user().get_name()) //found the user we want to update
 		{
 			out << lib.get_user();
-			for (int i = 0; i < 5; ++i) //6 new lines of data, but the first is already read 
-			{
-				std::getline(in, x);
-			}
 		}
 		else
 		{
-			out << x <<"\n"; 
+			out << user;
 		}
 	}
 	in.close();
@@ -326,7 +282,7 @@ void Commands::add_song(Library& lib)
 		album;
 	size_t release_year;
 	//many inputs
-
+	std::cout << std::endl;
 	std::cout << "Enter name: ";
 	std::getline(std::cin, name);
 

@@ -85,12 +85,12 @@ void Song::song_info() const
 //overloading operators
 std::ostream& operator << (std::ostream& out, Song& song)
 {
-	out << song.name << "\n" 
-		<< song.artist << "\n" 
-		<< song.genre << "\n" 
-		<< song.album << "\n"
-		<< song.release_year << "\n" 
-		<< song.rating.first << " " << song.rating.second << "\n";
+	out << song.name << '\n'
+		<< song.artist << '\n'
+		<< song.genre << '\n'
+		<< song.album << '\n'
+		<< song.release_year << '\n'
+		<< song.rating.first << " " << song.rating.second << '\n'; //no appending here; directly re-write the file so '\n' is not a problem
 	return out;
 }
 std::istream& operator >> (std::istream& in, Song& song)

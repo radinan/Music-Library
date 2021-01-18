@@ -10,7 +10,7 @@ void Playlist::copy(const Playlist& other)
 
 
 //fill:
-Playlist::Playlist(){} //add linked list w songs
+Playlist::Playlist(){} 
 Playlist& Playlist::operator=(const Playlist& other)
 {
 	if (this != &other)
@@ -55,20 +55,20 @@ size_t Playlist::get_size()
 
 
 
-void Playlist::load_playlist(std::string& playlist)
+void Playlist::load_playlist(std::string& line)
 {
-	std::istringstream ss(playlist);
+	std::istringstream ss(line);
 	int i = 0;
-	while (std::getline(ss, playlist, '|')) // name        song+song
+	while (std::getline(ss, line, '|')) // name        song+song
 	{
 		if (i == 0)//name
 		{
-			name = playlist;
+			name = line;
 			++i;
 		}
 		else //song
 		{
-			std::string song = playlist;
+			std::string song = line;
 			std::istringstream ss1(song);
 			while (std::getline(ss1, song, '+'))
 			{
@@ -79,18 +79,22 @@ void Playlist::load_playlist(std::string& playlist)
 }
 std::ostream& operator<< (std::ostream& out, Playlist& playlist)
 {
-	out << playlist.name; 
-	out << "|"; //indicator for ending of "name"
+	if (!playlist.songs.empty()) //if the playlist is not empty
+	{
+		out << playlist.name;
+		out << "|"; //indicator for ending of "name"
 
-	std::list<std::string>::iterator it = playlist.songs.begin();
-	if (it != playlist.songs.end())	//fixed problem: (song+song+song+)
-	{
-		out << *it;
-		++it;
-	}
-	for (; it != playlist.songs.end(); ++it)
-	{
-		out << "+" << *it; // + separates different songs' names 
+		std::list<std::string>::iterator it = playlist.songs.begin();
+		//fixed problem: (song+song+song+)
+		if (it != playlist.songs.end())	//first song
+		{
+			out << *it;
+			++it;
+		}
+		for (; it != playlist.songs.end(); ++it)
+		{
+			out << "+" << *it; // + separates different songs' names 
+		}
 	}
 	return out;
 }
