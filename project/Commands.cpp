@@ -81,6 +81,20 @@ void Commands::sign_up(Library& lib)
 }
 void Commands::sign_up_helper(Library& lib, const std::string& un, const std::string& pw) 
 {
+	try 
+	{
+		is_username_free(un);
+		User new_user(un, pw);
+		lib.set_user(new_user);
+		save_new_user_helper(lib);
+	}
+	catch (int i)
+	{
+		std::cout << "This username is already taken.\n";
+	}
+}
+void Commands::is_username_free(const std::string& un)
+{
 	std::ifstream file("users.txt");
 	if (file.is_open()) //if username is free
 	{
@@ -91,8 +105,7 @@ void Commands::sign_up_helper(Library& lib, const std::string& un, const std::st
 			if (x == un)
 			{
 				file.close();
-				std::cout << "This username is already taken.\n";
-				return;
+				throw -1;
 			}
 			else
 			{
@@ -104,9 +117,6 @@ void Commands::sign_up_helper(Library& lib, const std::string& un, const std::st
 		}
 		file.close();
 	}
-	User new_user(un, pw);
-	lib.set_user(new_user);
-	save_new_user_helper(lib);
 }
 
 void Commands::change_data(Library& lib)
@@ -161,8 +171,17 @@ void Commands::change_data_helper(Library& lib, size_t choice, const std::string
 	switch (choice)
 	{
 	case 1:
-		save_username_helper(lib, config); //username is used as a unique identificator!
-		lib.get_user().set_username(config); break;
+		try
+		{
+			is_username_free(config);
+			save_username_helper(lib, config); //username is used as a unique identificator!
+			lib.get_user().set_username(config);
+		}
+		catch(int a)
+		{
+			std::cout << "This username is already taken.\n";
+		}
+		break;
 	case 2:
 		lib.get_user().set_password(config); break;
 	case 3:
@@ -193,6 +212,7 @@ void Commands::save_new_user_helper(Library& lib)
 		out << '\n'; //because we are appending to the file
 	}
 	out << lib.get_user();
+	in.close();
 	out.close();
 	std::cout << "You are successfully signed up.\n";
 }
@@ -215,20 +235,24 @@ void Commands::save_username_helper(Library& lib, const std::string& un)
 		std::cout << "Unable to open file2\n";
 		return;
 	}
-	while (!in.eof()) //?????????????????????????????????????????????????????????????????????????????????????????????
+	while (std::getline(in, x)) //?????????????????????????????????????????????????????????????????????????????????????????????
 	{
-		std::getline(in, x);
-		if (in.peek() != EOF) //if it's not the last element
-		{
+		//if (in.peek() != EOF) //if it's not the last element 
+		//{
 			if (x == lib.get_user().get_name())
 			{
 				out << un << "\n";
 			}
 			else
 				out << x << "\n"; //does it get the "\n" ? check!!
-		}
-		else
-			out << x; //without new line (every txt file auto puts \n at it's end)
+
+			for (size_t i = 0; i < 5; ++i) //blind copy next data
+			{
+				std::getline(in, x);
+				out << x << '\n';
+			}
+		//}
+
 	}
 	in.close();
 	out.close();
@@ -254,18 +278,17 @@ void Commands::save_user_data_helper(Library& lib)
 		return;
 	}
 	std::ofstream out("users1.txt");
-
 	if (!out.is_open())
 	{
 		std::cout << "Unable to open file2\n";
 		return;
 	}
-	//while (!in.eof())
+
 	for(size_t i=0; !in.eof(); ++i)
 	{
 		User user;
 		in >> user;
-		if(i !=0)
+		if(i !=0) //not the very first element
 			out << '\n'; //it's indirectly appending to the file
 		if (user.get_name() == lib.get_user().get_name()) //found the user we want to update
 		{

@@ -31,6 +31,7 @@ private:
 	///user helpers///
 	static void sign_in_helper(Library& lib, const std::string& un, const std::string& pw);
 	static void sign_up_helper(Library& lib, const std::string& un, const std::string& pw);
+	static void is_username_free(const std::string& un);
 	static void change_data_helper(Library& lib, size_t choice, const std::string& config);
 	static void save_new_user_helper(Library& lib);
 	static void save_username_helper(Library& lib, const std::string& un);
