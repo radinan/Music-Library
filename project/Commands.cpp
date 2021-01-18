@@ -178,15 +178,20 @@ void Commands::change_data_helper(Library& lib, size_t choice, const std::string
 }
 
 //files:
+//fixed
 void Commands::save_new_user_helper(Library& lib)
 {
-	std::ofstream out("users.txt", std::ios::app); //go at the end of the file
+	std::ofstream out("users.txt", std::ios::out|std::ios::app); //go at the end of the file
+	std::ifstream in("users.txt");
 	if (!out.is_open())
 	{
 		std::cout << "Unable to open file.\n";
 		return;
 	}
-	out << '\n'; //because we are appending to the file
+	if (in.peek() != EOF) //if it's not empty
+	{
+		out << '\n'; //because we are appending to the file
+	}
 	out << lib.get_user();
 	out.close();
 	std::cout << "You are successfully signed up.\n";

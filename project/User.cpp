@@ -24,8 +24,12 @@ User::User(const User& other) //copy
 	copy(other);
 }
 User::User(const std::string& _username, const std::string& _password) 
-	: username(_username), password(_password)
-{}
+{
+	username = _username;
+	password = _password;
+	full_name = "#";
+	birth_date = "00.00.0000";
+}
 User& User::operator=(const User& other)
 {
 	if (this != &other)
