@@ -254,21 +254,22 @@ void Commands::save_user_data_helper(Library& lib)
 		return;
 	}
 	std::ofstream out("users1.txt");
-	std::ifstream check("users1.txt");
-
 
 	if (!out.is_open())
 	{
 		std::cout << "Unable to open file2\n";
 		return;
 	}
-	while (!in.eof())
+	//while (!in.eof())
+	for(size_t i=0; !in.eof(); ++i)
 	{
 		User user;
 		in >> user;
+		if(i !=0)
+			out << '\n'; //it's indirectly appending to the file
 		if (user.get_name() == lib.get_user().get_name()) //found the user we want to update
 		{
-			out << '\n' << lib.get_user();
+			out << lib.get_user();
 		}
 		else
 		{
@@ -276,7 +277,6 @@ void Commands::save_user_data_helper(Library& lib)
 		}
 	}
 	in.close();
-	check.close();
 	out.close();
 	remove("users.txt");
 	std::rename("users1.txt", "users.txt"); //to remove warning: if(.. == NULL) return;
