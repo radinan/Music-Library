@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <stdio.h>
+#include <sstream>
 
 Library::Library() 
 {
@@ -17,7 +18,7 @@ Library::Library()
 			{
 				Song song;
 				file >> song;
-				all_songs.insert(song);
+				all_songs.insert({ song.get_name(), song });
 			}
 			else
 				break;
@@ -27,8 +28,7 @@ Library::Library()
 	else
 		std::cout << "Unable to open file \n";
 }
-Library::Library(const AVLTree& other) : all_songs(other) {}
-Library::~Library() {}
+Library::~Library() {}//da vika save_songs 
 
 User& Library::get_user() 
 {
@@ -38,7 +38,7 @@ Playlist& Library::get_playlist()
 {
 	return curr_playlist;
 }
-AVLTree& Library::get_songs()
+std::unordered_map <std::string, Song>& Library::get_songs() 
 {
 	return all_songs;
 }
@@ -48,9 +48,16 @@ void Library::all_songs_info()
 {
 	//search every song's name in the tree and cout info
 	std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
-	for (auto const& i : curr_playlist.get_songs())
+	for (auto& i : curr_playlist.get_songs()) //iterate through the playlist
 	{
-		all_songs.find(i)->data.song_info();
+		for (auto& it : all_songs) //iterate through the whole map
+		{
+			if (it.first == i) //song found!
+			{
+				std::cout << it.second; //print the data of the song
+				break;
+			}
+		}
 		std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
 	}
 }
@@ -78,7 +85,7 @@ void Library::set_playlist(Playlist& other)
 
 void Library::add_song(Song& other)
 {
-	all_songs.insert(other);
+	all_songs.insert({other.get_name(), other});
 }
 
 
@@ -419,7 +426,7 @@ void Library::add_song_helper(const std::string& name, const std::string& artist
 	Song song(name, artist, genre, album, release_year);
 	//possible check here if it's successfully constructed
 	//yes =>
-	this->add_song(song); //changes the Tree w all songs
+	all_songs.insert({ name, song });
 	std::cout << "Song is successfully added.\n";// to the library.\n";
 	//no =>
 	//std::cout<<"Please enter correct data!\n";
@@ -441,13 +448,23 @@ void Library::rate_song()
 }
 void Library::rate_song_helper(const std::string& name, size_t rate)
 {
-	//original all_songs is always sorted by name!
-	this->get_songs().find(name)->data.set_rating(rate);
+	//if exists
+	all_songs[name].set_rating(rate);
 }
 
 void Library::save_songs()
 {
-	this->get_songs().save_to_file();
+	std::ofstream file("songs.txt", std::ios::trunc); //delete and replace old content with the new data
+	if (!file.is_open())
+	{
+		std::cout << "Unable to update file.\n";
+		return;
+	}
+	for (auto& it : all_songs)
+	{
+		file << it.second;
+	}
+	file.close();
 }
 
 //--playlist--//only with correct data for now!!!
@@ -466,26 +483,155 @@ void Library::generate_playlist() // .... & ... | ...
 
 	std::cin.ignore();
 	std::getline(std::cin, input); // [command] (value) & [command] (value) | [command] (value)
-	//generate_playlist_helper(input);
+	generate_playlist_helper(input);
 }
-/*void Library::generate_playlist_helper(const std::string& input)  //
+void Library::generate_playlist_helper(std::string& input)  //
 {
-	Expression expr(input);
-	AVLTree main(this->get_songs());
-	expr.do_expression(main); //parses the input and creates tree with songs
-	//main.inorder(); //to check if it works -> it does ;)
+	std::set<std::string> playlist_songs; //songs, sorted in alphabetical order
+	if (!expression(input, playlist_songs))
+	{
+		//throw ...
+		//return?
+	}
 
-	Song::priority = Priority::name;
-	AVLTree alph(main); //sorted playlist in alphabetical order
-
-	std::list<std::string> list; //empty
-	alph.insert_to_list(list);	 //fill with songs' names
-	Playlist playlist;			 //creating playlist
-	playlist.set_songs(list);
-	this->set_playlist(playlist); //setting it in the library (auto setting to the curr_user)
-
+	Playlist playlist;
+	playlist.set_songs(playlist_songs);
+	set_playlist(playlist); //set into library
 	save_playlist();
-}*/
+}
+bool Library::expression(std::string& expr, std::set<std::string>& playlist_songs)
+{
+	std::stringstream ss(expr);
+	while (std::getline(ss, expr, '|'))
+	{
+		std::unordered_map <std::string, Song> songs = all_songs; //creates a copy of all_songs //at the beginning of every statement is full
+		if (statement(expr, songs) == true)
+		{
+			for (auto& itr : songs)
+			{
+				playlist_songs.insert(itr.first);
+			}
+			return true;
+		}
+	}
+	return false;
+}
+bool Library::statement(std::string& state, std::unordered_map <std::string, Song>& songs)
+{
+	std::stringstream ss1(state);
+	while (std::getline(ss1, state, '&'))
+	{
+		if (command(state, songs) == false)
+			return false;
+	}
+	return true;
+}
+bool Library::command(std::string& com, std::unordered_map <std::string, Song>& songs)
+{
+	std::string type, op, opt; //type operator option
+
+	std::stringstream ss2(com);
+	ss2 >> type;
+	ss2 >> op;
+	ss2.get(); //white space
+	std::getline(ss2, opt);
+
+	bool flag = false; //indicator for changes
+
+	if (type == "rating")
+	{
+		if (op == ">")
+		{
+			for (auto& itr : songs) //iterate through the whole map
+			{
+				if (itr.second.get_rating() < stod(opt))
+				{
+					songs.erase(itr.first);
+					flag = true;
+				}
+			}
+		}
+	}
+	else if (type == "genre")
+	{
+		if (op == "+")
+		{
+			for (auto& itr : songs) //iterate through the whole map
+			{
+				if (itr.second.get_genre() != opt)
+				{
+					songs.erase(itr.first);
+					flag = true;
+				}
+			}
+		}
+		else if (op == "-")
+		{
+			for (auto& itr : all_songs) //iterate through the whole map
+			{
+				if (itr.second.get_genre() == opt)
+				{
+					songs.erase(itr.first);
+					flag = true;
+				}
+			}
+		}
+		else if (op == "!")
+		{
+			for (auto& it : curr_user.get_fav_genres()) 
+			{
+				for (auto& itr : all_songs) //iterate through the whole map
+				{
+					if (itr.second.get_genre() != it)
+					{
+						songs.erase(itr.first);
+						flag = true;
+					}
+				}
+			}
+		}
+	}
+	else if (type == "year")
+	{
+		if (op == ">")
+		{
+			//if stoi > 0
+			for (auto& itr : all_songs) //iterate through the whole map
+			{
+				if (itr.second.get_year() <= stoi(opt))
+				{
+					songs.erase(itr.first);
+					true;
+				}
+			}
+		}
+		else if (op == "<")
+		{
+			for (auto& itr : all_songs) //iterate through the whole map
+			{
+				if (itr.second.get_year() >= stoi(opt))
+				{
+					songs.erase(itr.first);
+					flag = true;
+				}
+			}
+		}
+		else if (op == "=")
+		{
+			for (auto& itr : all_songs) //iterate through the whole map
+			{
+				if (itr.second.get_year() != stoi(opt))
+				{
+					songs.erase(itr.first);
+					flag = true;
+				}
+			}
+		}
+	}
+
+	return (flag == true && !songs.empty());
+}
+
 
 void Library::save_playlist()
 {

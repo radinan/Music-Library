@@ -2,9 +2,14 @@
 //#include "User.h"
 //#include "Song.h"
 //#include "Playlist.h"
-#include "AVLTree.h"
-//#include "Parser.h"  not working for now
+//#include "AVLTree.h"
+#include "Song.h"
+#include "Playlist.h"
+#include "User.h"
 #include <iostream>
+#include <unordered_map>
+
+//Let's accept that all songs have unique names!
 
 //contains elements that are being used or needed
 class Library 
@@ -13,16 +18,14 @@ private: //!!!think about copies and whether you want to change the original use
 	User curr_user; //recently logged; current
 	Playlist curr_playlist;
 	bool loaded_pl = 0;
-	AVLTree all_songs; //in the whole library 
-					   //the original avl tree with all songs is always sorted by name!
+	std::unordered_map <std::string, Song> all_songs; //without references?
 public:
 	Library();
-	Library(const AVLTree& other); //constructor with the loaded tree
 	~Library();
 
 	User& get_user();
 	Playlist& get_playlist();
-	AVLTree& get_songs();
+	std::unordered_map <std::string, Song>& get_songs();
 
 	void all_songs_info();
 	bool check_playlist(const std::string& name);
@@ -68,15 +71,15 @@ private:
 	 void rate_song_helper(const std::string& name, size_t rate);
 	// void save_songs()
 	///playlist helpers///
-	 //void generate_playlist_helper(const std::string& input);
+	 void generate_playlist_helper(std::string& input);
+
+	 bool expression(std::string& expr, std::set<std::string>& playlist_songs);
+	 bool statement(std::string& state, std::unordered_map <std::string, Song>& songs);
+	 bool command(std::string& com, std::unordered_map <std::string, Song>& songs);
+
+
 	 void save_playlist_helper(const std::string& name);
 	 void load_playlist_helper(const std::string& name);
-
-//parser
-public:
-	friend class Expression;
-	friend class Statement;
-	friend class Command;
 
 };
 
