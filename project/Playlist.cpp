@@ -21,7 +21,7 @@ Playlist& Playlist::operator=(const Playlist& other)
 }
 Playlist::~Playlist(){}
 
-void Playlist::add_song(const Song& other) //song's name?
+void Playlist::add_song(Song& other) //song's name?
 {
 	if (get_size() <= max_size  ) //if there is free space in the playlist
 	{
@@ -40,13 +40,16 @@ void Playlist::set_name(const std::string& _name)
 	//validation
 	name = _name;
 }
-const std::list<std::string>& Playlist::get_songs()
+std::list<std::string>& Playlist::get_songs()
 {
 	return songs;
 }
-void Playlist::set_songs(std::list<std::string> other)
+void Playlist::set_songs(std::set<std::string>& other_songs)
 {
-	songs = other;
+	for (auto& itr : other_songs)
+	{
+		songs.push_back(itr);
+	}
 }
 size_t Playlist::get_size()
 {

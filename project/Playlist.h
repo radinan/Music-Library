@@ -4,6 +4,7 @@
 #include <iostream>
 #include "Song.h"
 #include <list>
+#include <set>
 
 class Playlist //validaciq za input(simvoli intervali i tn)
 {
@@ -20,11 +21,11 @@ public:
 	Playlist& operator=(const Playlist& other);
 	~Playlist();
 
-	void add_song(const Song& other);
+	void add_song(Song& other);
 	std::string& get_name(); //without const?
 	void set_name(const std::string& _name);
-	const std::list<std::string>& get_songs();
-	void set_songs(std::list<std::string> other);
+	std::list<std::string>& get_songs();
+	void set_songs(std::set<std::string>& other_songs);
 	size_t get_size();
 
 
