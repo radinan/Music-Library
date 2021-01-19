@@ -142,12 +142,11 @@ std::ostream& operator<< (std::ostream& out, User& user)
 		std::vector<Playlist>::size_type sz = user.playlists.size();
 
 		int i = 0;
-		for (; i < sz - 1; ++i) //PROBLEM!
+		for (; i < sz - 1; ++i) //PROBLEM! wtf?
 		{
 			out << user.playlists[i] << "~";
 		}
 		out << user.playlists[i];
-		out << "\n";
 	}
 	else
 		out << "#"; //symbol for empty; no '\n'
