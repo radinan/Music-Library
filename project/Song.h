@@ -3,10 +3,9 @@
 #include <string>
 #include <fstream>
 
-//starting the programm		 -> all data from txt file -> AVL Tree
-//exiting the programm(save) -> all data from AVL Tree -> txt file
+//starting the programm		 -> all data from txt file -> unordered map
+//exiting the programm(save) -> all data from unordered map -> txt file
 
-enum class Priority {name, release_year, genre, rating}; //sorting types
 class Song
 {
 private:
@@ -21,8 +20,6 @@ private:
 	void copy(const Song& other);
 	//!add bool funcs for data validation ;)
 public:
-	static Priority priority; //same for all objects
-public:
 	//constructors
 	Song();
 	Song(const std::string& _name, const std::string& _artist, const std::string& _genre,
@@ -33,30 +30,17 @@ public:
 	//public or private? setters and getters
 	void set_rating(size_t rate);
 	double get_rating() const;
-	std::string get_name() const;
+	std::string& get_name();
+	std::string& get_genre();
+	size_t get_year();
 
 	//informative methods
 	void song_info() const;
 
 	//overloading operators
-	friend bool operator > (const Song& song, size_t value);
-	friend bool operator > (const Song& song, double value);
-	friend bool operator > (const Song& song, std::string str);
-	friend bool operator < (const Song& song, size_t value);
-	friend bool operator < (const Song& song, double value);
-	friend bool operator < (const Song& song, std::string str);
-	friend bool operator == (const Song& song, size_t value);
-	friend bool operator == (const Song& song, double value);
-	friend bool operator == (const Song& song, std::string str);
-	friend bool operator != (const Song& song, size_t value);
-	friend bool operator != (const Song& song, double value);
-	friend bool operator != (const Song& song, std::string str);
 
 	friend std::ostream& operator << (std::ostream& out, Song& song); 
 	friend std::istream& operator >> (std::istream& in, Song& song); 
-
-	friend bool operator>(const Song& left, const Song& right);
-	friend bool operator<(const Song& left, const Song& right);
 	friend bool operator==(const Song& left, const Song& right);
 	friend bool operator!=(const Song& left, const Song& right);
 

@@ -1,7 +1,5 @@
 #include "Song.h"
 
-Priority Song::priority = Priority::name; //by default by name
-
 //constructor helpers
 void Song::copy(const Song& other)
 {
@@ -67,10 +65,19 @@ double Song::get_rating() const
 	else
 		return (double)rating.second / rating.first; //casting size_t->double
 }
-std::string Song::get_name() const
+std::string& Song::get_name() 
 {
 	return name;
 }
+std::string& Song::get_genre() 
+{
+	return genre;
+}
+size_t Song::get_year() 
+{
+	return release_year;
+}
+
 //informative methods
 void Song::song_info() const
 {
@@ -103,305 +110,17 @@ std::istream& operator >> (std::istream& in, Song& song)
 	in >> song.rating.first; in >> song.rating.second; in.get(); //new line
 	return in;
 }
-
-//more operators overloading
-bool operator > (const Song& song, size_t value) //by year
-{
-	switch (Song::priority)
-	{
-	case Priority::release_year:
-		return song.release_year > value; break;
-	}
-}
-bool operator < (const Song& song, size_t value) //by year 
-{
-	switch (Song::priority)
-	{
-	case Priority::release_year:
-		return song.release_year < value; break;
-	}
-}
-bool operator == (const Song& song, size_t value) //by year
-{
-	switch (Song::priority)
-	{
-	case Priority::release_year:
-		return song.release_year == value; break;
-	}
-}
-bool operator != (const Song& song, size_t value) //by year
-{
-	switch (Song::priority)
-	{
-	case Priority::release_year:
-		return song.release_year != value; break;
-	}
-}
-
-bool operator > (const Song& song, double value) //by rating
-{
-	switch (Song::priority)
-	{
-	case Priority::rating:
-		return song.get_rating() > value; break;
-	}
-}
-bool operator < (const Song& song, double value) //by rating
-{
-	switch (Song::priority)
-	{
-	case Priority::rating:
-		return song.get_rating() < value; break;
-	}
-}
-bool operator == (const Song& song, double value) //by rating
-{
-	switch (Song::priority)
-	{
-	case Priority::rating:
-		return song.get_rating() == value; break;
-	}
-}
-bool operator != (const Song& song, double value) //by rating
-{
-	switch (Song::priority)
-	{
-	case Priority::rating:
-		return song.get_rating() != value; break;
-	}
-}
-
-bool operator > (const Song& song, std::string str)
-{
-	switch (Song::priority)
-	{
-	case Priority::name:
-		return song.name > str; break;
-	case Priority::genre:
-		return song.genre > str; break;
-	}
-}
-bool operator < (const Song& song, std::string str)
-{
-	switch (Song::priority)
-	{
-	case Priority::name:
-		return song.name < str; break;
-	case Priority::genre:
-		return song.genre < str; break;
-	}
-}
-bool operator == (const Song& song, std::string str) //by name or genre
-{
-	switch (Song::priority)
-	{
-	case Priority::name:
-		return song.name == str; break;
-	case Priority::genre:
-		return song.genre == str; break;
-	}
-}
-bool operator != (const Song& song, std::string str) //by name or genre
-{
-	switch (Song::priority)
-	{
-	case Priority::name:
-		return song.name != str; break;
-	case Priority::genre:
-		return song.genre != str; break;
-	}
-}
-
-//Priority: name, release_year, genre, rating //without break?
-bool operator>(const Song& left, const Song& right)
-{
-	switch (Song::priority)
-	{
-	case Priority::name:
-		if (left.name == right.name)
-		{
-			if (left.release_year == right.release_year)
-			{
-				if (left.genre == right.genre)
-				{
-					return left.get_rating() > right.get_rating();
-					break; 
-				}
-				return left.genre > right.genre;
-				break;
-			}
-			return left.release_year > right.release_year;
-			break;
-		}
-		return left.name > right.name;
-		break;
-	case Priority::release_year:
-		if (left.release_year == right.release_year)
-		{
-			if (left.name == right.name)
-			{
-				if (left.genre == right.genre)
-				{
-					return left.get_rating() > right.get_rating();
-					break;
-				}
-				return left.genre > right.genre;
-				break;
-			}
-			return left.name > right.name;
-			break;
-		}
-		return left.release_year > right.release_year;
-		break;
-	case Priority::genre:
-		if (left.genre == right.genre)
-		{
-			if (left.name == right.name)
-			{
-				if (left.release_year == right.release_year)
-				{
-					return left.get_rating() > right.get_rating();
-					break;
-				}
-				return left.release_year > right.release_year; 
-				break;
-			}
-			return left.name > right.name;
-			break;
-		}
-		return left.genre > right.genre;
-		break;
-
-	case Priority::rating:
-		if (left.get_rating() == right.get_rating())
-		{
-			if (left.name == right.name)
-			{
-				if (left.release_year == right.release_year)
-				{
-					return left.genre > right.genre;
-					break;
-				}
-				return left.release_year > right.release_year;
-				break;
-			}
-			return left.name > right.name;
-			break;
-		}
-		return left.get_rating() > right.get_rating();
-		break;
-	}
-}
-bool operator<(const Song& left, const Song& right) 
-{
-	switch (Song::priority)
-	{
-	case Priority::name:
-		if (left.name == right.name)
-		{
-			if (left.release_year == right.release_year)
-			{
-				if (left.genre == right.genre)
-				{
-					return left.get_rating() < right.get_rating();
-					break;
-				}
-				return left.genre < right.genre;
-				break;
-			}
-			return left.release_year < right.release_year;
-			break;
-		}
-		return left.name < right.name;
-		break;
-	case Priority::release_year:
-		if (left.release_year == right.release_year)
-		{
-			if (left.name == right.name)
-			{
-				if (left.genre == right.genre)
-				{
-					return left.get_rating() < right.get_rating();
-					break;
-				}
-				return left.genre < right.genre;
-				break;
-			}
-			return left.name < right.name;
-			break;
-		}
-		return left.release_year < right.release_year;
-		break;
-	case Priority::genre:
-		if (left.genre == right.genre)
-		{
-			if (left.name == right.name)
-			{
-				if (left.release_year == right.release_year)
-				{
-					return left.get_rating() < right.get_rating();
-					break;
-				}
-				return left.release_year < right.release_year;
-				break;
-			}
-			return left.name < right.name;
-			break;
-		}
-		return left.genre < right.genre;
-		break;
-
-	case Priority::rating:
-		if (left.get_rating() == right.get_rating())
-		{
-			if (left.name == right.name)
-			{
-				if (left.release_year == right.release_year)
-				{
-					return left.genre < right.genre;
-					break;
-				}
-				return left.release_year < right.release_year;
-				break;
-			}
-			return left.name < right.name;
-			break;
-		}
-		return left.get_rating() < right.get_rating();
-		break;
-	}
-}
 bool operator==(const Song& left, const Song& right) 
 {
-	switch (Song::priority)
-	{
-	case Priority::name:
-		return left.name == right.name; break;
-
-	case Priority::release_year:
-		return left.release_year == right.release_year; break;
-
-	case Priority::genre:
-		return left.genre == right.genre; break;
-
-	case Priority::rating:
-		return left.get_rating() == right.get_rating(); break;
-	}
+	return left.name == right.name &&
+		left.release_year == right.release_year &&
+		left.genre == right.genre &&
+		left.get_rating() == right.get_rating(); 
 }
 bool operator!=(const Song& left, const Song& right) 
 {
-	switch (Song::priority)
-	{
-	case Priority::name:
-		return left.name != right.name; break;
-
-	case Priority::release_year:
-		return left.release_year != right.release_year; break;
-
-	case Priority::genre:
-		return left.genre != right.genre; break;
-
-	case Priority::rating:
-		return left.get_rating() != right.get_rating(); break;
-	}
+	return left.name != right.name &&
+		left.release_year != right.release_year &&
+		left.genre != right.genre &&
+		left.get_rating() != right.get_rating();
 }
