@@ -506,8 +506,19 @@ bool Library::expression(std::string expr, std::set<std::string>& playlist_songs
 	std::stringstream ss(expr);
 	while (std::getline(ss, expr, '|'))
 	{
+		//clear empty spaces
+		std::string expr1 = expr;
+		while (expr1.back() == ' ')
+		{
+			expr1.pop_back();
+		}
+		while (expr1.front() == ' ')
+		{
+			expr1.erase(0, 1);
+		}
+
 		std::unordered_map <std::string, Song> songs = all_songs; //creates a copy of all_songs //at the beginning of every statement is full
-		if (statement(expr, songs) == true)
+		if (statement(expr1, songs) == true)
 		{
 			for (auto& itr : songs)
 			{
@@ -523,7 +534,18 @@ bool Library::statement(std::string state, std::unordered_map <std::string, Song
 	std::stringstream ss1(state);
 	while (std::getline(ss1, state, '&'))
 	{
-		if (command(state, songs) == false)
+		//clear empty spaces
+		std::string state1 = state;
+		while (state1.back() == ' ')
+		{
+			state1.pop_back();
+		}
+		while (state1.front() == ' ')
+		{
+			state1.erase(0, 1);
+		}
+
+		if (command(state1, songs) == false)
 			return false;
 	}
 	return true;
@@ -533,6 +555,17 @@ bool Library::command(std::string com, std::unordered_map <std::string, Song>& s
 	std::string type, op, opt; //type operator option
 
 	std::stringstream ss2(com);
+	
+	//clear empty spaces
+	while (com.back() == ' ')
+	{
+		com.pop_back();
+	}
+	while (com.front() == ' ')
+	{
+		com.erase(0, 1);
+	}
+
 	ss2 >> type;
 	ss2 >> op;
 	ss2.get(); //white space
