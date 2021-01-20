@@ -490,6 +490,8 @@ void Library::generate_playlist_helper(std::string& input)  //
 	std::set<std::string> playlist_songs; //songs, sorted in alphabetical order
 	if (!expression(input, playlist_songs))
 	{
+		std::cout << "Nope..\n";
+		return;
 		//throw ...
 		//return?
 	}
@@ -499,7 +501,7 @@ void Library::generate_playlist_helper(std::string& input)  //
 	set_playlist(playlist); //set into library
 	save_playlist();
 }
-bool Library::expression(std::string& expr, std::set<std::string>& playlist_songs)
+bool Library::expression(std::string expr, std::set<std::string>& playlist_songs)
 {
 	std::stringstream ss(expr);
 	while (std::getline(ss, expr, '|'))
@@ -516,7 +518,7 @@ bool Library::expression(std::string& expr, std::set<std::string>& playlist_song
 	}
 	return false;
 }
-bool Library::statement(std::string& state, std::unordered_map <std::string, Song>& songs)
+bool Library::statement(std::string state, std::unordered_map <std::string, Song>& songs)
 {
 	std::stringstream ss1(state);
 	while (std::getline(ss1, state, '&'))
@@ -526,7 +528,7 @@ bool Library::statement(std::string& state, std::unordered_map <std::string, Son
 	}
 	return true;
 }
-bool Library::command(std::string& com, std::unordered_map <std::string, Song>& songs)
+bool Library::command(std::string com, std::unordered_map <std::string, Song>& songs)
 {
 	std::string type, op, opt; //type operator option
 
@@ -542,13 +544,15 @@ bool Library::command(std::string& com, std::unordered_map <std::string, Song>& 
 	{
 		if (op == ">")
 		{
-			for (auto& itr : songs) //iterate through the whole map
+			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
 			{
-				if (itr.second.get_rating() < stod(opt))
+				if (itr->second.get_rating() < stod(opt))
 				{
-					songs.erase(itr.first);
+					songs.erase(itr++->first);
 					flag = true;
 				}
+				else
+					++itr;
 			}
 		}
 	}
@@ -556,37 +560,43 @@ bool Library::command(std::string& com, std::unordered_map <std::string, Song>& 
 	{
 		if (op == "+")
 		{
-			for (auto& itr : songs) //iterate through the whole map
+			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
 			{
-				if (itr.second.get_genre() != opt)
+				if (itr->second.get_genre() != opt)
 				{
-					songs.erase(itr.first);
+					songs.erase(itr++->first);
 					flag = true;
 				}
+				else
+					++itr;
 			}
 		}
 		else if (op == "-")
 		{
-			for (auto& itr : all_songs) //iterate through the whole map
+			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
 			{
-				if (itr.second.get_genre() == opt)
+				if (itr->second.get_genre() == opt)
 				{
-					songs.erase(itr.first);
+					songs.erase(itr++->first);
 					flag = true;
 				}
+				else
+					++itr;
 			}
 		}
 		else if (op == "!")
 		{
 			for (auto& it : curr_user.get_fav_genres()) 
 			{
-				for (auto& itr : all_songs) //iterate through the whole map
+				for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
 				{
-					if (itr.second.get_genre() != it)
+					if (itr->second.get_genre() != it)
 					{
-						songs.erase(itr.first);
+						songs.erase(itr++->first);
 						flag = true;
 					}
+					else
+						++itr;
 				}
 			}
 		}
@@ -596,35 +606,41 @@ bool Library::command(std::string& com, std::unordered_map <std::string, Song>& 
 		if (op == ">")
 		{
 			//if stoi > 0
-			for (auto& itr : all_songs) //iterate through the whole map
+			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
 			{
-				if (itr.second.get_year() <= stoi(opt))
+				if (itr->second.get_year() <= stoi(opt))
 				{
-					songs.erase(itr.first);
-					true;
+					songs.erase(itr++->first);
+					flag = true;
 				}
+				else
+					++itr;
 			}
 		}
 		else if (op == "<")
 		{
-			for (auto& itr : all_songs) //iterate through the whole map
+			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
 			{
-				if (itr.second.get_year() >= stoi(opt))
+				if (itr->second.get_year() >= stoi(opt))
 				{
-					songs.erase(itr.first);
+					songs.erase(itr++->first);
 					flag = true;
 				}
+				else
+					++itr;
 			}
 		}
 		else if (op == "=")
 		{
-			for (auto& itr : all_songs) //iterate through the whole map
+			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
 			{
-				if (itr.second.get_year() != stoi(opt))
+				if (itr->second.get_year() != stoi(opt))
 				{
-					songs.erase(itr.first);
+					songs.erase(itr++->first);
 					flag = true;
 				}
+				else
+					++itr;
 			}
 		}
 	}

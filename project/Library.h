@@ -73,9 +73,9 @@ private:
 	///playlist helpers///
 	 void generate_playlist_helper(std::string& input);
 
-	 bool expression(std::string& expr, std::set<std::string>& playlist_songs);
-	 bool statement(std::string& state, std::unordered_map <std::string, Song>& songs);
-	 bool command(std::string& com, std::unordered_map <std::string, Song>& songs);
+	 bool expression(std::string expr, std::set<std::string>& playlist_songs);
+	 bool statement(const std::string state, std::unordered_map <std::string, Song>& songs);
+	 bool command(const std::string com, std::unordered_map <std::string, Song>& songs);
 
 
 	 void save_playlist_helper(const std::string& name);

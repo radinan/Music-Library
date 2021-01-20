@@ -69,11 +69,11 @@ std::string& Song::get_name()
 {
 	return name;
 }
-std::string& Song::get_genre() 
+const std::string& Song::get_genre() const
 {
 	return genre;
 }
-size_t Song::get_year() 
+const size_t& Song::get_year() const
 {
 	return release_year;
 }

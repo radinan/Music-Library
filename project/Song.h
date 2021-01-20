@@ -31,8 +31,8 @@ public:
 	void set_rating(size_t rate);
 	double get_rating() const;
 	std::string& get_name();
-	std::string& get_genre();
-	size_t get_year();
+	const std::string& get_genre() const;
+	const size_t& get_year() const;
 
 	//informative methods
 	void song_info() const;
