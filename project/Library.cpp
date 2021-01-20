@@ -100,6 +100,8 @@ void Library::welcome()
 }
 void Library::help()
 {
+	std::cout << "---Help--- \n";
+
 	std::cout << "List of all commands: \n"
 		<< "0 - exit\n"
 		<< "1 - help menu \n"
@@ -121,6 +123,8 @@ void Library::help()
 //--user-- 
 void Library::sign_in()
 {
+	std::cout << "---Sign in---\n";
+
 	std::string un, pw;
 
 	std::cout << "Enter username: ";
@@ -155,6 +159,8 @@ void Library::sign_in_helper(const std::string& un, const std::string& pw)
 
 void Library::sign_up()
 {
+	std::cout << "---Sign up---\n";
+
 	std::string un, pw;
 
 	std::cout << "Enter username: ";
@@ -207,6 +213,8 @@ void Library::is_username_free(const std::string& un)
 
 void Library::change_data()
 {
+	std::cout << "---Change data---\n";
+
 	size_t command = 0; //or char
 	std::cout <<
 		"Enter number of command: \n" <<
@@ -349,6 +357,8 @@ void Library::save_username_helper(const std::string& un)
 
 void Library::save_user_data() //not for username!
 {
+	std::cout << "---Save changes---\n";
+
 	//std::cout << "Saving all changes. Please, don't close the window\n"; //it's pretty fast as far as I've tested it
 	save_user_data_helper();
 }
@@ -396,6 +406,8 @@ void Library::save_user_data_helper()
 //--song-- 
 void Library::add_song()
 {
+	std::cout << "---Add song---\n";
+
 	std::string name, artist, genre, album;
 	size_t release_year;
 	//many inputs
@@ -434,6 +446,8 @@ void Library::add_song_helper(const std::string& name, const std::string& artist
 
 void Library::rate_song()
 {
+	std::cout << "---Rate song---\n";
+
 	std::string name;
 	size_t rate = 0;
 
@@ -470,6 +484,8 @@ void Library::save_songs()
 //--playlist--//only with correct data for now!!!
 void Library::generate_playlist() // .... & ... | ...
 {
+	std::cout << "---Generate playlist---\n";
+
 	//&& ||
 	std::string input;
 	std::cout << "Choose criteria (more than 1, separated with '&' or '|'): \n" <<
@@ -684,6 +700,8 @@ bool Library::command(std::string com, std::unordered_map <std::string, Song>& s
 
 void Library::save_playlist()
 {
+	std::cout << "---Set playlist's name---\n";
+
 	if (!this->is_loaded())
 	{
 		std::cout << "Please, first load a playlist.\n";
@@ -704,6 +722,8 @@ void Library::save_playlist_helper(const std::string& name)
 
 void Library::load_playlist()
 {
+	std::cout << "---Load playlist---\n";
+
 	std::string input;
 	std::cout << "Enter name: ";
 	std::cin >> input;
@@ -726,5 +746,7 @@ void Library::load_playlist_helper(const std::string& name) //to work, must fix 
 
 void Library::show_all_info()
 {
+	std::cout << "---Show all song's info---\n";
+
 	this->all_songs_info();
 }
