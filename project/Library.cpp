@@ -7,42 +7,41 @@
 #include <stdexcept>
 
 
-Library::Library() 
+Library::Library()
 {
 	//loads all song data to the file
-	std::ifstream file ("songs.txt"); // opens file "songs"
-	if (file.is_open())
+	std::ifstream file("songs.txt"); // opens file "songs"
+	if (!file.is_open())
+		throw std::runtime_error("Unable to open file.");
+
+	while (!file.eof())
 	{
-		while(!file.eof())
+		char c = file.peek();
+		if (c >= 32) //is whitespace
 		{
-			char c = file.peek();
-			if (c >= 32) //is whitespace
-			{
-				Song song;
-				file >> song;
-				all_songs.insert({ song.get_name(), song });
-			}
-			else
-				break;
+			Song song;
+			file >> song;
+			all_songs.insert({ song.get_name(), song });
 		}
-		file.close();
+		else
+			break;
 	}
-	else
-		std::cout << "Unable to open file \n";
+	file.close();
 }
-Library::~Library() {}//da vika save_songs 
+Library::~Library() {}
 
 
 void Library::set_user(User& other)
 {
 	curr_user = other;
+	logged_u = true;
 }
 void Library::set_playlist(Playlist& other)
 {
 	curr_playlist = other;
 	//adding to curr_user:
 	curr_user.add_playlist(curr_playlist);
-	loaded_pl = 1;
+	loaded_pl = true;
 }
 void Library::add_song(Song& other)
 {
@@ -87,6 +86,10 @@ bool Library::is_loaded() //for playlist
 {
 	return loaded_pl;
 }
+bool Library::is_logged()
+{
+	return logged_u;
+}
 void Library::is_username_free(const std::string& un)
 {
 	std::ifstream file("users.txt");
@@ -113,8 +116,6 @@ void Library::is_username_free(const std::string& un)
 	}
 	file.close();
 }
-
-
 
 
 //commands
@@ -146,6 +147,30 @@ void Library::help()
 		<< "9 - change playlist's name \n"
 		<< "10 - load playlist\n"
 		<< "11 - show info for all songs\n";
+}
+
+void Library::exit()
+{
+	try
+	{
+		exit_helper();
+	}
+	catch (const std::runtime_error& error)
+	{
+		std::cout << error.what() << std::endl;
+	}
+}
+void Library::exit_helper()
+{
+	std::ofstream file("songs.txt", std::ios::trunc); //delete and replace old songs' data with the new content
+	if (!file.is_open())
+		throw std::runtime_error("Unable to open file and save updates.");
+
+	for (auto& it : all_songs)
+	{
+		file << it.second;
+	}
+	file.close();
 }
 
 //--user-- 
@@ -230,7 +255,6 @@ void Library::sign_up()
 }
 void Library::sign_up_helper(const std::string& un, const std::string& pw)
 {
-	//correct input ?
 	is_username_free(un);
 	User new_user(un, pw);
 	this->set_user(new_user);
@@ -239,6 +263,12 @@ void Library::sign_up_helper(const std::string& un, const std::string& pw)
 
 void Library::change_data()
 {
+	if (!is_logged())
+	{
+		std::cout << "No permission for this action.\n";
+		return;
+	}
+
 	std::cout << "---Change data---\n";
 
 	size_t command = 0; //or char
@@ -328,7 +358,6 @@ void Library::change_data_helper(size_t choice, const std::string& config)
 }
 
 //files:
-//fixed
 void Library::save_new_user_helper()
 {
 	std::ofstream out("users.txt", std::ios::out | std::ios::app); //go at the end of the file
@@ -388,6 +417,12 @@ void Library::save_username_helper(const std::string& un)
 
 void Library::save_user_data() //not for username!
 {
+	if (!is_logged())
+	{
+		std::cout << "No permission for this action.\n";
+		return;
+	}
+
 	std::cout << "---Save changes---\n";
 
 	try
@@ -444,6 +479,12 @@ void Library::save_user_data_helper()
 //--song-- 
 void Library::add_song()
 {
+	if (!is_logged())
+	{
+		std::cout << "No permission for this action.\n";
+		return;
+	}
+
 	std::cout << "---Add song---\n";
 
 	std::string name, artist, genre, album;
@@ -485,6 +526,12 @@ void Library::add_song_helper(const std::string& name, const std::string& artist
 
 void Library::rate_song()
 {
+	if (!is_logged())
+	{
+		std::cout << "No permission for this action.\n";
+		return;
+	}
+
 	std::cout << "---Rate song---\n";
 
 	std::string name;
@@ -517,50 +564,30 @@ void Library::rate_song_helper(const std::string& name, int rate)
 		throw std::invalid_argument("Song was not found.\n");
 }
 
-void Library::save_songs()
-{
-	try
-	{
-		save_songs_helper();
-	}
-	catch (const std::runtime_error& error)
-	{
-		std::cout << error.what() << std::endl;
-		return;
-	}
-
-}
-void Library::save_songs_helper()
-{
-	std::ofstream file("songs.txt", std::ios::trunc); //delete and replace old content with the new data
-	if (!file.is_open())
-		throw std::runtime_error("Unable to open file.");
-
-	for (auto& it : all_songs)
-	{
-		file << it.second;
-	}
-	file.close();
-}
 
 //--playlist--//only with correct data for now!!!
 void Library::generate_playlist() // .... & ... | ...
 {
+	if (!is_logged())
+	{
+		std::cout << "No permission for this action.\n";
+		return;
+	}
+
 	std::cout << "---Generate playlist---\n";
 
 	//&& ||
 	std::string input;
-	std::cout << "Choose criteria (more than 1, separated with '&' or '|'): \n" <<
-		"1. rating > ... \n" <<
-		"2. genre + ... \n" <<
-		"3. genre - ... \n" <<
+	std::cout << "Type criterion/criteria (separated with '&' or '|'): \n" <<
+		"1. rating > \n" <<
+		"2. genre + \n" <<
+		"3. genre - \n" <<
 		"4. genre ! \n" <<
 		"5. year > \n" <<
 		"6. year = \n" <<
 		"7. year < \n";
-
 	std::cin.ignore();
-	std::getline(std::cin, input); // [command] (value) & [command] (value) | [command] (value)
+	std::getline(std::cin, input);
 	
 	try
 	{
@@ -766,11 +793,17 @@ bool Library::command(std::string com, std::unordered_map <std::string, Song>& s
 
 void Library::save_playlist()
 {
+	if (!is_logged())
+	{
+		std::cout << "No permission for this action.\n";
+		return;
+	}
+
 	std::cout << "---Set playlist's name---\n";
 
 	if (!this->is_loaded())
 	{
-		std::cout << "Please, first load a playlist.\n";
+		std::cout << "No playlist is loaded.\n";
 		return;
 	}
 	std::string input;
@@ -780,6 +813,7 @@ void Library::save_playlist()
 	try
 	{
 		save_playlist_helper(input);
+		std::cout << "Name successfully changed.\n";
 	}
 	catch (const std::invalid_argument& error)
 	{
@@ -796,6 +830,12 @@ void Library::save_playlist_helper(const std::string& name)
 
 void Library::load_playlist()
 {
+	if (!is_logged())
+	{
+		std::cout << "No permission for this action.\n";
+		return;
+	}
+
 	std::cout << "---Load playlist---\n";
 
 	std::string input;
@@ -805,10 +845,12 @@ void Library::load_playlist()
 	try
 	{
 		load_playlist_helper(input);
+		std::cout << "Playlist successfully loaded.\n";
 	}
 	catch (const std::invalid_argument& error)
 	{
 		std::cout << error.what() << std::endl;
+		return;
 	}
 }
 void Library::load_playlist_helper(const std::string& name) //to work, must fix load-func first
@@ -829,9 +871,15 @@ void Library::load_playlist_helper(const std::string& name) //to work, must fix 
 
 void Library::show_all_info()
 {
+	if (!is_logged())
+	{
+		std::cout << "No permission for this action.\n";
+		return;
+	}
+
 	std::cout << "---Show all song's info---\n";
 
-	show_all_info();
+	show_all_info_helper();
 }
 void Library::show_all_info_helper()
 {
