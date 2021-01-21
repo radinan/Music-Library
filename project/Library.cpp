@@ -4,6 +4,8 @@
 #include <fstream>
 #include <stdio.h>
 #include <sstream>
+#include <stdexcept>
+
 
 Library::Library() 
 {
@@ -30,6 +32,23 @@ Library::Library()
 }
 Library::~Library() {}//da vika save_songs 
 
+
+void Library::set_user(User& other)
+{
+	curr_user = other;
+}
+void Library::set_playlist(Playlist& other)
+{
+	curr_playlist = other;
+	//adding to curr_user:
+	curr_user.add_playlist(curr_playlist);
+	loaded_pl = 1;
+}
+void Library::add_song(Song& other)
+{
+	all_songs.insert({ other.get_name(), other });
+}
+
 User& Library::get_user() 
 {
 	return curr_user;
@@ -42,7 +61,6 @@ std::unordered_map <std::string, Song>& Library::get_songs()
 {
 	return all_songs;
 }
-
 
 void Library::all_songs_info()
 {
@@ -69,24 +87,34 @@ bool Library::is_loaded() //for playlist
 {
 	return loaded_pl;
 }
+void Library::is_username_free(const std::string& un)
+{
+	std::ifstream file("users.txt");
+	if (!file.is_open()) //if username is free
+	{
+		throw std::runtime_error("Unable to open file.");
+	}
+	std::string x;
+	while (!file.eof())
+	{
+		std::getline(file, x); //might move this upwards
+		if (x == un)
+		{
+			file.close();
+			throw std::invalid_argument("This username is already taken.");
+		}
+		else
+		{
+			for (int i = 0; i < 5; ++i) //skip next 5 lines of data
+			{
+				std::getline(file, x);
+			}
+		}
+	}
+	file.close();
+}
 
 
-void Library::set_user(User& other)
-{
-	curr_user = other;
-}
-void Library::set_playlist(Playlist& other)
-{
-	curr_playlist = other;
-	//adding to curr_user:
-	curr_user.add_playlist(curr_playlist);
-	loaded_pl = 1;
-}
-
-void Library::add_song(Song& other)
-{
-	all_songs.insert({other.get_name(), other});
-}
 
 
 //commands
@@ -131,30 +159,45 @@ void Library::sign_in()
 	std::cin >> un;
 	std::cout << "Enter password: ";
 	std::cin >> pw;
-	//validation
-	sign_in_helper(un, pw);
+
+	try
+	{
+		sign_in_helper(un, pw);
+		std::cout << "You are successfully signed in.\n";
+
+	}
+	catch (const std::runtime_error& error)
+	{
+		std::cout << error.what() <<std::endl;
+		return;
+	}
+	catch (const std::invalid_argument& error)
+	{
+		std::cout << error.what() << std::endl;
+		return;
+	}
 }
 void Library::sign_in_helper(const std::string& un, const std::string& pw)
 {
 	//checks in file
 	std::ifstream file("users.txt");
-	if (file.is_open())
+	if (!file.is_open())
+		throw std::runtime_error("Unable to open file.");
+
+	while (!file.eof())
 	{
-		while (!file.eof())
+		User user;
+		file >> user; //load data from file
+		if (user.check_username_password(un, pw)) //correct data case
 		{
-			User user;
-			file >> user; //load data from file
-			if (user.check_username_password(un, pw)) //correct data case
-			{
-				this->set_user(user); 
-				file.close();
-				std::cout << "You are successfully signed in.\n";
-				return;
-			}
+			this->set_user(user); 
+			file.close();
+			return;
 		}
-		file.close();
 	}
-	std::cout << "Wrong username or password.\n";
+	file.close();
+
+	throw std::invalid_argument("Wrong username or password.");
 }
 
 void Library::sign_up()
@@ -168,47 +211,30 @@ void Library::sign_up()
 	std::cout << "Enter password: ";
 	std::cin >> pw;
 
-	//validation
-	sign_up_helper(un, pw);
+	try 
+	{
+		sign_up_helper(un, pw);
+		std::cout << "You are successfully signed up.\n";
+	}
+	catch (const std::runtime_error& error)
+	{ 
+		std::cout << error.what() << std::endl;
+		return;
+	}
+	catch (const std::invalid_argument& error)
+	{
+		std::cout << error.what() << std::endl;
+		return;
+	}
+
 }
 void Library::sign_up_helper(const std::string& un, const std::string& pw)
 {
-	try
-	{
-		is_username_free(un);
-		User new_user(un, pw);
-		this->set_user(new_user);
-		save_new_user_helper();
-	}
-	catch (int i)
-	{
-		std::cout << "This username is already taken.\n";
-	}
-}
-void Library::is_username_free(const std::string& un)
-{
-	std::ifstream file("users.txt");
-	if (file.is_open()) //if username is free
-	{
-		std::string x;
-		while (!file.eof())
-		{
-			std::getline(file, x); //might move this upwards
-			if (x == un)
-			{
-				file.close();
-				throw - 1;
-			}
-			else
-			{
-				for (int i = 0; i < 5; ++i) //skip next 5 lines of data
-				{
-					std::getline(file, x);
-				}
-			}
-		}
-		file.close();
-	}
+	//correct input ?
+	is_username_free(un);
+	User new_user(un, pw);
+	this->set_user(new_user);
+	save_new_user_helper();
 }
 
 void Library::change_data()
@@ -256,25 +282,36 @@ void Library::change_data()
 		std::cin.ignore();
 		std::getline(std::cin, config);
 		break;
+	default:
+		std::cout << "Please enter correct number.\n";
+		return;
 	}
-	//check here for whitespaces(before or after)
-	change_data_helper(command, config);
+
+	try
+	{
+		change_data_helper(command, config);
+		std::cout << "Data successfully changed.(Don't forget to save, after you're done with all changes)\n";
+	}
+	catch (const std::runtime_error& error)
+	{
+		std::cout << error.what() << std::endl;
+		return;
+	}
+	catch (const std::invalid_argument& error)
+	{
+		std::cout << error.what() << std::endl;
+		return;
+	}
 }
 void Library::change_data_helper(size_t choice, const std::string& config)
 {
+	//input validation?
 	switch (choice)
 	{
 	case 1:
-		try
-		{
-			is_username_free(config);
-			save_username_helper(config); //username is used as a unique identificator!
-			this->get_user().set_username(config);
-		}
-		catch (int a)
-		{
-			std::cout << "This username is already taken.\n";
-		}
+		is_username_free(config);
+		save_username_helper(config); //username is used as a unique identificator!
+		this->get_user().set_username(config);
 		break;
 	case 2:
 		this->get_user().set_password(config); break;
@@ -298,8 +335,7 @@ void Library::save_new_user_helper()
 	std::ifstream in("users.txt");
 	if (!out.is_open())
 	{
-		std::cout << "Unable to open file.\n";
-		return;
+		throw std::runtime_error("Unable to open file.");
 	}
 	if (in.peek() != EOF) //if it's not empty
 	{
@@ -320,47 +356,50 @@ void Library::save_username_helper(const std::string& un)
 	std::ifstream in("users.txt");
 	if (!in.is_open())
 	{
-		std::cout << "Unable to open file1\n";
-		return;
+		throw std::runtime_error("Unable to open file.");
 	}
 	std::ofstream out("users1.txt");
 	if (!out.is_open())
 	{
-		std::cout << "Unable to open file2\n";
-		return;
+		throw std::runtime_error("Unable to open file.");
 	}
-	while (std::getline(in, x)) //?????????????????????????????????????????????????????????????????????????????????????????????
+	while (std::getline(in, x))
 	{
-		//if (in.peek() != EOF) //if it's not the last element 
-		//{
 		if (x == this->get_user().get_name())
 		{
 			out << un << "\n";
 		}
 		else
-			out << x << "\n"; //does it get the "\n" ? check!!
+			out << x << "\n"; 
 
 		for (size_t i = 0; i < 5; ++i) //blind copy next data
 		{
 			std::getline(in, x);
 			out << x << '\n';
 		}
-		//}
-
 	}
 	in.close();
 	out.close();
 	remove("users.txt");
-	std::rename("users1.txt", "users.txt"); //to remove warning: if(.. == NULL) return;
-	std::cout << "Username is successfully changed.\n";
+
+	if ((std::rename("users1.txt", "users.txt")) == NULL)
+		throw std::runtime_error("Unable to save changes.\n");
 }
 
 void Library::save_user_data() //not for username!
 {
 	std::cout << "---Save changes---\n";
 
-	//std::cout << "Saving all changes. Please, don't close the window\n"; //it's pretty fast as far as I've tested it
-	save_user_data_helper();
+	try
+	{
+		save_user_data_helper();
+		std::cout << "Data-changes successfully saved.\n";
+	}
+	catch (const std::runtime_error& error)
+	{
+		std::cout << error.what() << std::endl;
+		return;
+	}
 }
 void Library::save_user_data_helper()
 {
@@ -370,14 +409,12 @@ void Library::save_user_data_helper()
 	std::ifstream in("users.txt");
 	if (!in.is_open())
 	{
-		std::cout << "Unable to open file1\n";
-		return;
+		throw std::runtime_error("Unable to open file.");
 	}
 	std::ofstream out("users1.txt");
 	if (!out.is_open())
 	{
-		std::cout << "Unable to open file2\n";
-		return;
+		throw std::runtime_error("Unable to open file.");
 	}
 
 	for (size_t i = 0; in.peek() != EOF && !in.eof(); ++i)
@@ -398,8 +435,9 @@ void Library::save_user_data_helper()
 	in.close();
 	out.close();
 	remove("users.txt");
-	std::rename("users1.txt", "users.txt"); //to remove warning: if(.. == NULL) return;
-	std::cout << "Successfully saved.\n";
+
+	if ((std::rename("users1.txt", "users.txt")) == NULL) 
+		throw std::runtime_error("Unable to save changes.\n");
 }
 
 
@@ -410,38 +448,39 @@ void Library::add_song()
 
 	std::string name, artist, genre, album;
 	size_t release_year;
-	//many inputs
+
 	std::cout << "Enter name: ";
 	std::cin.ignore();
 	std::getline(std::cin, name);
 
 	std::cout << "Enter artist: ";
-	//std::cin.ignore();
 	std::getline(std::cin, artist);
 
 	std::cout << "Enter genre: ";
-	//std::cin.ignore();
 	std::getline(std::cin, genre);
 
 	std::cout << "Enter album: ";
-	//std::cin.ignore();
 	std::getline(std::cin, album);
 
 	std::cout << "Enter release date: ";
 	std::cin >> release_year;
-	//validation
-	add_song_helper(name, artist, genre, album, release_year);
+	
+	try
+	{
+		add_song_helper(name, artist, genre, album, release_year);
+		std::cout << "Song successfully added.\n";
+	}
+	catch (const std::invalid_argument& error)
+	{
+		std::cout << error.what() << std::endl;
+		return;
+	}
 }
 void Library::add_song_helper(const std::string& name, const std::string& artist, const std::string& genre,
 	const std::string& album, size_t release_year)
 {
 	Song song(name, artist, genre, album, release_year);
-	//possible check here if it's successfully constructed
-	//yes =>
 	all_songs.insert({ name, song });
-	std::cout << "Song is successfully added.\n";// to the library.\n";
-	//no =>
-	//std::cout<<"Please enter correct data!\n";
 }
 
 void Library::rate_song()
@@ -449,7 +488,7 @@ void Library::rate_song()
 	std::cout << "---Rate song---\n";
 
 	std::string name;
-	size_t rate = 0;
+	int rate = 0;
 
 	std::cout << "Enter song: ";
 	std::cin.ignore();
@@ -457,23 +496,46 @@ void Library::rate_song()
 
 	std::cout << "Enter rating(1-6): ";// 1-6 ? 
 	std::cin >> rate;
-	//validation
-	rate_song_helper(name, rate);
+	
+	try
+	{
+		rate_song_helper(name, rate);
+		std::cout << "Song successfully rated.\n";
+	}
+	catch(const std::invalid_argument& error)
+	{
+		std::cout << error.what() << std::endl;
+		return;
+	}
 }
-void Library::rate_song_helper(const std::string& name, size_t rate)
+void Library::rate_song_helper(const std::string& name, int rate)
 {
-	//if exists
-	all_songs[name].set_rating(rate);
+	const auto& search = all_songs.find(name);
+	if (search != all_songs.end()) 
+		search->second.set_rating(rate);
+	else 
+		throw std::invalid_argument("Song was not found.\n");
 }
 
 void Library::save_songs()
 {
-	std::ofstream file("songs.txt", std::ios::trunc); //delete and replace old content with the new data
-	if (!file.is_open())
+	try
 	{
-		std::cout << "Unable to update file.\n";
+		save_songs_helper();
+	}
+	catch (const std::runtime_error& error)
+	{
+		std::cout << error.what() << std::endl;
 		return;
 	}
+
+}
+void Library::save_songs_helper()
+{
+	std::ofstream file("songs.txt", std::ios::trunc); //delete and replace old content with the new data
+	if (!file.is_open())
+		throw std::runtime_error("Unable to open file.");
+
 	for (auto& it : all_songs)
 	{
 		file << it.second;
@@ -499,18 +561,22 @@ void Library::generate_playlist() // .... & ... | ...
 
 	std::cin.ignore();
 	std::getline(std::cin, input); // [command] (value) & [command] (value) | [command] (value)
-	generate_playlist_helper(input);
+	
+	try
+	{
+		generate_playlist_helper(input);
+	}
+	catch (const std::invalid_argument& error)
+	{
+		std::cout << error.what() << std::endl;
+		return;
+	}
 }
 void Library::generate_playlist_helper(std::string& input)  //
 {
 	std::set<std::string> playlist_songs; //songs, sorted in alphabetical order
 	if (!expression(input, playlist_songs))
-	{
-		std::cout << "Nope..\n";
-		return;
-		//throw ...
-		//return?
-	}
+		throw std::invalid_argument("No songs match the chosen criteria.");
 
 	Playlist playlist;
 	playlist.set_songs(playlist_songs);
@@ -709,15 +775,23 @@ void Library::save_playlist()
 	}
 	std::string input;
 	std::cout << "Enter playlist's new name: ";
-	std::cin >> input;
-	save_playlist_helper(input);
+	std::getline(std::cin, input);
+
+	try
+	{
+		save_playlist_helper(input);
+	}
+	catch (const std::invalid_argument& error)
+	{
+		std::cout << error.what() << std::endl;
+		return;
+	}
 }
 void Library::save_playlist_helper(const std::string& name)
 {
 	std::string old_name = this->get_playlist().get_name();
 	this->get_user().get_playlist(old_name).set_name(name); //changes name in curr_user
 	this->get_playlist().set_name(name); //changes name of the loaded playlist in the library
-
 }
 
 void Library::load_playlist()
@@ -727,26 +801,39 @@ void Library::load_playlist()
 	std::string input;
 	std::cout << "Enter name: ";
 	std::cin >> input;
-	load_playlist_helper(input);
+
+	try
+	{
+		load_playlist_helper(input);
+	}
+	catch (const std::invalid_argument& error)
+	{
+		std::cout << error.what() << std::endl;
+	}
 }
 void Library::load_playlist_helper(const std::string& name) //to work, must fix load-func first
 {
 	if (!this->check_playlist(name)) //checks if it's not already loaded
 	{
-		if (this->get_user().is_playlist(name)) //seaarch in current user's playlist for name
+		if (this->get_user().is_playlist(name)) //search in current user's playlist for name
 		{
 			this->set_playlist(this->get_user().get_playlist(name)); //if found -> add it to lib.curr_playlist
 		}
 		else
-			std::cout << "No playlist found.\n";
+			throw std::invalid_argument("No playlist found.");
 	}
 	else
-		std::cout << "Playlist " << name << " is already loaded.";
+		throw std::invalid_argument("This playlist is already loaded.");
 }
+
 
 void Library::show_all_info()
 {
 	std::cout << "---Show all song's info---\n";
 
+	show_all_info();
+}
+void Library::show_all_info_helper()
+{
 	this->all_songs_info();
 }
