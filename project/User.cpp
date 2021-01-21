@@ -11,7 +11,6 @@ void User::copy(const User& other)
 	playlists = other.playlists;
 }
 
-
 User::User() //they have their own default constructors;
 {
 	username = "#";
@@ -62,6 +61,14 @@ void User::set_birth_date(const std::string& _birth_date)
 	//validation
 	birth_date = _birth_date;
 }
+void User::add_fav_genre(const std::string& genre)
+{
+	fav_genres.insert(genre);
+}
+void User::add_playlist(Playlist& other)
+{
+	playlists.push_back(other);
+}
 const std::unordered_set<std::string>& User::get_fav_genres() const
 {
 	return fav_genres;
@@ -70,7 +77,20 @@ std::string User::get_name() //by copy
 {
 	return username;
 }
+Playlist& User::get_playlist(const std::string& name)
+{
+	for (auto& i : playlists)
+	{
+		if (i.get_name() == name)
+			return i;
+	}
 
+	throw std::invalid_argument("No playlist found.");
+}
+void User::remove_fav_genre(const std::string& genre)
+{
+	fav_genres.erase(genre);
+}
 
 
 
@@ -78,21 +98,6 @@ bool User::check_username_password(const std::string& _username, const std::stri
 {
 	return (username == _username && password == _password);
 }
-
-void User::add_fav_genre(const std::string& genre)
-{
-	fav_genres.insert(genre);
-}
-void User::remove_fav_genre(const std::string& genre)
-{
-	fav_genres.erase(genre);
-}
-void User::add_playlist(Playlist& other)
-{
-	playlists.push_back(other);
-}
-
-
 bool User::is_playlist(const std::string& name)
 {
 	for (auto i : playlists)
@@ -102,14 +107,7 @@ bool User::is_playlist(const std::string& name)
 	}
 	return false;
 }
-Playlist& User::get_playlist(const std::string& name)
-{
-	for (auto& i : playlists)
-	{
-		if (i.get_name() == name)
-			return i;
-	}
-}
+
 
 
 

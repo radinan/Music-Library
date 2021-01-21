@@ -31,18 +31,17 @@ public:
 	void set_password(const std::string& _password);
 	void set_full_name(const std::string& _full_name);
 	void set_birth_date(const std::string& _birth_date);
-
+	void add_fav_genre(const std::string& genre);
+	void add_playlist(Playlist& other);
 	const std::unordered_set<std::string>& get_fav_genres() const; //const& so not being changed
 	std::string get_name(); //by copy
-	
-	bool check_username_password(const std::string& _username, const std::string& _password);
-
-	void add_fav_genre(const std::string& genre);
-	void remove_fav_genre(const std::string& genre);
-	void add_playlist(Playlist& other);
-
-	bool is_playlist(const std::string & name);
 	Playlist& get_playlist(const std::string& name);
+	void remove_fav_genre(const std::string& genre);
+
+	//informative methods
+	bool check_username_password(const std::string& _username, const std::string& _password);
+	bool is_playlist(const std::string& name);
+
 
 	friend std::ostream& operator<< (std::ostream& out, User& user);
 	friend std::istream& operator>> (std::istream& in, User& user);

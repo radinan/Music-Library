@@ -21,11 +21,12 @@ public:
 	Playlist& operator=(const Playlist& other);
 	~Playlist();
 
+	//setters and getters
+	void set_name(const std::string& _name);
+	void set_songs(std::set<std::string>& other_songs);
 	void add_song(Song& other);
 	std::string& get_name(); //without const?
-	void set_name(const std::string& _name);
-	std::list<std::string>& get_songs();
-	void set_songs(std::set<std::string>& other_songs);
+	std::list<std::string>& get_songs();	
 	size_t get_size();
 
 
