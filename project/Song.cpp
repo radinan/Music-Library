@@ -8,33 +8,25 @@ void Song::copy(const Song& other)
 	genre = other.genre;
 	album = other.album;
 	release_year = other.release_year;
-	//reserve?
 	rating = other.rating;
 }
 
 //constructors
 Song::Song()
 {
-	/*name.reserve(20);
-	name = "";
-	artist.reserve(20);
-	artist = "";
-	genre.reserve(20);
-	genre = "";
-	album.reserve(20);
-	album = "";
-	//release_year = 0;*/
-
+	release_year = 0;
 	rating.first = 0;
 	rating.second = 0;
 }
 Song::Song(const std::string& _name, const std::string& _artist, const std::string& _genre, 
-		   const std::string& _album, size_t _release_year)
+		   const std::string& _album, int _release_year)
 {
 	name = _name;
 	artist = _artist;
 	genre = _genre;
 	album = _album;
+	if (release_year < 0 || release_year > 2021) //check min value
+		throw std::invalid_argument("Invalid year.");
 	release_year = _release_year;
 
 	rating.first = 0;
@@ -53,8 +45,10 @@ Song::~Song()
 }
 
 //setters and getters
-void Song::set_rating(size_t rate)
+void Song::set_rating(int rate)
 {
+	if (rate < 1 || rate > 6)
+		throw std::invalid_argument("Invalid rate.");
 	++rating.first;
 	rating.second += rate;
 }
@@ -65,7 +59,7 @@ double Song::get_rating() const
 	else
 		return (double)rating.second / rating.first; //casting size_t->double
 }
-std::string& Song::get_name() 
+std::string& Song::get_name()
 {
 	return name;
 }
@@ -84,7 +78,7 @@ void Song::song_info() const
 	std::cout << "Name: " << name << "\n"
 		<< "Artist: " << artist << "\n"
 		<< "Genre: " << genre << "\n"
-		<< "Album" << album << "\n"
+		<< "Album: " << album << "\n"
 		<< "Release date: " << release_year << "\n"
 		<< "Rating: " << get_rating()<<"\n";
 }
