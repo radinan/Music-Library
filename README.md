@@ -10,7 +10,5 @@ Overall: pay attention to const and &
 <br>1. User
 <br>  1.1 consider validaiton inside setters
 <br>  
-<br>2. Song
-<br>  2.1 consider validation methods
-
+<br> Don't allow one user to vote more than once for a song
 <img src="https://octocat-generator-assets.githubusercontent.com/my-octocat-1608367107981.png" id="octocat" alt="" />
