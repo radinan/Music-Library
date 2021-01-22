@@ -6,14 +6,12 @@
 #include <list>
 #include <set>
 
-class Playlist //validaciq za input(simvoli intervali i tn)
+class Playlist 
 {
 private:
 	std::string name; 
 	const size_t max_size = 20;
-
-	std::list<std::string> songs; // changes in tree will reflect in playlist without changing any data
-								  // also it's easier to read from/write to file
+	std::list<std::string> songs; 
 private:
 	void copy(const Playlist& other);
 public:

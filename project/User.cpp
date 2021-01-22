@@ -127,10 +127,7 @@ void User::add_fav_genre(const std::string& genre)
 }
 void User::add_playlist(Playlist& other)
 {
-	//if (is_playlist(other.get_name())) //if playlist with the same name already exist for this user
-		//throw std::invalid_argument("Name is already used.");
-	//else
-		playlists.insert({other.get_name(), other});
+	playlists.insert({other.get_name(), other});
 }
 void User::add_voted_song(const std::string& name)
 {
@@ -142,7 +139,7 @@ void User::add_voted_song(const std::string& name)
 void User::change_playlists_name(const std::string& old_name, const std::string& new_name)
 {
 	Playlist pl = playlists[old_name]; //copies old playlist
-	pl.set_name(new_name); //updates name ?????
+	pl.set_name(new_name); //updates name 
 	playlists.insert({ new_name, pl }); //creates new key with this data
 	playlists.erase(old_name);
 }
@@ -176,7 +173,7 @@ bool User::check_username_password(const std::string& _username, const std::stri
 }
 bool User::is_playlist(const std::string& name)
 {
-	return playlists.find(name) != playlists.end(); //does it exist within "playlists:
+	return playlists.find(name) != playlists.end(); //does it exist within "playlists"
 }
 
 
@@ -205,13 +202,13 @@ std::ostream& operator<< (std::ostream& out, User& user)
 	}
 	//voted_songs
 	std::unordered_set<std::string>::iterator it1 = user.voted_songs.begin();
-	if (it1 != user.voted_songs.end()) //fixed problem: genre+genre+genre+ 
+	if (it1 != user.voted_songs.end())
 	{
 		out << *it1; //first
 		++it1;
 		for (; it1 != user.voted_songs.end(); ++it1)
 		{
-			out << "^" << *it1;  //first + second ...
+			out << "^" << *it1;  //first ^ second ...
 		}
 		out << "\n";
 	}
@@ -265,9 +262,9 @@ std::istream& operator>> (std::istream& in, User& user)
 	if (in.peek() != '#')
 	{
 		std::string line1;
-		std::getline(in, line1); //saving the whole line into a string
+		std::getline(in, line1); 
 		std::istringstream ss1(line1);
-		while (std::getline(ss1, line1, '^')) //splitting
+		while (std::getline(ss1, line1, '^')) 
 		{
 			user.voted_songs.insert(line1);
 		}
@@ -293,7 +290,7 @@ std::istream& operator>> (std::istream& in, User& user)
 	else
 	{
 		in.get(); // #
-		in.get(); // \n		//or without?
+		in.get(); // \n		
 	}
 
 	return in;

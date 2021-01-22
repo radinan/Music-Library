@@ -25,7 +25,6 @@ Playlist::~Playlist(){}
 
 void Playlist::set_name(const std::string& _name)
 {
-	//validation
 	name = _name;
 }
 void Playlist::set_songs(std::set<std::string>& other_songs)
@@ -35,7 +34,7 @@ void Playlist::set_songs(std::set<std::string>& other_songs)
 		songs.push_back(itr);
 	}
 }
-void Playlist::add_song(Song& other) //song's name?
+void Playlist::add_song(Song& other) 
 {
 	if (get_size() <= max_size  ) //if there is free space in the playlist
 	{

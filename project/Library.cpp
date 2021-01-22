@@ -86,7 +86,7 @@ bool Library::is_loaded() //for playlist
 {
 	return loaded_pl;
 }
-bool Library::is_logged()
+bool Library::is_logged() //for user
 {
 	return logged_u;
 }
@@ -100,7 +100,7 @@ void Library::is_username_free(const std::string& un)
 	std::string x;
 	while (!file.eof())
 	{
-		std::getline(file, x); //might move this upwards
+		std::getline(file, x);
 		if (x == un)
 		{
 			file.close();
@@ -108,7 +108,7 @@ void Library::is_username_free(const std::string& un)
 		}
 		else
 		{
-			for (int i = 0; i < 6; ++i) //skip next 5 lines of data
+			for (int i = 0; i < 6; ++i) //skip next 6 lines of data
 			{
 				std::getline(file, x);
 			}
@@ -116,7 +116,6 @@ void Library::is_username_free(const std::string& un)
 	}
 	file.close();
 }
-
 
 //commands
 //using cin.ignore() before every getline 
@@ -259,7 +258,7 @@ void Library::sign_up_helper(const std::string& un, const std::string& pw)
 }
 void Library::save_new_user_helper()
 {
-	std::ofstream out("users.txt", std::ios::out | std::ios::app); //go at the end of the file
+	std::ofstream out("users.txt", std::ios::out | std::ios::app); //go to the end of the file
 	std::ifstream in("users.txt");
 	if (!out.is_open())
 	{
@@ -269,7 +268,7 @@ void Library::save_new_user_helper()
 	{
 		out << '\n'; //because we are appending to the file
 	}
-	out << this->get_user();
+	out << get_user();
 	in.close();
 	out.close();
 }
@@ -282,7 +281,7 @@ void Library::change_data()
 		return;
 	}
 
-	size_t command = 0; //or char
+	size_t command = 0; 
 	std::cout <<
 		"Enter number of command: \n" <<
 		"1. username \n" <<
@@ -346,7 +345,6 @@ void Library::change_data()
 }
 void Library::change_data_helper(size_t choice, const std::string& config)
 {
-	//input validation?
 	switch (choice)
 	{
 	case 1:
@@ -364,7 +362,6 @@ void Library::change_data_helper(size_t choice, const std::string& config)
 		this->get_user().add_fav_genre(config); break;
 	case 6:
 		this->get_user().remove_fav_genre(config); break;
-		//default?
 	}
 }
 void Library::save_username_helper(const std::string& un)
@@ -392,7 +389,7 @@ void Library::save_username_helper(const std::string& un)
 		else
 			out << x << "\n"; 
 
-		for (size_t i = 0; i < 6; ++i) //blind copy next data
+		for (size_t i = 0; i < 6; ++i) //blind copy following data
 		{
 			std::getline(in, x);
 			out << x << '\n';
@@ -475,6 +472,7 @@ void Library::log_out()
 	catch (const std::invalid_argument& error)
 	{
 		std::cout << error.what() << std::endl;
+		return;
 	}
 }
 void Library::log_out_helper()
@@ -574,7 +572,6 @@ void Library::rate_song_helper(const std::string& name, int rate)
 		throw std::invalid_argument("Song was not found.\n");
 }
 
-
 //--playlist--
 void Library::generate_playlist()
 {
@@ -584,7 +581,7 @@ void Library::generate_playlist()
 		return;
 	}
 
-	//&& ||
+	//& |
 	std::string input;
 	std::cout << "Type criterion/criteria (separated with '&' or '|'): \n" <<
 		"1. rating > \n" <<
@@ -610,7 +607,7 @@ void Library::generate_playlist()
 
 	save_playlist();
 }
-void Library::generate_playlist_helper(std::string& input)  //
+void Library::generate_playlist_helper(std::string& input)  
 {
 	std::set<std::string> playlist_songs; //songs, sorted in alphabetical order
 	if (!expression(input, playlist_songs))
@@ -696,7 +693,7 @@ bool Library::command(std::string com, std::unordered_map <std::string, Song>& s
 	{
 		if (op == ">")
 		{
-			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
+			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  
 			{
 				if (itr->second.get_rating() <= stod(opt))
 				{
@@ -712,7 +709,7 @@ bool Library::command(std::string com, std::unordered_map <std::string, Song>& s
 	{
 		if (op == "+")
 		{
-			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
+			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map 
 			{
 				if (itr->second.get_genre() != opt)
 				{
@@ -725,7 +722,7 @@ bool Library::command(std::string com, std::unordered_map <std::string, Song>& s
 		}
 		else if (op == "-")
 		{
-			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
+			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map 
 			{
 				if (itr->second.get_genre() == opt)
 				{
@@ -740,7 +737,7 @@ bool Library::command(std::string com, std::unordered_map <std::string, Song>& s
 		{
 			for (auto& it : curr_user.get_fav_genres()) 
 			{
-				for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
+				for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  
 				{
 					if (itr->second.get_genre() != it)
 					{
@@ -758,7 +755,7 @@ bool Library::command(std::string com, std::unordered_map <std::string, Song>& s
 		if (op == ">")
 		{
 			//if stoi > 0
-			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
+			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  
 			{
 				if (itr->second.get_year() <= stoi(opt))
 				{
@@ -771,7 +768,7 @@ bool Library::command(std::string com, std::unordered_map <std::string, Song>& s
 		}
 		else if (op == "<")
 		{
-			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
+			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  
 			{
 				if (itr->second.get_year() >= stoi(opt))
 				{
@@ -784,7 +781,7 @@ bool Library::command(std::string com, std::unordered_map <std::string, Song>& s
 		}
 		else if (op == "=")
 		{
-			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
+			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map 
 			{
 				if (itr->second.get_year() != stoi(opt))
 				{
@@ -861,11 +858,11 @@ void Library::load_playlist()
 }
 void Library::load_playlist_helper(const std::string& name) //to work, must fix load-func first
 {
-	if (!this->check_playlist(name)) //checks if it's not already loaded
+	if (!check_playlist(name)) //checks if it's not already loaded
 	{
-		if (this->get_user().is_playlist(name)) //search in current user's playlist for name
+		if (get_user().is_playlist(name)) //search in current user's playlist for name
 		{
-			this->set_playlist(this->get_user().get_playlist(name)); //if found -> add it to lib.curr_playlist
+			set_playlist(get_user().get_playlist(name)); //if found -> add it to lib.curr_playlist
 		}
 		else
 			throw std::invalid_argument("No playlist found.");
