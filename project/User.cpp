@@ -1,5 +1,7 @@
 #include "User.h"
 #include <sstream>
+#include <unordered_map>
+
 
 void User::copy(const User& other)
 {
@@ -8,6 +10,7 @@ void User::copy(const User& other)
 	full_name = other.full_name;
 	birth_date = other.birth_date;
 	fav_genres = other.fav_genres;
+	voted_songs = other.voted_songs;
 	playlists = other.playlists;
 }
 
@@ -116,6 +119,7 @@ void User::set_birth_date(const std::string& _birth_date)
 	date_validation(_birth_date);
 	birth_date = _birth_date;
 }
+
 void User::add_fav_genre(const std::string& genre)
 {
 	symbols_validation(genre);
@@ -123,8 +127,27 @@ void User::add_fav_genre(const std::string& genre)
 }
 void User::add_playlist(Playlist& other)
 {
-	playlists.push_back(other);
+	//if (is_playlist(other.get_name())) //if playlist with the same name already exist for this user
+		//throw std::invalid_argument("Name is already used.");
+	//else
+		playlists.insert({other.get_name(), other});
 }
+void User::add_voted_song(const std::string& name)
+{
+	if (voted_songs.find(name) != voted_songs.end())
+		throw std::invalid_argument("Already voted for this song.");
+	else
+		voted_songs.insert(name);
+}
+void User::change_playlists_name(const std::string& old_name, const std::string& new_name)
+{
+	Playlist pl = playlists[old_name]; //copies old playlist
+	pl.set_name(new_name); //updates name ?????
+	playlists.insert({ new_name, pl }); //creates new key with this data
+	playlists.erase(old_name);
+}
+
+
 const std::unordered_set<std::string>& User::get_fav_genres() const
 {
 	return fav_genres;
@@ -135,13 +158,10 @@ std::string User::get_name() //by copy
 }
 Playlist& User::get_playlist(const std::string& name)
 {
-	for (auto& i : playlists)
-	{
-		if (i.get_name() == name)
-			return i;
-	}
-
-	throw std::invalid_argument("No playlist found.");
+	if (!is_playlist(name))
+		throw std::invalid_argument("No playlist found.");
+	else
+		return playlists.find(name)->second;
 }
 void User::remove_fav_genre(const std::string& genre)
 {
@@ -156,14 +176,8 @@ bool User::check_username_password(const std::string& _username, const std::stri
 }
 bool User::is_playlist(const std::string& name)
 {
-	for (auto i : playlists)
-	{
-		if (i.get_name() == name)
-			return true;
-	}
-	return false;
+	return playlists.find(name) != playlists.end(); //does it exist within "playlists:
 }
-
 
 
 
@@ -173,9 +187,9 @@ std::ostream& operator<< (std::ostream& out, User& user)
 	out << user.password; out << "\n";
 	out << user.full_name; out << "\n";
 	out << user.birth_date; out << "\n";
-
+	//genres
 	std::unordered_set<std::string>::iterator it = user.fav_genres.begin();
-	if (it != user.fav_genres.end()) 	//fixed problem: genre+genre+genre+ 
+	if (it != user.fav_genres.end()) //fixed problem: genre+genre+genre+ 
 	{
 		out << *it; //first
 		++it;
@@ -189,35 +203,48 @@ std::ostream& operator<< (std::ostream& out, User& user)
 	{
 		out << "#" << '\n'; //symbol for empty
 	}
-
-
-	if (!user.playlists.empty())
+	//voted_songs
+	std::unordered_set<std::string>::iterator it1 = user.voted_songs.begin();
+	if (it1 != user.voted_songs.end()) //fixed problem: genre+genre+genre+ 
 	{
-		std::vector<Playlist>::size_type sz = user.playlists.size();
-
-		int i = 0;
-		for (; i < sz - 1; ++i) //PROBLEM! wtf?
+		out << *it1; //first
+		++it1;
+		for (; it1 != user.voted_songs.end(); ++it1)
 		{
-			out << user.playlists[i] << "~";
+			out << "^" << *it1;  //first + second ...
 		}
-		out << user.playlists[i];
+		out << "\n";
+	}
+	else //empty set
+	{
+		out << "#" << '\n'; //symbol for empty
+	}
+	
+	//playlist
+	std::unordered_map<std::string, Playlist>::iterator it2 = user.playlists.begin();
+	if (it2 != user.playlists.end())
+	{
+		out << it2->second;
+		++it2;
+		for (; it2 != user.playlists.end(); ++it2)
+		{
+			out << "~" << it2->second;
+		}
 	}
 	else
-		out << "#"; //symbol for empty; no '\n'
+	{
+		out << "#"; //no \n
+	}
+
+
 	return out;
 }
 std::istream& operator>> (std::istream& in, User& user)
 {
-	in >> user.username; 
-	in.get();
-
-	in >> user.password; 
-	in.get();
-
+	in >> user.username; in.get();
+	in >> user.password; in.get();
 	std::getline(in, user.full_name);
-
 	in >> user.birth_date; in.get();
-
 	//genres:
 	if (in.peek() != '#')
 	{
@@ -234,18 +261,32 @@ std::istream& operator>> (std::istream& in, User& user)
 		in.get(); // #
 		in.get(); // \n
 	}
-
+	//voted_songs
+	if (in.peek() != '#')
+	{
+		std::string line1;
+		std::getline(in, line1); //saving the whole line into a string
+		std::istringstream ss1(line1);
+		while (std::getline(ss1, line1, '^')) //splitting
+		{
+			user.voted_songs.insert(line1);
+		}
+	}
+	else
+	{
+		in.get(); // #
+		in.get(); // \n
+	}
 	//playlists
 	if (in.peek() != '#')
 	{
-		std::string line1;// = "name|song+song~name|song+song+song";
-		std::getline(in, line1);
-		std::istringstream ss1(line1);
-		while (std::getline(ss1, line1, '~')) //name|song+song
+		std::string line2;// = "name|song+song~name|song+song+song";
+		std::getline(in, line2);
+		std::istringstream ss2(line2);
+		while (std::getline(ss2, line2, '~')) //name|song+song
 		{
-			//std::string playlist = line1;
 			Playlist pl;
-			pl.load_playlist(line1);
+			pl.load_playlist(line2);
 			user.add_playlist(pl);
 		}
 	}

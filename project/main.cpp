@@ -4,7 +4,8 @@
 
 int main()
 {	
-	Terminal::start();
+	Terminal t;
+	t.start();
 
 	return 0;
 }

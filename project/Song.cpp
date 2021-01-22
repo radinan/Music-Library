@@ -25,7 +25,7 @@ Song::Song(const std::string& _name, const std::string& _artist, const std::stri
 	artist = _artist;
 	genre = _genre;
 	album = _album;
-	if (release_year < 0 || release_year > 2021) //check min value
+	if (_release_year < 1920 || _release_year > 2021) //check min value
 		throw std::invalid_argument("Invalid year.");
 	release_year = _release_year;
 

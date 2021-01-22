@@ -1,6 +1,6 @@
 #pragma once
-#include "Song.h"
-#include "Playlist.h"
+//#include "Song.h"
+//#include "Playlist.h"
 #include "User.h"
 #include <iostream>
 #include <unordered_map>
@@ -47,6 +47,7 @@ public:
 	 void sign_up();
 	 void change_data();
 	 void save_user_data(); 
+	 void log_out();
 	//-------------song-------------------//
 	 void add_song();
 	 void rate_song();
@@ -67,10 +68,11 @@ private:
 	 void save_new_user_helper();
 	 void save_username_helper(const std::string& un);
 	 void save_user_data_helper();
+	 void log_out_helper();
 
 	///song helpers///
 	 void add_song_helper(const std::string& name, const std::string& artist, const std::string& genre,
-						  const std::string& album, size_t release_year);
+						  const std::string& album, int release_year);
 	 void rate_song_helper(const std::string& name, int rate);
 
 	///playlist helpers///

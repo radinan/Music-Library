@@ -108,7 +108,7 @@ void Library::is_username_free(const std::string& un)
 		}
 		else
 		{
-			for (int i = 0; i < 5; ++i) //skip next 5 lines of data
+			for (int i = 0; i < 6; ++i) //skip next 5 lines of data
 			{
 				std::getline(file, x);
 			}
@@ -137,14 +137,15 @@ void Library::help()
 		<< "3 - sign up \n"
 		<< "4 - change data \n"
 		<< "5 - save changes \n"
+		<< "6 - log out \n"
 		<< "--Song--\n"
-		<< "6 - add song \n"
-		<< "7 - rate song \n"
+		<< "7 - add song \n"
+		<< "8 - rate song \n"
 		<< "--Playlist--\n"
-		<< "8 - generate playlist \n"
-		<< "9 - change playlist's name \n"
-		<< "10 - load playlist\n"
-		<< "11 - show info for all songs\n";
+		<< "9 - generate playlist \n"
+		<< "10 - change playlist's name \n"
+		<< "11 - load playlist\n"
+		<< "12 - show info for all songs\n";
 }
 
 void Library::exit()
@@ -152,6 +153,7 @@ void Library::exit()
 	try
 	{
 		exit_helper();
+		save_user_data_helper();
 	}
 	catch (const std::runtime_error& error)
 	{
@@ -329,7 +331,7 @@ void Library::change_data()
 	try
 	{
 		change_data_helper(command, config);
-		std::cout << "Data successfully changed.(Don't forget to save, after you're done with all changes)\n";
+		std::cout << "Data successfully changed.\n";
 	}
 	catch (const std::runtime_error& error)
 	{
@@ -390,7 +392,7 @@ void Library::save_username_helper(const std::string& un)
 		else
 			out << x << "\n"; 
 
-		for (size_t i = 0; i < 5; ++i) //blind copy next data
+		for (size_t i = 0; i < 6; ++i) //blind copy next data
 		{
 			std::getline(in, x);
 			out << x << '\n';
@@ -462,6 +464,28 @@ void Library::save_user_data_helper()
 		throw std::runtime_error("Unable to save changes.\n");
 }
 
+void Library::log_out()
+{
+	try
+	{
+		save_user_data_helper();
+		log_out_helper();
+		std::cout << "You are successfully logged out.\n";
+	}
+	catch (const std::invalid_argument& error)
+	{
+		std::cout << error.what() << std::endl;
+	}
+}
+void Library::log_out_helper()
+{
+	if (!is_logged())
+		throw std::invalid_argument("No permission for this action.");
+	
+	User def;//default user
+	set_user(def);
+	logged_u = false;
+}
 
 //--song-- 
 void Library::add_song()
@@ -473,7 +497,7 @@ void Library::add_song()
 	}
 
 	std::string name, artist, genre, album;
-	size_t release_year;
+	int release_year;
 
 	std::cout << "Enter name: ";
 	std::cin.ignore();
@@ -488,7 +512,7 @@ void Library::add_song()
 	std::cout << "Enter album: ";
 	std::getline(std::cin, album);
 
-	std::cout << "Enter release date: ";
+	std::cout << "Enter release year: ";
 	std::cin >> release_year;
 	
 	try
@@ -503,7 +527,7 @@ void Library::add_song()
 	}
 }
 void Library::add_song_helper(const std::string& name, const std::string& artist, const std::string& genre,
-	const std::string& album, size_t release_year)
+	const std::string& album, int release_year)
 {
 	Song song(name, artist, genre, album, release_year);
 	all_songs.insert({ name, song });
@@ -541,8 +565,11 @@ void Library::rate_song()
 void Library::rate_song_helper(const std::string& name, int rate)
 {
 	const auto& search = all_songs.find(name);
-	if (search != all_songs.end()) 
+	if (search != all_songs.end())
+	{
+		curr_user.add_voted_song(name);
 		search->second.set_rating(rate);
+	}
 	else 
 		throw std::invalid_argument("Song was not found.\n");
 }
@@ -574,13 +601,14 @@ void Library::generate_playlist()
 	{
 		generate_playlist_helper(input);
 		std::cout << "Playlist generated.\n";
-		save_playlist();
 	}
 	catch (const std::invalid_argument& error)
 	{
 		std::cout << error.what() << std::endl;
 		return;
 	}
+
+	save_playlist();
 }
 void Library::generate_playlist_helper(std::string& input)  //
 {
@@ -670,7 +698,7 @@ bool Library::command(std::string com, std::unordered_map <std::string, Song>& s
 		{
 			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  //const?
 			{
-				if (itr->second.get_rating() < stod(opt))
+				if (itr->second.get_rating() <= stod(opt))
 				{
 					songs.erase(itr++->first);
 					flag = true;
@@ -803,9 +831,9 @@ void Library::save_playlist()
 }
 void Library::save_playlist_helper(const std::string& name)
 {
-	std::string old_name = this->get_playlist().get_name();
-	this->get_user().get_playlist(old_name).set_name(name); //changes name in curr_user
-	this->get_playlist().set_name(name); //changes name of the loaded playlist in the library
+	std::string old_name = get_playlist().get_name();
+	get_playlist().set_name(name); //changes name of the loaded playlist in the library
+	curr_user.change_playlists_name(old_name, name);
 }
 
 void Library::load_playlist()

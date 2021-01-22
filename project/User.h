@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <unordered_set> //is it already included?
+#include <unordered_map>
+#include <algorithm>
 #include "Playlist.h"
 
 
@@ -15,8 +17,8 @@ private:
 	std::string birth_date;
 
 	std::unordered_set<std::string> fav_genres; //good for custom el add/remove 
-	std::vector<Playlist> playlists;		
-
+	std::unordered_set<std::string> voted_songs; //user'd already voted for these songs
+	std::unordered_map<std::string, Playlist> playlists;		
 private:
 	void copy(const User& other);
 	//validations
@@ -34,8 +36,12 @@ public:
 	void set_password(const std::string& _password);
 	void set_full_name(const std::string& _full_name);
 	void set_birth_date(const std::string& _birth_date);
+
 	void add_fav_genre(const std::string& genre);
 	void add_playlist(Playlist& other);
+	void add_voted_song(const std::string& name);
+	void change_playlists_name(const std::string& old_name, const std::string& new_name);
+
 	const std::unordered_set<std::string>& get_fav_genres() const; //const& so not being changed
 	std::string get_name(); //by copy
 	Playlist& get_playlist(const std::string& name);
