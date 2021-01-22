@@ -176,6 +176,11 @@ void Library::exit_helper()
 //--user-- 
 void Library::sign_in()
 {
+	if (is_logged())
+	{
+		std::cout << "First log out.\n";
+		return;
+	}
 	std::string un, pw;
 
 	std::cout << "Enter username: ";
@@ -224,6 +229,12 @@ void Library::sign_in_helper(const std::string& un, const std::string& pw)
 
 void Library::sign_up()
 {
+	if (is_logged())
+	{
+		std::cout << "First log out.\n";
+		return;
+	}
+
 	std::string un, pw;
 
 	std::cout << "Enter username: ";
@@ -754,7 +765,6 @@ bool Library::command(std::string com, std::unordered_map <std::string, Song>& s
 	{
 		if (op == ">")
 		{
-			//if stoi > 0
 			for (auto itr = songs.cbegin(); itr != songs.cend(); ) //iterate through the whole map  
 			{
 				if (itr->second.get_year() <= stoi(opt))
@@ -813,6 +823,7 @@ void Library::save_playlist()
 
 	std::string input;
 	std::cout << "Enter playlist's new name: ";
+	std::cin.ignore();
 	std::getline(std::cin, input);
 
 	try

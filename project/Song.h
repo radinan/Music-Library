@@ -41,6 +41,5 @@ public:
 	friend std::istream& operator >> (std::istream& in, Song& song); 
 	friend bool operator==(const Song& left, const Song& right);
 	friend bool operator!=(const Song& left, const Song& right);
-
 };
 

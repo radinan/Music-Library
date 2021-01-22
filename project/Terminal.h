@@ -5,7 +5,6 @@
 class Terminal
 {
 public:
-
 	void start()
 	{
 		Library lib; //create library
@@ -110,7 +109,6 @@ public:
 			}
 			}
 		}
-
 	}
 };
 

@@ -1,18 +1,42 @@
 windmill
 helloween
 rock
-idk
-1983
+chameleon
+1993
 1 6
-fear of the dark
-iron maiden
+san frandisco
+dom dolla
+techno
+san frandisco
+2019
+0 0
+seek and destroy
+metallica
 metal
-fear of the dark
-1989
-1 6
-antidote
-travis scott
+kill em all
+1983
+0 0
+crazy world
+scorpions
+rock
+crazy world
+1990
+0 0
+Antidote
+Travis Scott
 rap
-idk
+rodeo
 2015
-1 5
+0 0
+100 zhivota
+galena
+chalga
+100 zhivota
+2020
+0 0
+swish
+tyga
+rap
+legendary
+2019
+0 0

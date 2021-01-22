@@ -7,7 +7,7 @@
 #include "Playlist.h"
 
 
-class User //validation inside setters?
+class User 
 {
 private:
 	std::string username; 
