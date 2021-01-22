@@ -129,8 +129,6 @@ void Library::welcome()
 }
 void Library::help()
 {
-	std::cout << "---Help--- \n";
-
 	std::cout << "List of all commands: \n"
 		<< "0 - exit\n"
 		<< "1 - help menu \n"
@@ -158,6 +156,7 @@ void Library::exit()
 	catch (const std::runtime_error& error)
 	{
 		std::cout << error.what() << std::endl;
+		return;
 	}
 }
 void Library::exit_helper()
@@ -176,8 +175,6 @@ void Library::exit_helper()
 //--user-- 
 void Library::sign_in()
 {
-	std::cout << "---Sign in---\n";
-
 	std::string un, pw;
 
 	std::cout << "Enter username: ";
@@ -189,7 +186,6 @@ void Library::sign_in()
 	{
 		sign_in_helper(un, pw);
 		std::cout << "You are successfully signed in.\n";
-
 	}
 	catch (const std::runtime_error& error)
 	{
@@ -227,8 +223,6 @@ void Library::sign_in_helper(const std::string& un, const std::string& pw)
 
 void Library::sign_up()
 {
-	std::cout << "---Sign up---\n";
-
 	std::string un, pw;
 
 	std::cout << "Enter username: ";
@@ -251,14 +245,31 @@ void Library::sign_up()
 		std::cout << error.what() << std::endl;
 		return;
 	}
-
 }
 void Library::sign_up_helper(const std::string& un, const std::string& pw)
 {
 	is_username_free(un);
+
 	User new_user(un, pw);
 	this->set_user(new_user);
+
 	save_new_user_helper();
+}
+void Library::save_new_user_helper()
+{
+	std::ofstream out("users.txt", std::ios::out | std::ios::app); //go at the end of the file
+	std::ifstream in("users.txt");
+	if (!out.is_open())
+	{
+		throw std::runtime_error("Unable to open file.");
+	}
+	if (in.peek() != EOF) //if it's not empty
+	{
+		out << '\n'; //because we are appending to the file
+	}
+	out << this->get_user();
+	in.close();
+	out.close();
 }
 
 void Library::change_data()
@@ -268,8 +279,6 @@ void Library::change_data()
 		std::cout << "No permission for this action.\n";
 		return;
 	}
-
-	std::cout << "---Change data---\n";
 
 	size_t command = 0; //or char
 	std::cout <<
@@ -313,7 +322,7 @@ void Library::change_data()
 		std::getline(std::cin, config);
 		break;
 	default:
-		std::cout << "Please enter correct number.\n";
+		std::cout << "Invalid input.\n";
 		return;
 	}
 
@@ -356,26 +365,6 @@ void Library::change_data_helper(size_t choice, const std::string& config)
 		//default?
 	}
 }
-
-//files:
-void Library::save_new_user_helper()
-{
-	std::ofstream out("users.txt", std::ios::out | std::ios::app); //go at the end of the file
-	std::ifstream in("users.txt");
-	if (!out.is_open())
-	{
-		throw std::runtime_error("Unable to open file.");
-	}
-	if (in.peek() != EOF) //if it's not empty
-	{
-		out << '\n'; //because we are appending to the file
-	}
-	out << this->get_user();
-	in.close();
-	out.close();
-	std::cout << "You are successfully signed up.\n";
-}
-
 void Library::save_username_helper(const std::string& un)
 {
 	//read from user.txt -> write to user1.txt (check if x == old_username)
@@ -411,7 +400,7 @@ void Library::save_username_helper(const std::string& un)
 	out.close();
 	remove("users.txt");
 
-	if ((std::rename("users1.txt", "users.txt")) == NULL)
+	if ((std::rename("users1.txt", "users.txt")) != NULL)
 		throw std::runtime_error("Unable to save changes.\n");
 }
 
@@ -422,8 +411,6 @@ void Library::save_user_data() //not for username!
 		std::cout << "No permission for this action.\n";
 		return;
 	}
-
-	std::cout << "---Save changes---\n";
 
 	try
 	{
@@ -471,7 +458,7 @@ void Library::save_user_data_helper()
 	out.close();
 	remove("users.txt");
 
-	if ((std::rename("users1.txt", "users.txt")) == NULL) 
+	if ((std::rename("users1.txt", "users.txt")) != NULL) 
 		throw std::runtime_error("Unable to save changes.\n");
 }
 
@@ -484,8 +471,6 @@ void Library::add_song()
 		std::cout << "No permission for this action.\n";
 		return;
 	}
-
-	std::cout << "---Add song---\n";
 
 	std::string name, artist, genre, album;
 	size_t release_year;
@@ -532,8 +517,6 @@ void Library::rate_song()
 		return;
 	}
 
-	std::cout << "---Rate song---\n";
-
 	std::string name;
 	int rate = 0;
 
@@ -541,7 +524,7 @@ void Library::rate_song()
 	std::cin.ignore();
 	std::getline(std::cin, name);
 
-	std::cout << "Enter rating(1-6): ";// 1-6 ? 
+	std::cout << "Enter rating(1-6): ";
 	std::cin >> rate;
 	
 	try
@@ -565,16 +548,14 @@ void Library::rate_song_helper(const std::string& name, int rate)
 }
 
 
-//--playlist--//only with correct data for now!!!
-void Library::generate_playlist() // .... & ... | ...
+//--playlist--
+void Library::generate_playlist()
 {
 	if (!is_logged())
 	{
 		std::cout << "No permission for this action.\n";
 		return;
 	}
-
-	std::cout << "---Generate playlist---\n";
 
 	//&& ||
 	std::string input;
@@ -592,6 +573,8 @@ void Library::generate_playlist() // .... & ... | ...
 	try
 	{
 		generate_playlist_helper(input);
+		std::cout << "Playlist generated.\n";
+		save_playlist();
 	}
 	catch (const std::invalid_argument& error)
 	{
@@ -608,7 +591,6 @@ void Library::generate_playlist_helper(std::string& input)  //
 	Playlist playlist;
 	playlist.set_songs(playlist_songs);
 	set_playlist(playlist); //set into library
-	save_playlist();
 }
 bool Library::expression(std::string expr, std::set<std::string>& playlist_songs)
 {
@@ -798,14 +780,12 @@ void Library::save_playlist()
 		std::cout << "No permission for this action.\n";
 		return;
 	}
-
-	std::cout << "---Set playlist's name---\n";
-
-	if (!this->is_loaded())
+	if (!is_loaded())
 	{
 		std::cout << "No playlist is loaded.\n";
 		return;
 	}
+
 	std::string input;
 	std::cout << "Enter playlist's new name: ";
 	std::getline(std::cin, input);
@@ -835,8 +815,6 @@ void Library::load_playlist()
 		std::cout << "No permission for this action.\n";
 		return;
 	}
-
-	std::cout << "---Load playlist---\n";
 
 	std::string input;
 	std::cout << "Enter name: ";
@@ -876,8 +854,6 @@ void Library::show_all_info()
 		std::cout << "No permission for this action.\n";
 		return;
 	}
-
-	std::cout << "---Show all song's info---\n";
 
 	show_all_info_helper();
 }
