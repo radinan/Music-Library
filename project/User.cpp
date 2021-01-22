@@ -11,6 +11,58 @@ void User::copy(const User& other)
 	playlists = other.playlists;
 }
 
+void User::date_validation(const std::string& date)
+{
+	std::stringstream ss(date);
+	std::string x; //temporary to save separated sections of the string
+
+	std::getline(ss, x, '.');
+	int day = stoi(x);
+	std::getline(ss, x, '.');
+	int month = stoi(x);
+	std::getline(ss, x, '\n');
+	int year = stoi(x);
+
+	if (year < 1 || year > 2020)
+		throw std::invalid_argument("Invalid date.");
+	switch (month)
+	{
+	case 1: case 3:case 5: case 7: case 8: case 10:case 12:
+		if (day < 1 || day > 31)
+			throw std::invalid_argument("Invalid date.");
+		break;
+	case 4: case 6: case 9: case 11:
+		if (day < 1 || day > 30)
+			throw std::invalid_argument("Invalid date.");
+		break;
+	case 2:
+		if (year % 400 == 0 || year % 4 == 0 && year % 100 != 0) //leap
+		{
+			if (day < 1 || day > 29)
+				throw std::invalid_argument("Invalid date.");
+			break;
+		}
+		else if (day < 1 || day > 28)
+			throw std::invalid_argument("Invalid date.");
+		break;
+	default:
+		throw std::invalid_argument("Invalid date.");
+		break;
+	}
+}
+void User::symbols_validation(const std::string& str)
+{
+	if (str.find('#') != std::string::npos)
+		throw std::invalid_argument("Invalid symbol.");
+	if (str.find('+') != std::string::npos)
+		throw std::invalid_argument("Invalid symbol.");
+	if (str.find('|') != std::string::npos)
+		throw std::invalid_argument("Invalid symbol.");
+	if (str.find('~') != std::string::npos)
+		throw std::invalid_argument("Invalid symbol.");
+}
+
+
 User::User() //they have their own default constructors;
 {
 	username = "#";
@@ -24,6 +76,9 @@ User::User(const User& other) //copy
 }
 User::User(const std::string& _username, const std::string& _password) 
 {
+	symbols_validation(_username);
+	symbols_validation(_password);
+
 	username = _username;
 	password = _password;
 	full_name = "#";
@@ -43,26 +98,27 @@ User::~User()
 
 void User::set_username(const std::string& _username)
 {
-	//validation
+	symbols_validation(_username);
 	username = _username;
 }
 void User::set_password(const std::string& _password)
 {
-	//validation
+	symbols_validation(_password);
 	password = _password;
 }
 void User::set_full_name(const std::string& _full_name)
 {
-	//validation
+	symbols_validation(_full_name);
 	full_name = _full_name;
 }
 void User::set_birth_date(const std::string& _birth_date)
 {
-	//validation
+	date_validation(_birth_date);
 	birth_date = _birth_date;
 }
 void User::add_fav_genre(const std::string& genre)
 {
+	symbols_validation(genre);
 	fav_genres.insert(genre);
 }
 void User::add_playlist(Playlist& other)

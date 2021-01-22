@@ -19,6 +19,9 @@ private:
 
 private:
 	void copy(const User& other);
+	//validations
+	void date_validation(const std::string& date);
+	void symbols_validation(const std::string& str);
 public:
 	User();
 	User(const User& other); //copy
